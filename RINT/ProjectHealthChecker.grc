@@ -19,21 +19,15 @@
 
 /* Localizable dialog resource(s) with the accompanying help resource(s) */
 
-'GDLG'	32400	Modal			 40   40   490 322 	"Copy Property Options Sets" {
+'GDLG'	32400	Modal			 40   40   490 322 	"Project Status Report" {
 /* [  1] */ Button				380  288   100  24  LargePlain "Close"
-/* [  2] */ LeftText               10   10   200  24  24 5
-/* [  3] */ Button				220   10    50  24  LargePlain ">>"
+/* [  2] */ SingleSelList		 10   10   470 200  LargePlain PartialItems  VScroll  24
+/* [  3] */ Button				270  288   100  24  LargePlain "Select File..."
 }
 
 'DLGH'  32400  DLG_32500_Fill_Settings {
 1	""							Button_0
-2	""							PopupControl_0
-3	""							PopupControl_1
-4	""							MultiLineEdit_0
-5	""							Button_1
-6	""							PopupControl_2
-7	""							PopupControl_3
-8	""							MultiLineEdit_1
-9	""							CheckBox_0
+2	""							LeftText_0
+3	""							Button_1
 }
 

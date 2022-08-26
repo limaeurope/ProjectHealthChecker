@@ -137,17 +137,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ACVersion)'== 24">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ACDevKitModules)\LibXL;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ACVersion)'== 25">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ACDevKitModules)\RS;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Extensions\APIOutputFramework;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ACDevKitModules)\LibXL;$(ACDevKitModules)\RS;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Extensions\APIOutputFramework;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ACVersion)'== 26">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ACDevKitModules)\RS;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Extensions\APIOutputFramework;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ACDevKitModules)\LibXL;$(ACDevKitModules)\RS;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Extensions\APIOutputFramework;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(BuildType)'=='Debug'">
@@ -237,6 +237,9 @@
       <FileType>Document</FileType>
     </Library>
     <Library Condition="'$(ACVersion)'=='25'" Include="$(ACDevKitModules)\RS\Win\RSImp.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="$(ACDevKitModules)\LibXL\Win\LibXLImp.lib">
       <FileType>Document</FileType>
     </Library>
   </ItemGroup>
