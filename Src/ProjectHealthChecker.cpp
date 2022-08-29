@@ -20,8 +20,10 @@
 
 // ---------------------------------- Types ------------------------------------
 
+typedef GS::HashTable<GS::UniString, UInt16> ReportData;
+
 typedef struct {
-	GS::HashTable<GS::UniString, double> reportData;
+	GS::HashTable<GS::UniString, ReportData> reportData;
 	Int64 iSourceGroup;
 	Int64 iTargetGroup;
 	Int64 iSource;
@@ -123,11 +125,182 @@ static const GS::Array<GS::UniString> ac_types{
 	"Openings",
 	"AnalyticalPointLoads",
 	"AnalyticalEdgeLoads",
-	"AnalyticalSurfaceLoads"
+	"AnalyticalSurfaceLoads",
 };
+
+
+static const GS::Array<GS::UniString> ac_mapTypes{
+	"Undefined Map",
+	"Project Map",
+	"PublicView Map",
+	"MyView Map",
+	"Layout Map",
+	"Publisher Sets",
+};
+
+
+static const GS::Array<GS::UniString> ac_navItemTypes{
+	"Undefined",
+	"Project",
+	"Story",
+	"Section",
+	"DetailDrawing",
+	"Perspective",
+	"Axonometry",
+	"List",
+	"Schedule",
+	"Toc",
+	"Camera",
+	"CameraSet",
+	"Info",
+	"Help",
+	"Layout",
+	"MasterLayout",
+	"Book",
+	"MasterFolder",
+	"SubSet",
+	"TextList",
+	"Elevation",
+	"InteriorElevation",
+	"WorksheetDrawing",
+	"DocumentFrom3D",
+	"Folder",
+	"Drawing",
+};
+
 
 // ---------------------------------- Prototypes -------------------------------
 
+static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iItemNumber)
+{
+	char sItem[256], _sNumberOfWalls[256], sInt[256];
+
+	sprintf(sItem, "Number of %s", i_sItem.ToCStr().Get());
+	itoa(i_iItemNumber, sInt, 10);
+
+	if (!cntlDlgData.reportData.ContainsKey(i_sTable))
+	{ 
+		ReportData _rd{};
+		cntlDlgData.reportData.Add(i_sTable, _rd);
+	}
+
+	cntlDlgData.reportData[i_sTable].Add(i_sItem, i_iItemNumber);
+
+	sprintf(_sNumberOfWalls, "Number of %s: %s", sItem, sInt);
+	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
+	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
+}
+
+
+static short GetChildrenNumber(API_NavigatorItem i_item)
+{
+	GSErrCode err;
+	GS::Array<API_NavigatorItem> childItems;
+
+	err = ACAPI_Navigator(APINavigator_GetNavigatorChildrenItemsID, &i_item, nullptr, &childItems);
+
+	short result = childItems.GetSize();
+
+	for (const API_NavigatorItem& childItem : childItems)
+		result += GetChildrenNumber(childItem);
+
+	return result;
+}
+
+
+static short GetNavigatorItems(API_NavigatorMapID i_mapID, API_NavigatorItemTypeID i_navID)
+{
+	short result = 0;
+	GSErrCode err;
+
+	// create drawing data
+	//GS::Array<API_NavigatorItem> navItems;
+	//API_NavigatorItem	navItem = {}, parentItem;
+
+	//navItem.mapId = i_mapID;
+	//navItem.itemType = i_navID;
+
+	//err = ACAPI_Navigator(APINavigator_SearchNavigatorItemID, &navItem, nullptr, &navItems);
+
+	//if (err != NoError)
+	//	return -1;
+	//else result = navItems.GetSize();
+
+	////for (API_NavigatorItem& _item : navItems)
+	//{
+	GS::Array<API_NavigatorItem> childItems;
+	API_NavigatorItem item = {};
+	API_NavigatorSet	set;
+	set.mapId = i_mapID;
+	err = ACAPI_Navigator(APINavigator_GetNavigatorSetID, &set, 0);
+
+	item.guid = set.rootGuid;
+
+	result = GetChildrenNumber(item);
+
+	//err = ACAPI_Navigator(APINavigator_GetNavigatorChildrenItemsID, &item, nullptr, &childItems);
+	////}
+
+	//for (auto childItem : childItems)
+	//{
+	//	GS::Array<API_NavigatorItem> navItems2;
+
+	//	err = ACAPI_Navigator(APINavigator_GetNavigatorChildrenItemsID, &childItem, nullptr, &navItems2);
+	//}
+
+
+
+	//GSErrCode err = NoError;
+
+	//API_NavigatorView   view;
+	//API_NavigatorItem   parent;
+	//API_NavigatorItem   item = {};
+	//GS::Array<API_NavigatorItem> items;
+
+	//item.itemType = i_navID;
+	//item.mapId = i_mapID;
+
+	//err = ACAPI_Navigator(APINavigator_SearchNavigatorItemID, &item, nullptr, &items);
+	//if (err != NoError)
+	//	return -1;
+
+	//char    str[256];
+	//Int32   num;
+
+	//ACAPI_WriteReport("Stories of View Map:", false);
+
+	//for (const API_NavigatorItem& navItem : items) {
+	//	sprintf(str, "%s", GS::UniString(navItem.uName).ToCStr().Get());
+	//	ACAPI_WriteReport(str, false);
+
+	//	BNZeroMemory(&parent, sizeof(API_NavigatorItem));
+	//	parent.mapId = navItem.mapId;
+	//	err = ACAPI_Navigator(APINavigator_GetNavigatorParentItemID, nullptr, &parent, nullptr);
+	//	sprintf(str, " - parent name: %s", GS::UniString(parent.uName).ToCStr().Get());
+	//	ACAPI_WriteReport(str, false);
+
+	//	err = ACAPI_Navigator(APINavigator_GetNavigatorChildNumID, &parent, &num, nullptr);
+	//	sprintf(str, " - number of children of the parent: %d", num);
+	//	ACAPI_WriteReport(str, false);
+
+	//	BNZeroMemory(&view, sizeof(API_NavigatorView));
+	//	err = ACAPI_Navigator(APINavigator_GetNavigatorViewID, nullptr, &view, nullptr);
+	//	if (view.saveLaySet) {
+	//		if (view.layerCombination[0] != 0)
+	//			sprintf(str, " - Layer combination: %s", view.layerCombination);
+	//		else
+	//			sprintf(str, " - Layers individual");
+	//	}
+	//	else {
+	//		sprintf(str, " - none layers");
+	//	}
+	//	BMhKill((GSHandle*)&view.layerStats);
+
+	//	ACAPI_WriteReport(str, false);
+	//}
+
+	return result;
+}
 
 // -----------------------------------------------------------------------------
 // Open the selected DWG file into a library part
@@ -164,33 +337,50 @@ static void	Do_ExportReportToExcel(void)
 	DBPrintf("Exporting walls to Excel document...\n");
 
 	libxl::Book* book = xlCreateXMLBook();
-	libxl::Sheet* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(GS::UniString("Report")));
-	libxl::Font* reportFormatFont = book->addFont();
-	reportFormatFont->setSize(6);
-	reportFormatFont->setColor(libxl::COLOR_GRAY50);
-	libxl::Format* reportFormat = book->addFormat();
-	reportFormat->setFont(reportFormatFont);
-	sheet->setCol(0, 1, 100.0);
 
-	GS::Array<GS::UniString> titles =
-	{ "Object type", "Number"};
-
-	for (UIndex ii = 0; ii < titles.GetSize(); ++ii) {
-		sheet->writeStr(0, ii, UNISTR_TO_LIBXLSTR(titles[ii]));
-	}
-
-	UIndex ii = 1;
 	for (auto item : cntlDlgData.reportData) {
-		sheet->writeStr(ii, 0, item.key->ToUStr());
-		sheet->writeNum(ii++, 1, *item.value);
+		const GS::UniString _k = *item.key;
+		libxl::Sheet* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(_k));
+		sheet->setCol(0, 1, 100.0);
+
+		GS::Array<GS::UniString> titles =
+		{ "Object type", "Number" };
+
+		for (UIndex ii = 0; ii < titles.GetSize(); ++ii) {
+			sheet->writeStr(0, ii, UNISTR_TO_LIBXLSTR(titles[ii]));
+		}
+
+		UIndex ii = 1;
+
+		for (auto iitem : *item.value)
+		{
+
+			sheet->writeStr(ii, 0, iitem.key->ToUStr());
+			sheet->writeNum(ii++, 1, *iitem.value);
+		}
 	}
 
-	IO::Location dwgFileLoc;
-	if (!GetOpenFile(&dwgFileLoc, "xlsx", "*.xlsx"))
+
+	//libxl::Font* reportFormatFont = book->addFont();
+	//reportFormatFont->setSize(6);
+	//reportFormatFont->setColor(libxl::COLOR_GRAY50);
+	//libxl::Format* reportFormat = book->addFormat();
+	//reportFormat->setFont(reportFormatFont);
+
+
+
+	//UIndex ii = 1;
+	//for (auto item : cntlDlgData.reportData) {
+	//	sheet->writeStr(ii, 0, item.key->ToUStr());
+	//	sheet->writeNum(ii++, 1, *item.value);
+	//}
+
+	IO::Location xlsFileLoc;
+	if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx"))
 		return;
 
 	GS::UniString filepath;
-	dwgFileLoc.ToPath(&filepath);
+	xlsFileLoc.ToPath(&filepath);
 
 	DBVERIFY(book->save(UNISTR_TO_LIBXLSTR(filepath)));
 	book->release();
@@ -229,7 +419,7 @@ GS::HashSet<API_Guid> GetSEOElements(bool isBoundingBoxConsidered = false)
 
 	err = ACAPI_Element_GetElemList(API_ZombieElemID, &_tempArray);
 
-	for (API_Guid _guid : _tempArray) {
+	for (const API_Guid& _guid : _tempArray) {
 		bool bAdd = false;
 
 		BNZeroMemory(&elementThis, sizeof(API_Element));
@@ -297,26 +487,41 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	{
 		GSErrCode err;
 
-		for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
-		{
-			GS::Array<API_Guid> _array{};
-			char intStr[256], _sNumberOfWalls[256], _sNumberOfWalls2[256];
+		//for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
+		//{
+		//	GS::Array<API_Guid> _array{};
+		//	char intStr[256], _sNumberOfWalls[256], _sNumberOfWalls2[256];
 
-			err = ACAPI_Element_GetElemList(static_cast<API_ElemTypeID>(i), &_array);
-			itoa(_array.GetSize(), intStr, 10);
-			auto _a = ac_types[i-1].ToCStr().Get();
+		//	err = ACAPI_Element_GetElemList(static_cast<API_ElemTypeID>(i), &_array);
+		//	itoa(_array.GetSize(), intStr, 10);
+		//	auto _a = ac_types[i-1].ToCStr().Get();
 
-			sprintf(_sNumberOfWalls2, "Number of %s", _a);
-			cntlDlgData.reportData.Add(GS::UniString(_sNumberOfWalls2), _array.GetSize());
+		//	sprintf(_sNumberOfWalls2, "Number of %s", _a);
+		//	cntlDlgData.reportData.Add(GS::UniString(_sNumberOfWalls2), _array.GetSize());
 
-			sprintf(_sNumberOfWalls, "Number of %s: %s", _a,  intStr);
-			DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
-			DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
-		}
+		//	sprintf(_sNumberOfWalls, "Number of %s: %s", _a,  intStr);
+		//	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
+		//	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
+		//}
 
-		cntlDlgData.reportData.Add("Number of SEO Operators/Targets", GetSEOElements().GetSize());
-		cntlDlgData.reportData.Add("Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize());
-		
+		//cntlDlgData.reportData.Add("Number of SEO Operators/Targets", GetSEOElements().GetSize());
+		//cntlDlgData.reportData.Add("Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize());
+
+
+		short iNavItems = 0;
+
+		for (UInt16 iMT = 0; iMT < ac_mapTypes.GetSize(); iMT++)
+			for (UInt16 iNIT = 0; iNIT < ac_navItemTypes.GetSize(); iNIT++)
+			{
+				iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
+
+				if (iNavItems != -1)
+				{
+					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
+				}
+			}
+
+
 		break;
 	}
 	case DG_MSG_CLICK:
@@ -337,14 +542,14 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	return result;
 }
 
-static GSErrCode	Do_CopyOptionSets()
+static GSErrCode	Do_Report()
 {
 	GSErrCode		err = NoError;
 
 	err = DGModalDialog(ACAPI_GetOwnResModule(), 32400, ACAPI_GetOwnResModule(), CntlDlgCallBack, (DGUserData)&cntlDlgData);
 	
 	return err;
-}		// Do_CopyOptionSets
+}		// Do_Report
 
 
 // -----------------------------------------------------------------------------
@@ -357,7 +562,7 @@ GSErrCode __ACENV_CALL ElementsSolidOperation (const API_MenuParams *menuParams)
 		[&] () -> GSErrCode {
 
 			switch (menuParams->menuItemRef.itemIndex) {
-				case 1:		Do_CopyOptionSets();				break;
+				case 1:		Do_Report();						break;
 				default:										break;
 			}
 
