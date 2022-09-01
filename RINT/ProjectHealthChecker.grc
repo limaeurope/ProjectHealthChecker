@@ -23,8 +23,7 @@
 /* [  1] */ Button				380  288   100  24  LargePlain "Close"
 /* [  2] */ SingleSelList		 10   10   470 200  LargePlain PartialItems  VScroll  24
 /* [  3] */ Button				270  288   100  24  LargePlain "Select File..."
-
-/* [  4]  CheckBox			 10  288   260  24  LargePlain "Include zero valued data"*/
+/* [  4] */ CheckBox			 10  288   260  24  LargePlain "Include zero valued data"
 
 }
 

@@ -33,7 +33,7 @@ static CntlDlgData			cntlDlgData{1};
 #define OK_BUTTON			1
 #define SOURCE_GROUP_POPUP	2
 #define EXPORT_BUTTON		3
-//#define ZERO_CHECKBOX		4
+#define ZERO_CHECKBOX		4
 
 static const GS::Array<GS::UniString> ac_types{
 	"Walls",
@@ -193,7 +193,7 @@ static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iIte
 
 
 static short GetChildrenNumber(API_NavigatorItem i_item, API_NavigatorItemTypeID i_navID,
-	GS::UniString i_inExcludeString = "",
+	GS::UniString i_sInExclude = "",
 	bool i_isInclude = true)
 {
 	GSErrCode err;
@@ -205,11 +205,15 @@ static short GetChildrenNumber(API_NavigatorItem i_item, API_NavigatorItemTypeID
 	err = ACAPI_Navigator(APINavigator_GetNavigatorChildrenItemsID, &i_item, nullptr, &childItems);
 
 	if (i_item.itemType == i_navID)
-		result += 1;
+		if (i_sInExclude.GetLength())
+			if (i_isInclude == (GS::UniString(i_item.uName).FindFirst(i_sInExclude) < MaxUSize))
+				result += 1;
+		else
+			result += 1;
 
 	for (const API_NavigatorItem& childItem : childItems)
 	{
-		result += GetChildrenNumber(childItem, i_navID, i_inExcludeString, i_isInclude);
+		result += GetChildrenNumber(childItem, i_navID, i_sInExclude, i_isInclude);
 	}
 
 	return result;
@@ -429,7 +433,7 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	{
 		GSErrCode err;
 
-		//DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
+		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
 
 		for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
 		{
@@ -457,6 +461,14 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 				{
 					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
 				}
+
+				// -------------------------------------
+				iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
+
+				if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
+				{
+					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
+				}
 			}
 
 		break;
@@ -472,12 +484,12 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 			result = item;
 			break;
 		}
-	//case DG_MSG_CHANGE:
-	//	switch (item) {
-	//	case ZERO_CHECKBOX:
-	//		cntlDlgData.iAddZeroValues = DGGetItemValLong(dialID, ZERO_CHECKBOX);
-	//		break;
-	//	}
+	case DG_MSG_CHANGE:
+		switch (item) {
+		case ZERO_CHECKBOX:
+			cntlDlgData.iAddZeroValues = DGGetItemValLong(dialID, ZERO_CHECKBOX);
+			break;
+		}
 		break;
 	}
 
@@ -489,7 +501,8 @@ static GSErrCode	Do_Report()
 	GSErrCode		err = NoError;
 
 	err = DGModalDialog(ACAPI_GetOwnResModule(), 32400, ACAPI_GetOwnResModule(), CntlDlgCallBack, (DGUserData)&cntlDlgData);
-	
+	ACAPI_KeepInMemory(true);
+
 	return err;
 }		// Do_Report
 
