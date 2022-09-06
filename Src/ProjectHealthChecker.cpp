@@ -22,10 +22,10 @@
 
 typedef GS::HashTable<GS::UniString, UInt16> ReportData;
 
-typedef struct {
+struct CntlDlgData {
 	Int32 iAddZeroValues;
 	GS::HashTable<GS::UniString, ReportData> reportData;
-} CntlDlgData;
+};
 
 // ---------------------------------- Variables --------------------------------
 
@@ -192,9 +192,10 @@ static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iIte
 }
 
 
-static short GetChildrenNumber(API_NavigatorItem i_item, API_NavigatorItemTypeID i_navID,
-	GS::UniString i_sInExclude = "",
-	bool i_isInclude = true)
+static short GetChildrenNumber(API_NavigatorItem i_item, 
+	const API_NavigatorItemTypeID& i_navID,
+	const GS::UniString& i_sInExclude = "",
+	const bool i_isInclude = true)
 {
 	GSErrCode err;
 	short result = 0;
@@ -220,10 +221,10 @@ static short GetChildrenNumber(API_NavigatorItem i_item, API_NavigatorItemTypeID
 }
 
 
-static short GetNavigatorItems(API_NavigatorMapID i_mapID, 
-	API_NavigatorItemTypeID i_navID, 
-	GS::UniString i_inExcludeString = "", 
-	bool i_isInclude = true)
+static short GetNavigatorItems(const API_NavigatorMapID& i_mapID, 
+	const API_NavigatorItemTypeID& i_navID, 
+	const GS::UniString& i_inExcludeString = "", 
+	const bool i_isInclude = true)
 {
 	short result = 0;
 	GSErrCode err;
@@ -487,6 +488,7 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	case DG_MSG_CHANGE:
 		switch (item) {
 		case ZERO_CHECKBOX:
+			//TODO Refresh the dialog
 			cntlDlgData.iAddZeroValues = DGGetItemValLong(dialID, ZERO_CHECKBOX);
 			break;
 		}
