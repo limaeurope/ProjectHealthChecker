@@ -17,7 +17,6 @@
 #include	"LibXL/libxl.h"
 #include	"DGFileDialog.hpp"
 
-
 // ---------------------------------- Types ------------------------------------
 
 typedef GS::HashTable<GS::UniString, UInt16> ReportData;
@@ -25,6 +24,24 @@ typedef GS::HashTable<GS::UniString, UInt16> ReportData;
 struct CntlDlgData {
 	Int32 iAddZeroValues;
 	GS::HashTable<GS::UniString, ReportData> reportData;
+	GS::HashSet<GS::UniString> filterStrings;
+};
+
+struct AbstractData {};
+
+struct StringData :AbstractData {
+	GS::UniString string;
+	StringData(GS::UniString s) :string(s) {}
+};
+
+struct DataObject {
+	virtual void funct() {}
+};
+
+struct FileSizeReportObject : public DataObject
+{
+	GS::UniString path;
+	UInt64 size;
 };
 
 // ---------------------------------- Variables --------------------------------
@@ -33,7 +50,9 @@ static CntlDlgData			cntlDlgData{1};
 #define OK_BUTTON			1
 #define SOURCE_GROUP_POPUP	2
 #define EXPORT_BUTTON		3
-#define ZERO_CHECKBOX		4
+
+#define ZERO_CHECKBOX		2
+#define IMPORT_BUTTON		3
 
 static const GS::Array<GS::UniString> ac_types{
 	"Walls",
@@ -125,7 +144,6 @@ static const GS::Array<GS::UniString> ac_types{
 	"AnalyticalSurfaceLoads",
 };
 
-
 static const GS::Array<GS::UniString> ac_mapTypes{
 	"Undefined Map",
 	"Project Map",
@@ -134,7 +152,6 @@ static const GS::Array<GS::UniString> ac_mapTypes{
 	"Layout Map",
 	"Publisher Sets",
 };
-
 
 static const GS::Array<GS::UniString> ac_navItemTypes{
 	"Undefined",
@@ -165,8 +182,114 @@ static const GS::Array<GS::UniString> ac_navItemTypes{
 	"Drawing",
 };
 
+// ----------------------------------  -------------------------------
 
-// ---------------------------------- Prototypes -------------------------------
+static bool hasTexture(API_Attribute i_apiAttrib, AbstractData* i_attrs)
+{
+	return i_apiAttrib.material.texture.fileLoc != NULL;
+}
+
+static bool nameContains(API_Attribute i_apiAttrib, AbstractData* i_attrs)
+{
+	return GS::UniString(i_apiAttrib.header.name)
+		.FindFirst(static_cast<StringData*>(i_attrs)->string) < MaxUIndex;
+}
+
+static int getTextureSize(FileSizeReportObject* o_result, API_Attribute i_apiAttrib, AbstractData* = nullptr)
+{
+	if (i_apiAttrib.material.texture.status == 0) 
+		return 1;
+	IO::Location loc{ *i_apiAttrib.material.texture.fileLoc };
+	IO::File f{loc};
+	GSErrCode err;
+	GS::UniString path = "";
+	UInt64 fileSize = 0;
+
+	if (!loc.IsEmpty())
+	{
+		err = loc.ToPath(&path);
+		o_result->path = path;
+
+		err = f.GetDataLength(&fileSize);
+		o_result->size = fileSize;
+	}
+	else return 1;
+	if (err) return err;
+
+	return NoError;
+}
+
+// -----------------------------------------------------------------------------
+//  List attributes
+// -----------------------------------------------------------------------------
+
+static UInt32 CountAttributes(
+	API_AttrTypeID i_attrType, 
+	bool(*i_func)(API_Attribute, AbstractData*) = nullptr,
+	AbstractData* i_attrs = nullptr)
+{
+	API_Attribute		attrib;
+	API_AttributeIndex	count;
+	GSErrCode			err;
+	Int32 i, result = 0;
+
+	err = ACAPI_Attribute_GetNum(i_attrType, &count);
+	if (err != NoError) {
+		WriteReport_Err("ACAPI_Attribute_GetNum", err);
+		return 0;
+	}
+
+	if (i_func != nullptr)
+		for (i = 1; i <= count; i++) {
+			BNZeroMemory(&attrib, sizeof(API_Attribute));
+			attrib.header.typeID = i_attrType;
+			attrib.header.index = i;
+
+			err = ACAPI_Attribute_Get(&attrib);
+
+			if (err == NoError && i_func(attrib, i_attrs))
+				result++;
+		}
+	else
+		result = count;
+
+	return result;
+}
+
+
+static int ListAttributes(
+	GS::Array<DataObject>* io_attrs,
+	API_AttrTypeID i_attrType,
+	int (*i_func)(DataObject*, API_Attribute, AbstractData*) = nullptr,
+	AbstractData* i_attrs = nullptr)
+{
+	API_Attribute			attrib;
+	API_AttributeIndex		count;
+	GSErrCode				err;
+	DataObject				resultThis;
+
+	err = ACAPI_Attribute_GetNum(i_attrType, &count);
+	if (err != NoError) {
+		WriteReport_Err("ACAPI_Attribute_GetNum", err);
+	}
+
+	if (i_func != nullptr)
+		for (Int32 i = 1; i <= count; i++) {
+			BNZeroMemory(&attrib, sizeof(API_Attribute));
+			attrib.header.typeID = i_attrType;
+			attrib.header.index = i;
+
+			err = ACAPI_Attribute_Get(&attrib);
+
+			if (err == NoError && i_func(&resultThis, attrib, i_attrs) != 0)
+			{
+				io_attrs->Push(resultThis);
+			}
+		}
+
+	return 0;
+}
+
 
 static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iItemNumber)
 {
@@ -175,7 +298,7 @@ static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iIte
 
 	char sItem[256], _sNumberOfWalls[256], sInt[256];
 
-	sprintf(sItem, "Number of %s", i_sItem.ToCStr().Get());
+	//sprintf(sItem, "Number of %s", i_sItem.ToCStr().Get());
 	itoa(i_iItemNumber, sInt, 10);
 
 	if (!cntlDlgData.reportData.ContainsKey(i_sTable))
@@ -186,9 +309,21 @@ static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iIte
 
 	cntlDlgData.reportData[i_sTable].Add(i_sItem, i_iItemNumber);
 
-	sprintf(_sNumberOfWalls, "%s: %s", sItem, sInt);
+	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
 	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
 	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
+}
+
+static void AddList(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iItemNumber)
+{
+
+	if (!cntlDlgData.reportData.ContainsKey(i_sTable))
+	{
+		ReportData _rd{};
+		cntlDlgData.reportData.Add(i_sTable, _rd);
+	}
+
+	cntlDlgData.reportData[i_sTable].Add(i_sItem, i_iItemNumber);
 }
 
 
@@ -263,9 +398,12 @@ static short GetNavigatorItems(const API_NavigatorMapID& i_mapID,
 }
 
 // -----------------------------------------------------------------------------
-// Open the selected DWG file into a library part
+// Open the selected XLSX file into a library part
 // -----------------------------------------------------------------------------
-static bool	GetOpenFile(IO::Location* dloc, const char* fileExtensions, const GS::UniString& filterText)
+static bool	GetOpenFile(IO::Location* dloc, 
+	const char* fileExtensions, 
+	const GS::UniString& filterText, 
+	DG::FileDialog::Type i_type = DG::FileDialog::Type::OpenFile)
 {
 	if (dloc == nullptr)
 		return false;
@@ -277,7 +415,7 @@ static bool	GetOpenFile(IO::Location* dloc, const char* fileExtensions, const GS
 	if (id == FTM::UnknownType)
 		id = ftman.AddType(type);
 
-	DG::FileDialog	dlg(DG::FileDialog::Save);			
+	DG::FileDialog	dlg(i_type);
 
 	if (!dlg.Invoke())
 		return false;
@@ -291,6 +429,43 @@ static bool	GetOpenFile(IO::Location* dloc, const char* fileExtensions, const GS
 // -----------------------------------------------------------------------------
 
 #define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
+
+static void	Do_ImportNamesFromExcel(void)
+{
+	IO::Location xlsFileLoc;
+	if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx", DG::FileDialog::OpenFile))
+		return;
+
+	GS::UniString filepath;
+	xlsFileLoc.ToPath(&filepath);
+
+	libxl::Book* book;
+	bool isBookLoaded = false;
+
+	book = xlCreateBook();
+	if (book->load(filepath.ToUStr()))
+		isBookLoaded = true;
+	else
+	{
+		book = xlCreateXMLBook();
+		if (book->load(filepath.ToUStr()))
+			isBookLoaded = true;
+	}
+
+	if (isBookLoaded)
+	{
+		if (libxl::Sheet* sheet = book->getSheet(0))
+		{
+			for (int row = sheet->firstRow(); row < sheet->lastRow(); ++row)
+			{
+				if (const wchar_t* sFilter = sheet->readStr(row, 0))
+					cntlDlgData.filterStrings.Add(GS::UniString(sFilter));
+			}
+		}
+
+		book->release();
+	}
+}
 
 static void	Do_ExportReportToExcel(void)
 {
@@ -323,7 +498,7 @@ static void	Do_ExportReportToExcel(void)
 	}
 
 	IO::Location xlsFileLoc;
-	if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx"))
+	if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx", DG::FileDialog::Save))
 		return;
 
 	GS::UniString filepath;
@@ -464,6 +639,7 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 				}
 
 				// -------------------------------------
+
 				iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
 
 				if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
@@ -471,6 +647,26 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
 				}
 			}
+
+		AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID));
+
+		for (auto sFilter: cntlDlgData.filterStrings)
+		{ 
+			auto iCount = CountAttributes(API_LayerID, nameContains, &StringData{ sFilter });
+			AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);
+		}
+		
+		AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID));
+		AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, hasTexture));
+
+		GS::Array<FileSizeReportObject> lTextures{};
+		
+		ListAttributes(&lTextures, API_MaterialID, getTextureSize);
+
+		for (FileSizeReportObject* tex : lTextures)
+		{
+			AddItem("Texture data", tex->path, (UInt16)tex->size);
+		}
 
 		break;
 	}
@@ -481,6 +677,38 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 			break;
 		case EXPORT_BUTTON:
 			Do_ExportReportToExcel();
+
+			result = item;
+			break;
+		}
+		break;
+	}
+
+	return result;
+}
+
+static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short item, DGUserData userData, DGMessageData msgData)
+{
+	short result = 0;
+	GS::UniString _text{};
+	API_PropertyDefinition _def;
+
+	switch (message) {
+	case DG_MSG_INIT:
+	{
+		GSErrCode err;
+
+		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
+
+		break;
+	}
+	case DG_MSG_CLICK:
+		switch (item) {
+		case OK_BUTTON:
+			result = item;
+			break;
+		case IMPORT_BUTTON:
+			Do_ImportNamesFromExcel();
 
 			result = item;
 			break;
@@ -506,6 +734,16 @@ static GSErrCode	Do_Report()
 	ACAPI_KeepInMemory(true);
 
 	return err;
+}
+
+static GSErrCode	Do_Settings()
+{
+	GSErrCode		err = NoError;
+
+	err = DGModalDialog(ACAPI_GetOwnResModule(), 32401, ACAPI_GetOwnResModule(), SettingsDlgCallBack, (DGUserData)&cntlDlgData);
+	ACAPI_KeepInMemory(true);
+
+	return err;
 }		// Do_Report
 
 
@@ -520,6 +758,7 @@ GSErrCode __ACENV_CALL ProjectHealthChecker (const API_MenuParams *menuParams)
 
 			switch (menuParams->menuItemRef.itemIndex) {
 				case 1:		Do_Report();						break;
+				case 2:		Do_Settings();						break;
 				default:										break;
 			}
 

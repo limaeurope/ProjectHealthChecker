@@ -13,24 +13,33 @@
 /* [   ] */		"LIMA"
 /* [   ] */		"ProjectHealthChecker"
 /* [  1] */		"Write out project status"
+/* [  2] */		"Settings..."
 }
 
 /* Localizable string resource(s) */
 
 /* Localizable dialog resource(s) with the accompanying help resource(s) */
 
-'GDLG'	32400	Modal			 40   40   490 322 	"Project Status Report" {
-/* [  1] */ Button				380  288   100  24  LargePlain "Close"
+'GDLG'	32400	Modal			 40   40   490 366 	"Project Status Report" {
+/* [  1] */ Button				380  332   100  24  LargePlain "Close"
 /* [  2] */ SingleSelList		 10   10   470 200  LargePlain PartialItems  VScroll  24
-/* [  3] */ Button				270  288   100  24  LargePlain "Select File..."
-/* [  4] */ CheckBox			 10  288   260  24  LargePlain "Include zero valued data"
-
+/* [  3] */ Button				270  332   100  24  LargePlain "Select File..."
 }
 
 'DLGH'  32400  DLG_32500_Fill_Settings {
 1	""							Button_0
 2	""							LeftText_0
 3	""							Button_1
-4	""							CheckBox_1
 }
 
+'GDLG'	32401	Modal			 40   40   490 366 	"Settings" {
+/* [  1] */ Button				380  332   100  24  LargePlain "Close"
+/* [  2] */ CheckBox			 10  288   260  24  LargePlain "Include zero valued data"
+/* [  3] */ Button				 10  332   250  24  LargePlain "Import filters from .xlsx..."
+}
+
+'DLGH'  32401  DLG_32500_Settings {
+1	""							Button_0
+2	""							CheckBox_1
+3	""							Button_1
+}
