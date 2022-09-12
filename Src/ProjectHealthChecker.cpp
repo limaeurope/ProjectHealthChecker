@@ -34,8 +34,9 @@ struct StringData :AbstractData {
 	StringData(GS::UniString s) :string(s) {}
 };
 
+
 struct DataObject {
-	virtual void funct() {}
+	//virtual void funct() {}
 };
 
 struct FileSizeReportObject : public DataObject
@@ -195,10 +196,10 @@ static bool nameContains(API_Attribute i_apiAttrib, AbstractData* i_attrs)
 		.FindFirst(static_cast<StringData*>(i_attrs)->string) < MaxUIndex;
 }
 
-static int getTextureSize(FileSizeReportObject* o_result, API_Attribute i_apiAttrib, AbstractData* = nullptr)
+static DataObject* getTextureSize(API_Attribute i_apiAttrib)
 {
 	if (i_apiAttrib.material.texture.status == 0) 
-		return 1;
+		throw 1;
 	IO::Location loc{ *i_apiAttrib.material.texture.fileLoc };
 	IO::File f{loc};
 	GSErrCode err;
@@ -207,16 +208,21 @@ static int getTextureSize(FileSizeReportObject* o_result, API_Attribute i_apiAtt
 
 	if (!loc.IsEmpty())
 	{
+		FileSizeReportObject* result = new FileSizeReportObject;
+
 		err = loc.ToPath(&path);
-		o_result->path = path;
+		if (err) throw err;
+
+		result->path = path;
 
 		err = f.GetDataLength(&fileSize);
-		o_result->size = fileSize;
-	}
-	else return 1;
-	if (err) return err;
+		if (err) throw err;
 
-	return NoError;
+		result->size = fileSize;
+
+		return result;
+	}
+	else throw 1;
 }
 
 // -----------------------------------------------------------------------------
@@ -257,16 +263,16 @@ static UInt32 CountAttributes(
 }
 
 
-static int ListAttributes(
-	GS::Array<DataObject>* io_attrs,
+static GS::Array<DataObject*> ListAttributes(
 	API_AttrTypeID i_attrType,
-	int (*i_func)(DataObject*, API_Attribute, AbstractData*) = nullptr,
-	AbstractData* i_attrs = nullptr)
+	DataObject* (*i_func)(API_Attribute) = nullptr
+)
 {
 	API_Attribute			attrib;
 	API_AttributeIndex		count;
 	GSErrCode				err;
-	DataObject				resultThis;
+	DataObject*				resultThis;
+	GS::Array<DataObject*>	io_attrs;
 
 	err = ACAPI_Attribute_GetNum(i_attrType, &count);
 	if (err != NoError) {
@@ -275,19 +281,26 @@ static int ListAttributes(
 
 	if (i_func != nullptr)
 		for (Int32 i = 1; i <= count; i++) {
-			BNZeroMemory(&attrib, sizeof(API_Attribute));
-			attrib.header.typeID = i_attrType;
-			attrib.header.index = i;
-
-			err = ACAPI_Attribute_Get(&attrib);
-
-			if (err == NoError && i_func(&resultThis, attrib, i_attrs) != 0)
+			try 
 			{
-				io_attrs->Push(resultThis);
+				BNZeroMemory(&attrib, sizeof(API_Attribute));
+				attrib.header.typeID = i_attrType;
+				attrib.header.index = i;
+
+				err = ACAPI_Attribute_Get(&attrib);
+
+				if (err == NoError)
+				{
+						resultThis = i_func(attrib);
+						io_attrs.Push(resultThis);
+				}
+			}
+			catch (...) {
+				continue;
 			}
 		}
 
-	return 0;
+	return io_attrs;
 }
 
 
@@ -659,13 +672,15 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 		AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID));
 		AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, hasTexture));
 
-		GS::Array<FileSizeReportObject> lTextures{};
+		GS::Array<DataObject*> lTextures;
 		
-		ListAttributes(&lTextures, API_MaterialID, getTextureSize);
+		lTextures = ListAttributes(API_MaterialID, getTextureSize);
 
-		for (FileSizeReportObject* tex : lTextures)
+		for (DataObject* tex : lTextures)
 		{
-			AddItem("Texture data", tex->path, (UInt16)tex->size);
+			FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
+			AddItem("Texture data", _tex->path, (UInt16)_tex->size);
+			delete tex;
 		}
 
 		break;
