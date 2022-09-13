@@ -19,7 +19,7 @@
 
 // ---------------------------------- Types ------------------------------------
 
-typedef GS::HashTable<GS::UniString, UInt16> ReportData;
+typedef GS::HashTable<GS::UniString, UInt32> ReportData;
 
 struct CntlDlgData {
 	Int32 iAddZeroValues;
@@ -36,18 +36,58 @@ struct StringData :AbstractData {
 
 
 struct DataObject {
-	//virtual void funct() {}
 };
 
 struct FileSizeReportObject : public DataObject
 {
 	GS::UniString path;
+	GS::UniString name;
 	UInt64 size;
+	bool isEmbedded;
+	API_LibraryTypeID libType;
+};
+
+class APITypeDict {
+public:
+	GS::HashTable<GS::UniString, API_LibraryTypeID> table;
+
+	APITypeDict()
+	{
+		GS::Array<API_LibraryInfo>    libInfo;
+		IO::Path    sEmbeddedLibPath;
+
+		if (ACAPI_Environment(APIEnv_GetLibrariesID, &libInfo) == NoError) {
+			for (API_LibraryInfo lib : libInfo) {
+				lib.location.ToPath(&sEmbeddedLibPath);
+
+				table.Add(GS::UniString(sEmbeddedLibPath), lib.libraryType);
+			}
+		}
+	}
+
+	API_LibraryTypeID GetLibPartType(API_LibPart& i_libPart)
+	{
+		GS::UniString path = "";
+		API_LibraryTypeID result = API_Undefined;
+
+		for (auto k : table.Keys())
+		{
+			i_libPart.location->ToPath(&path);
+
+			if (GS::UniString(path).Contains(k))
+			{
+				return table[k];
+			}
+		}
+
+		return result;
+	}
 };
 
 // ---------------------------------- Variables --------------------------------
 
 static CntlDlgData			cntlDlgData{1};
+static APITypeDict			apiTypeDict;
 #define OK_BUTTON			1
 #define SOURCE_GROUP_POPUP	2
 #define EXPORT_BUTTON		3
@@ -209,11 +249,13 @@ static DataObject* getTextureSize(API_Attribute i_apiAttrib)
 	if (!loc.IsEmpty())
 	{
 		FileSizeReportObject* result = new FileSizeReportObject;
-
+		
 		err = loc.ToPath(&path);
 		if (err) throw err;
-
+		
 		result->path = path;
+		if (path.Contains("\\"))
+			result->name = path(path.FindLast("\\") + 1, path.GetLength() - path.FindLast("\\") - 1);
 
 		err = f.GetDataLength(&fileSize);
 		if (err) throw err;
@@ -223,6 +265,70 @@ static DataObject* getTextureSize(API_Attribute i_apiAttrib)
 		return result;
 	}
 	else throw 1;
+}
+
+// -----------------------------------------------------------------------------
+//  List libparts
+// -----------------------------------------------------------------------------
+
+static GS::Array<DataObject*> ListLibParts()
+{
+	API_LibPart  libPart;
+	Int32        i, count;
+	GSErrCode    err;
+	GS::UniString path = "";
+	UInt64 fileSize = 0;
+	GS::Array<DataObject*> aResult;
+	GS::Array<API_LibraryInfo>    libInfo;
+	IO::Path    sEmbeddedLibPath = "";
+
+	if (ACAPI_Environment(APIEnv_GetLibrariesID, &libInfo) == NoError) {
+		for (auto lib: libInfo) {
+			if (lib.libraryType == API_EmbeddedLibrary)
+			lib.location.ToPath(&sEmbeddedLibPath);
+		}
+	}
+
+	err = ACAPI_LibPart_GetNum(&count);
+
+	if (!err) {
+		for (i = 1; i <= count; i++) {
+			BNZeroMemory(&libPart, sizeof(API_LibPart));
+			libPart.index = i;
+			err = ACAPI_LibPart_Get(&libPart);
+			if (!err) {
+				IO::Location loc = *libPart.location;
+				IO::File f{ loc };
+
+				FileSizeReportObject* result = new FileSizeReportObject;
+
+				err = loc.ToPath(&path);
+				if (err) throw err;
+
+				result->path = path;
+				if (path.Contains("\\"))
+					result->name = path(path.FindLast("\\") + 1, path.GetLength() - path.FindLast("\\") - 1);
+
+				err = f.GetDataLength(&fileSize);
+				if (err) throw err;
+
+				result->size = fileSize;
+
+				if (sEmbeddedLibPath)
+				{
+					result->isEmbedded = path.Contains(GS::UniString(sEmbeddedLibPath)) ? true : false;
+				}
+
+				result->libType = apiTypeDict.GetLibPartType(libPart);
+
+				aResult.Push(result);
+			}
+			if (libPart.location != nullptr)
+				delete libPart.location;
+		}
+	}
+
+	return aResult;
 }
 
 // -----------------------------------------------------------------------------
@@ -303,8 +409,11 @@ static GS::Array<DataObject*> ListAttributes(
 	return io_attrs;
 }
 
+static void AddSum(GS::UniString i_sTable ) {
+	//TODO
+}
 
-static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iItemNumber)
+static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt32 i_iItemNumber)
 {
 	// Adds an item to both the UI report and the .xlsx output
 	if (!i_iItemNumber && !cntlDlgData.iAddZeroValues) return;
@@ -327,7 +436,7 @@ static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iIte
 	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
 }
 
-static void AddList(GS::UniString i_sTable, GS::UniString i_sItem, UInt16 i_iItemNumber)
+static void AddList(GS::UniString i_sTable, GS::UniString i_sItem, UInt32 i_iItemNumber)
 {
 
 	if (!cntlDlgData.reportData.ContainsKey(i_sTable))
@@ -679,9 +788,42 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 		for (DataObject* tex : lTextures)
 		{
 			FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
-			AddItem("Texture data", _tex->path, (UInt16)_tex->size);
+			AddItem("Texture data", _tex->name, (UInt16)_tex->size);
 			delete tex;
 		}
+
+		Int32 iLibParts;
+
+		//err = ACAPI_LibPart_GetNum(&iLibParts);
+
+		//AddItem("Library Part data", "Number of Library Parts", CountAttributes(API_MaterialID));
+
+		GS::Array<DataObject*> lLibParts;
+
+		lLibParts = ListLibParts();
+		GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
+
+		for (DataObject* lp : lLibParts)
+		{
+			FileSizeReportObject* _lp = (FileSizeReportObject*)lp;
+			if (_lp->libType == API_BuiltInLibrary)
+				aSpecial.Push(*_lp);
+
+			if (_lp->libType == API_LocalLibrary
+			||	_lp->libType == API_ServerLibrary)
+				aNormal.Push(*_lp);
+
+			if (_lp->libType == API_EmbeddedLibrary)
+				aEmbedded.Push(*_lp);
+
+			delete lp;
+		}
+
+		for (auto item:aNormal)
+			AddItem("LibPart data", item.name, (UInt32)item.size);
+
+		for (auto item:aEmbedded)
+			AddItem("Embedded LibPart data", item.name, (UInt32)item.size);
 
 		break;
 	}
@@ -768,6 +910,8 @@ static GSErrCode	Do_Settings()
 
 GSErrCode __ACENV_CALL ProjectHealthChecker (const API_MenuParams *menuParams)
 {
+	apiTypeDict = APITypeDict{};
+
 	return ACAPI_CallUndoableCommand ("Element Test API Function",
 		[&] () -> GSErrCode {
 
