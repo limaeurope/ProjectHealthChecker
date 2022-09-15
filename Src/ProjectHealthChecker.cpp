@@ -1,4 +1,8 @@
 ﻿// *****************************************************************************
+//
+// Namespaces:        Contact person: samuel.karli@limaeurope.com
+//     -None-
+//
 // *****************************************************************************
 
 #define	_ELEMENT_TEST_TRANSL_
@@ -10,14 +14,11 @@
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
 
-#include	"ProjectHealthChecker.h"
-#include	"DG.h"
-#include	"ACAPinc.h"
-#include	"FileSystem.hpp"
-#include	"LibXL/libxl.h"
-#include	"DGFileDialog.hpp"
+#include	"ProjectHealthChecker.hpp"
+
 
 // ---------------------------------- Types ------------------------------------
+
 
 typedef GS::HashTable<GS::UniString, UInt32> ReportData;
 
@@ -34,7 +35,6 @@ struct StringData :AbstractData {
 	StringData(GS::UniString s) :string(s) {}
 };
 
-
 struct DataObject {
 };
 
@@ -45,183 +45,21 @@ struct FileSizeReportObject : public DataObject
 	UInt64 size;
 	bool isEmbedded;
 	API_LibraryTypeID libType;
-};
-
-class APITypeDict {
-public:
-	GS::HashTable<GS::UniString, API_LibraryTypeID> table;
-
-	APITypeDict()
-	{
-		GS::Array<API_LibraryInfo>    libInfo;
-		IO::Path    sEmbeddedLibPath;
-
-		if (ACAPI_Environment(APIEnv_GetLibrariesID, &libInfo) == NoError) {
-			for (API_LibraryInfo lib : libInfo) {
-				lib.location.ToPath(&sEmbeddedLibPath);
-
-				table.Add(GS::UniString(sEmbeddedLibPath), lib.libraryType);
-			}
-		}
-	}
-
-	API_LibraryTypeID GetLibPartType(API_LibPart& i_libPart)
-	{
-		GS::UniString path = "";
-		API_LibraryTypeID result = API_Undefined;
-
-		for (auto k : table.Keys())
-		{
-			i_libPart.location->ToPath(&path);
-
-			if (GS::UniString(path).Contains(k))
-			{
-				return table[k];
-			}
-		}
-
-		return result;
-	}
+	UInt32 nInstances = 0;
 };
 
 // ---------------------------------- Variables --------------------------------
 
 static CntlDlgData			cntlDlgData{1};
 static APITypeDict			apiTypeDict;
+static GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS{};
+
 #define OK_BUTTON			1
 #define SOURCE_GROUP_POPUP	2
 #define EXPORT_BUTTON		3
 
 #define ZERO_CHECKBOX		2
 #define IMPORT_BUTTON		3
-
-static const GS::Array<GS::UniString> ac_types{
-	"Walls",
-	"Columns",
-	"Beams",
-	"Windows",
-	"Doors",
-	"Objects",
-	"Lamps",
-	"Slabs",
-	"Roofs",
-	"Meshes",
-
-	"Dimensions",
-	"RadialDimensions",
-	"LevelDimensions",
-	"AngleDimensions",
-
-	"Texts",
-	"Labels",
-	"Zones",
-
-	"Hatches",
-	"Lines",
-	"PolyLines",
-	"Arcs",
-	"Circles",
-	"Splines",
-	"Hotspots",
-
-	"CutPlanes",
-	"Cameras",
-	"CamSets",
-
-	"Groups",
-	"SectElems",
-
-	"Drawings",
-	"Pictures",
-	"Details",
-	"Elevations",
-	"InteriorElevations",
-	"Worksheets",
-
-	"Hotlinks",
-
-	"CurtainWalls",
-	"CurtainWallSegments",
-	"CurtainWallFrames",
-	"CurtainWallPanels",
-	"CurtainWallJunctions",
-	"CurtainWallAccessorys",
-	"Shells",
-	"Skylights",
-	"Morphs",
-	"ChangeMarkers",
-	"Stairs",
-	"Risers",
-	"Treads",
-	"StairStructures",
-	"Railings",
-	"RailingToprails",
-	"RailingHandrails",
-	"RailingRails",
-	"RailingPosts",
-	"RailingInnerPosts",
-	"RailingBalusters",
-	"RailingPanels",
-	"RailingSegments",
-	"RailingNodes",
-	"RailingBalusterSets",
-	"RailingPatterns",
-	"RailingToprailEnds",
-	"RailingHandrailEnds",
-	"RailingRailEnds",
-	"RailingToprailConnections",
-	"RailingHandrailConnections",
-	"RailingRailConnections",
-	"RailingEndFinishs",
-
-	"AnalyticalSupports",
-	"AnalyticalLinks",
-
-	"BeamSegments",
-	"ColumnSegments",
-	"Openings",
-	"AnalyticalPointLoads",
-	"AnalyticalEdgeLoads",
-	"AnalyticalSurfaceLoads",
-};
-
-static const GS::Array<GS::UniString> ac_mapTypes{
-	"Undefined Map",
-	"Project Map",
-	"PublicView Map",
-	"MyView Map",
-	"Layout Map",
-	"Publisher Sets",
-};
-
-static const GS::Array<GS::UniString> ac_navItemTypes{
-	"Undefined",
-	"Project",
-	"Story",
-	"Section",
-	"DetailDrawing",
-	"Perspective",
-	"Axonometry",
-	"List",
-	"Schedule",
-	"Toc",
-	"Camera",
-	"CameraSet",
-	"Info",
-	"Help",
-	"Layout",
-	"MasterLayout",
-	"Book",
-	"MasterFolder",
-	"SubSet",
-	"TextList",
-	"Elevation",
-	"InteriorElevation",
-	"WorksheetDrawing",
-	"DocumentFrom3D",
-	"Folder",
-	"Drawing",
-};
 
 // ----------------------------------  -------------------------------
 
@@ -293,42 +131,134 @@ static GS::Array<DataObject*> ListLibParts()
 
 	if (!err) {
 		for (i = 1; i <= count; i++) {
-			BNZeroMemory(&libPart, sizeof(API_LibPart));
-			libPart.index = i;
-			err = ACAPI_LibPart_Get(&libPart);
-			if (!err) {
-				IO::Location loc = *libPart.location;
-				IO::File f{ loc };
+			try
+			{
+				BNZeroMemory(&libPart, sizeof(API_LibPart));
+				libPart.index = i;
+				err = ACAPI_LibPart_Get(&libPart);
+				if (!err) {
+					IO::Location loc = *libPart.location;
+					IO::File f{ loc };
 
-				FileSizeReportObject* result = new FileSizeReportObject;
+					FileSizeReportObject* result = new FileSizeReportObject;
 
-				err = loc.ToPath(&path);
-				if (err) throw err;
+					err = loc.ToPath(&path);
+					if (err) throw err;
 
-				result->path = path;
-				if (path.Contains("\\"))
-					result->name = path(path.FindLast("\\") + 1, path.GetLength() - path.FindLast("\\") - 1);
+					result->path = path;
+					if (path.Contains("\\"))
+						result->name = path(path.FindLast("\\") + 1, path.GetLength() - path.FindLast("\\") - 1);
 
-				err = f.GetDataLength(&fileSize);
-				if (err) throw err;
+					err = f.GetDataLength(&fileSize);
+					if (err) throw err;
 
-				result->size = fileSize;
+					result->size = fileSize;
 
-				if (sEmbeddedLibPath)
-				{
-					result->isEmbedded = path.Contains(GS::UniString(sEmbeddedLibPath)) ? true : false;
+					if (sEmbeddedLibPath)
+					{
+						result->isEmbedded = path.Contains(GS::UniString(sEmbeddedLibPath)) ? true : false;
+					}
+
+					result->libType = apiTypeDict.GetLibPartType(libPart);
+
+					aResult.Push(result);
+
+					if (libPart.location != nullptr)
+						delete libPart.location;
 				}
-
-				result->libType = apiTypeDict.GetLibPartType(libPart);
-
-				aResult.Push(result);
 			}
-			if (libPart.location != nullptr)
-				delete libPart.location;
+			catch (...)
+			{
+				continue;
+			}
 		}
 	}
 
 	return aResult;
+}
+
+inline GS::UniString GetLibPartName(const API_LibPart& i_libPart)
+{
+	GS::UniString sResult;
+
+	IO::Location loc = *i_libPart.location;
+	IO::File f{ loc };
+
+	GSErrCode err = loc.ToPath(&sResult);
+
+	return sResult;
+}
+
+static void CountLibPartInstances()
+{
+	GS::Array<API_Guid> libPartGuidS;
+	API_LibPart			libPart;
+	API_Element         element;
+	GSErrCode err;
+	GS::UniString sLibPart;
+
+	for (auto _id : GS::Array<API_ElemTypeID>{ 
+		API_ObjectID, 
+		API_LampID, 
+		API_DoorID, 
+		API_WindowID, 
+		API_SkylightID })
+	{
+		err = ACAPI_Element_GetElemList(_id, &libPartGuidS);
+	}
+
+	Int32 iLibParts;
+	err = ACAPI_LibPart_GetNum(&iLibParts);
+	for (Int32 i = 1; i <= iLibParts; i++) {
+		BNZeroMemory(&libPart, sizeof(API_LibPart));
+		libPart.index = i;
+		err = ACAPI_LibPart_Get(&libPart);
+		if (!err && libPart.isPlaceable) {
+			iLibPartInstanceS.Add(GetLibPartName(libPart), 0);
+		}
+		if (libPart.location != nullptr)
+			delete libPart.location;
+	}
+	
+	for (auto libPartGuid : libPartGuidS)
+	{
+		try
+		{
+			BNZeroMemory(&element, sizeof(API_Element));
+			element.header.guid = libPartGuid;
+			err = ACAPI_Element_Get(&element);
+			if (err) throw err;
+
+			BNZeroMemory(&libPart, sizeof(API_LibPart));
+			if	(	element.header.typeID == API_ObjectID
+				||	element.header.typeID == API_LampID)
+			{
+				libPart.index = element.object.libInd;
+				err = ACAPI_LibPart_Get(&libPart);
+			}
+			else if	(	element.header.typeID == API_DoorID
+					||	element.header.typeID == API_WindowID
+					||	element.header.typeID == API_SkylightID)
+			{
+				err = ACAPI_Goodies(APIAny_GetElemLibPartUnIdID, &element.header, libPart.ownUnID);
+				err = ACAPI_LibPart_Search(&libPart, false);
+			}
+			if (err) throw err;
+
+			if (iLibPartInstanceS.ContainsKey(sLibPart = (GetLibPartName(libPart))))
+			{
+				iLibPartInstanceS[sLibPart]++;
+			}
+			else
+			{
+				iLibPartInstanceS.Add(sLibPart, 1);
+			}
+		}
+		catch(...)
+		{
+			continue;
+		}
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -591,7 +521,7 @@ static void	Do_ImportNamesFromExcel(void)
 
 static void	Do_ExportReportToExcel(void)
 {
-	DBPrintf("Exporting walls to Excel document...\n");
+	//DBPrintf("Exporting walls to Excel document...\n");
 
 	libxl::Book* book = xlCreateXMLBook();
 
@@ -629,7 +559,7 @@ static void	Do_ExportReportToExcel(void)
 	DBVERIFY(book->save(UNISTR_TO_LIBXLSTR(filepath)));
 	book->release();
 
-	DBPrintf("Export operation finished\n");
+	//DBPrintf("Export operation finished\n");
 }
 
 bool BoundingBoxesMatch(API_Element& element1, API_Element& element2)
@@ -733,97 +663,105 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 
 		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
 
-		for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
-		{
-			GS::Array<API_Guid> _array{};
-			char intStr[256], _sNumberOfWalls[256], _sNumberOfWalls2[256];
-
-			err = ACAPI_Element_GetElemList(static_cast<API_ElemTypeID>(i), &_array);
-
-			auto _a = ac_types[i-1].ToCStr().Get();
-			sprintf(_sNumberOfWalls2, "Number of %s", _a);
-			AddItem("Elements", _sNumberOfWalls2, _array.GetSize());
-		}
-
-		AddItem("SEO Data", "Number of SEO Operators/Targets", GetSEOElements().GetSize());
-		AddItem("SEO Data", "Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize());
-
-		short iNavItems = 0;
-
-		for (UInt16 iMT = 1; iMT < ac_mapTypes.GetSize(); iMT++)
-			for (UInt16 iNIT = 1; iNIT < ac_navItemTypes.GetSize(); iNIT++)
-			{
-				iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
-
-				if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
-				{
-					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
-				}
-
-				// -------------------------------------
-
-				iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
-
-				if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
-				{
-					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
-				}
-			}
-
-		AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID));
-
-		for (auto sFilter: cntlDlgData.filterStrings)
-		{ 
-			auto iCount = CountAttributes(API_LayerID, nameContains, &StringData{ sFilter });
-			AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);
-		}
-		
-		AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID));
-		AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, hasTexture));
-
-		GS::Array<DataObject*> lTextures;
-		
-		lTextures = ListAttributes(API_MaterialID, getTextureSize);
-
-		for (DataObject* tex : lTextures)
-		{
-			FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
-			AddItem("Texture data", _tex->name, (UInt16)_tex->size);
-			delete tex;
-		}
-
-		Int32 iLibParts;
-
-		//err = ACAPI_LibPart_GetNum(&iLibParts);
-
-		//AddItem("Library Part data", "Number of Library Parts", CountAttributes(API_MaterialID));
 
 		GS::Array<DataObject*> lLibParts;
 
 		lLibParts = ListLibParts();
-		GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
 
-		for (DataObject* lp : lLibParts)
+		CountLibPartInstances();
+
+		for (auto libPart : iLibPartInstanceS)
 		{
-			FileSizeReportObject* _lp = (FileSizeReportObject*)lp;
-			if (_lp->libType == API_BuiltInLibrary)
-				aSpecial.Push(*_lp);
-
-			if (_lp->libType == API_LocalLibrary
-			||	_lp->libType == API_ServerLibrary)
-				aNormal.Push(*_lp);
-
-			if (_lp->libType == API_EmbeddedLibrary)
-				aEmbedded.Push(*_lp);
-
-			delete lp;
+			AddItem("Library Part Instances", *libPart.key, *libPart.value);
 		}
 
-		for (auto item:aNormal)
-			AddItem("LibPart data", item.name, (UInt32)item.size);
+		//GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
 
-		for (auto item:aEmbedded)
-			AddItem("Embedded LibPart data", item.name, (UInt32)item.size);
+		//for (DataObject* lp : lLibParts)
+		//{
+		//	FileSizeReportObject* _lp = (FileSizeReportObject*)lp;
+		//	if (_lp->libType == API_BuiltInLibrary)
+		//		aSpecial.Push(*_lp);
+
+		//	if (_lp->libType == API_LocalLibrary
+		//		|| _lp->libType == API_ServerLibrary)
+		//		aNormal.Push(*_lp);
+
+		//	if (_lp->libType == API_EmbeddedLibrary)
+		//		aEmbedded.Push(*_lp);
+
+		//	delete lp;
+		//}
+
+		//for (auto item : aNormal)
+		//	AddItem("LibPart data", item.name, (UInt32)item.size);
+
+		//for (auto item : aEmbedded)
+		//	AddItem("Embedded LibPart data", item.name, (UInt32)item.size);
+
+
+		//for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
+		//{
+		//	GS::Array<API_Guid> _array{};
+		//	char intStr[256], _sNumberOfWalls[256], _sNumberOfWalls2[256];
+
+		//	err = ACAPI_Element_GetElemList(static_cast<API_ElemTypeID>(i), &_array);
+
+		//	auto _a = ac_types[i-1].ToCStr().Get();
+		//	sprintf(_sNumberOfWalls2, "Number of %s", _a);
+		//	AddItem("Elements", _sNumberOfWalls2, _array.GetSize());
+		//}
+
+		//AddItem("SEO Data", "Number of SEO Operators/Targets", GetSEOElements().GetSize());
+		//AddItem("SEO Data", "Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize());
+
+
+		//short iNavItems = 0;
+
+		//for (UInt16 iMT = 1; iMT < ac_mapTypes.GetSize(); iMT++)
+		//	for (UInt16 iNIT = 1; iNIT < ac_navItemTypes.GetSize(); iNIT++)
+		//	{
+		//		iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
+
+		//		if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
+		//		{
+		//			AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
+		//		}
+
+		//		// -------------------------------------
+
+		//		iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
+
+		//		if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
+		//		{
+		//			AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
+		//		}
+		//	}
+
+		//AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID));
+
+		//for (auto sFilter: cntlDlgData.filterStrings)
+		//{ 
+		//	auto iCount = CountAttributes(API_LayerID, nameContains, &StringData{ sFilter });
+		//	AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);
+		//}
+		//
+		//AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID));
+		//AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, hasTexture));
+
+		//GS::Array<DataObject*> lTextures;
+		//
+		//lTextures = ListAttributes(API_MaterialID, getTextureSize);
+
+		//for (DataObject* tex : lTextures)
+		//{
+		//	FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
+		//	AddItem("Texture data", _tex->name, (UInt16)_tex->size);
+		//	delete tex;
+		//}
+
+		//Int32 iLibParts;
+
 
 		break;
 	}

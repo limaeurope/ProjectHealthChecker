@@ -1,9 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Src\$(ProjectName).cpp" />
-    <ClCompile Include="Src\APICommon.c" />
-    <ClCompile Include="Src\Element_SolidLink.cpp" />
+    <ClCompile Include="Src\APITypeDict.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\APICommon.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\$(ProjectName).cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="$(ACDevKitModules)\GSRoot\Win\GSRootImp.lib">
@@ -15,28 +21,59 @@
     <Library Include="$(ACDevKitModules)\InputOutput\Win\InputOutputImp.lib">
       <Filter>Libs</Filter>
     </Library>
+    <Library Include="$(ACDevKitModules)\DGLib\Win\DGImp.lib">
+      <Filter>Libs</Filter>
+    </Library>
+    <Library Include="$(ACDevKitModules)\LibXL\Win\LibXLImp.lib">
+      <Filter>Libs</Filter>
+    </Library>
     <Library Include="$(ACDevKitModules)\ObjectDatabase\Win\ObjectDatabaseImp.LIB">
       <Filter>Libs</Filter>
     </Library>
     <Library Include="$(ACDevKitSupport)\Lib\Win\ACAP_STATD.lib">
       <Filter>Libs</Filter>
     </Library>
-    <Library Include="$(ACDevKitModules)\DGLib\Win\DGImp.lib">
+    <Library Include="$(ACDevKitModules)\RS\Win\RSImp.lib">
       <Filter>Libs</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="RINT\$(ProjectName).grc" />
-    <CustomBuild Include="RFIX\$(ProjectName)Fix.grc" />
-    <CustomBuild Include="RFIX.WIN\$(ProjectName).rc2" />
+    <CustomBuild Include="RFIX.WIN\$(ProjectName).rc2">
+      <Filter>Resources</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RFIX\$(ProjectName)Fix.grc">
+      <Filter>Resources</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RINT\$(ProjectName).$(LanguageCode).grc">
+      <Filter>Resources</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Libs">
       <UniqueIdentifier>{c95d90ee-2a44-42a0-af6c-a1d36151215a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{513f4134-7578-4506-beec-21ea3a3af7b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Constants">
+      <UniqueIdentifier>{ee35b3d3-9334-461d-a023-2e13d2195a07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{c8a9fa03-4879-4652-b02b-e28343b3b05c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{a3aef5fb-f8a0-4cee-98ca-bf5696357aed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\APICommon.h" />
-    <ClInclude Include="Src\OptionSetCopier.h" />
+    <ClInclude Include="Src\acTypes.hpp">
+      <Filter>Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\APITypeDict.hpp">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\APICommon.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

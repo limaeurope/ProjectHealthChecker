@@ -1,54 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug 24|x64">
-      <Configuration>Debug 24</Configuration>
+    <ProjectConfiguration Include="Debug 24 EN|x64">
+      <Configuration>Debug 24 EN</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release 24|x64">
-      <Configuration>Release 24</Configuration>
+    <ProjectConfiguration Include="Release 24 EN|x64">
+      <Configuration>Release 24 EN</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug 25|x64">
-      <Configuration>Debug 25</Configuration>
+    <ProjectConfiguration Include="Debug 25 EN|x64">
+      <Configuration>Debug 25 EN</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release 25|x64">
-      <Configuration>Release 25</Configuration>
+    <ProjectConfiguration Include="Release 25 EN|x64">
+      <Configuration>Release 25 EN</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug 26|x64">
-      <Configuration>Debug 26</Configuration>
+    <ProjectConfiguration Include="Debug 26 EN|x64">
+      <Configuration>Debug 26 EN</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release 26|x64">
-      <Configuration>Release 26</Configuration>
+    <ProjectConfiguration Include="Release 26 EN|x64">
+      <Configuration>Release 26 EN</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug 24'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug 24 EN'">
     <ACVersion>24</ACVersion>
     <BuildType>Debug</BuildType>
+    <LanguageCode>en</LanguageCode>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release 24'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release 24 EN'">
     <ACVersion>24</ACVersion>
     <BuildType>Release</BuildType>
+    <LanguageCode>en</LanguageCode>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug 25'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug 25 EN'">
     <ACVersion>25</ACVersion>
     <BuildType>Debug</BuildType>
+    <LanguageCode>en</LanguageCode>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release 25'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release 25 EN'">
     <ACVersion>25</ACVersion>
     <BuildType>Release</BuildType>
+    <LanguageCode>en</LanguageCode>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug 26'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug 26 EN'">
     <ACVersion>26</ACVersion>
     <BuildType>Debug</BuildType>
+    <LanguageCode>en</LanguageCode>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release 26'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release 26 EN'">
     <ACVersion>26</ACVersion>
     <BuildType>Release</BuildType>
+    <LanguageCode>en</LanguageCode>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros">
     <ACDevKit>..\ArchiCAD_API\API Development Kit $(ACVersion)</ACDevKit>
@@ -178,13 +184,13 @@
   <ItemGroup>
     <ClCompile Include="Src\$(ProjectName).cpp" />
     <ClCompile Include="Src\APICommon.c" />
-    <ClCompile Include="Src\Element_SolidLink.cpp" />
+    <ClCompile Include="Src\APITypeDict.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="RINT\$(ProjectName).grc">
+    <CustomBuild Include="RINT\$(ProjectName).$(LanguageCode).grc">
       <FileType>Document</FileType>
-      <Command Condition="'$(BuildType)'=='Debug'">"$(ACDevKitSupport)\Tools\Win\ResConv.exe" -m r -D WINDOWS -T W -q utf8 1252 -i "RINT\$(ProjectName).grc" -D _DEBUG -o "$(OutDir)\RO\$(ProjectName).grc.rc2"</Command>
-      <Command Condition="'$(BuildType)'=='Release'">"$(ACDevKitSupport)\Tools\Win\ResConv.exe" -m r -D WINDOWS -T W -q utf8 1252 -i "RINT\$(ProjectName).grc" -o "$(OutDir)\RO\$(ProjectName).grc.rc2"</Command>
+      <Command Condition="'$(BuildType)'=='Debug'">"$(ACDevKitSupport)\Tools\Win\ResConv.exe" -m r -D WINDOWS -T W -q utf8 1252 -i "RINT\$(ProjectName).$(LanguageCode).grc" -D _DEBUG -o "$(OutDir)\RO\$(ProjectName).grc.rc2"</Command>
+      <Command Condition="'$(BuildType)'=='Release'">"$(ACDevKitSupport)\Tools\Win\ResConv.exe" -m r -D WINDOWS -T W -q utf8 1252 -i "RINT\$(ProjectName).$(LanguageCode).grc" -o "$(OutDir)\RO\$(ProjectName).grc.rc2"</Command>
       <Message>Compiling the localized GRC file...</Message>
       <Outputs>$(OutDir)\RO\$(ProjectName).grc.rc2;%(Outputs)</Outputs>
     </CustomBuild>
@@ -244,8 +250,9 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\acTypes.hpp" />
     <ClInclude Include="Src\APICommon.h" />
-    <ClInclude Include="Src\OptionSetCopier.h" />
+    <ClInclude Include="Src\APITypeDict.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

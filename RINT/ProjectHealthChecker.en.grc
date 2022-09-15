@@ -22,7 +22,7 @@
 
 'GDLG'	32400	Modal			 40   40   490 366 	"Project Status Report" {
 /* [  1] */ Button				380  332   100  24  LargePlain "Close"
-/* [  2] */ SingleSelList		 10   10   470 200  LargePlain PartialItems  VScroll  24
+/* [  2] */ SingleSelList		 10   10   470 200  LargePlain PartialItems  HVScroll  24
 /* [  3] */ Button				270  332   100  24  LargePlain "Select File..."
 }
 
