@@ -1,17 +1,17 @@
 ﻿/* *****************************************************************************
-// Localizable resource description for the Element Test Add-On
+// Localizable resource description for the ProjectHealthChecker
 // ****************************************************************************/
 
 
 'STR#' 32000 "Add-on Name and Description" {
-/* [  1] */		"OptionSetCopier"
+/* [  1] */		"ProjectHealthChecker"
 /* [  2] */		"Add-on; Copies a Property's Option Set to another Property"
 }
 
 
-'STR#' 32506 "Solid Operations Menu" {
+'STR#' 32506 "ProjectHealthChecker" {
 /* [   ] */		"LIMA"
-/* [   ] */		"ProjectHealthChecker"
+/* [   ] */		"Project Health Check"
 /* [  1] */		"Write out project status"
 /* [  2] */		"Settings..."
 }

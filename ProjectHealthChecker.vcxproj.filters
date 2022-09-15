@@ -10,6 +10,21 @@
     <ClCompile Include="Src\$(ProjectName).cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Attribute.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Excel.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LibPart.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Navigator.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SEO.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="$(ACDevKitModules)\GSRoot\Win\GSRootImp.lib">
@@ -73,6 +88,27 @@
       <Filter>Classes</Filter>
     </ClInclude>
     <ClInclude Include="Src\APICommon.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ProjectHealthChecker.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DataStructs.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Attribute.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Excel.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LibPart.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Navigator.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SEO.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

@@ -185,6 +185,11 @@
     <ClCompile Include="Src\$(ProjectName).cpp" />
     <ClCompile Include="Src\APICommon.c" />
     <ClCompile Include="Src\APITypeDict.cpp" />
+    <ClCompile Include="Src\Attribute.cpp" />
+    <ClCompile Include="Src\Excel.cpp" />
+    <ClCompile Include="Src\LibPart.cpp" />
+    <ClCompile Include="Src\Navigator.cpp" />
+    <ClCompile Include="Src\SEO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="RINT\$(ProjectName).$(LanguageCode).grc">
@@ -253,6 +258,13 @@
     <ClInclude Include="Src\acTypes.hpp" />
     <ClInclude Include="Src\APICommon.h" />
     <ClInclude Include="Src\APITypeDict.hpp" />
+    <ClInclude Include="Src\Attribute.hpp" />
+    <ClInclude Include="Src\DataStructs.hpp" />
+    <ClInclude Include="Src\Excel.hpp" />
+    <ClInclude Include="Src\LibPart.hpp" />
+    <ClInclude Include="Src\Navigator.hpp" />
+    <ClInclude Include="Src\ProjectHealthChecker.hpp" />
+    <ClInclude Include="Src\SEO.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

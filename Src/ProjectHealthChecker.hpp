@@ -5,7 +5,7 @@
 //
 // *****************************************************************************
 
-#if !defined _PROJECT_HEALTH_CHECKER_H
+#ifndef _PROJECT_HEALTH_CHECKER_H
 #define _PROJECT_HEALTH_CHECKER_H
 
 #include	"DG.h"
@@ -16,7 +16,11 @@
 
 #include	"APITypeDict.hpp"
 #include	"acTypes.hpp"
-
-static void	Do_ExportReportToExcel();
+#include	"SEO.hpp"
+#include	"DataStructs.hpp"
+#include	"LibPart.hpp"
+#include	"Attribute.hpp"
+#include	"Navigator.hpp"
+#include	"Excel.hpp"
 
 #endif
