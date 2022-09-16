@@ -22,5 +22,6 @@
 #include	"Attribute.hpp"
 #include	"Navigator.hpp"
 #include	"Excel.hpp"
+#include	"Table.hpp"
 
 #endif

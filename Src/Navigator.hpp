@@ -4,6 +4,9 @@
 #include	"APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
+#include	"Table.hpp"
+
+void ProcessNavigatorItems(CntlDlgData& io_cntlDlgData);
 
 short GetChildrenNumber(API_NavigatorItem i_item,
 	const API_NavigatorItemTypeID& i_navID,
@@ -16,3 +19,4 @@ short GetNavigatorItems(const API_NavigatorMapID& i_mapID,
 	const bool i_isInclude = true);
 
 #endif	//_NAVIGATOR_HPP
+

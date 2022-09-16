@@ -21,9 +21,9 @@ struct StringData :AbstractData {
 	StringData(GS::UniString s) :string(s) {}
 };
 
-struct DataObject {};
+//struct DataObject {};
 
-struct FileSizeReportObject : public DataObject
+struct FileSizeReportObject : AbstractData
 {
 	GS::UniString path;
 	GS::UniString name;

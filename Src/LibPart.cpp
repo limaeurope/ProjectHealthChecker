@@ -1,18 +1,62 @@
 #include	"LibPart.hpp"
 #include	"File.hpp"
+#include	"Table.hpp"
+#include	"APITypeDict.hpp"
+
+
+void ProcessLibPars(CntlDlgData& io_cntlDlgData, 
+	const APITypeDict& i_apiTypeDict, 
+	GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS)
+{
+	GS::Array<AbstractData*> lLibParts;
+
+	lLibParts = ListLibParts(i_apiTypeDict);
+
+	CountLibPartInstances(io_iLibPartInstanceS);
+
+	for (auto libPart : io_iLibPartInstanceS)
+	{
+		AddItem("Library Part Instances", *libPart.key, *libPart.value, io_cntlDlgData);
+	}
+
+	GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
+
+	for (AbstractData* lp : lLibParts)
+	{
+		FileSizeReportObject* _lp = (FileSizeReportObject*)lp;
+		if (_lp->libType == API_BuiltInLibrary)
+			aSpecial.Push(*_lp);
+
+		if (_lp->libType == API_LocalLibrary
+			|| _lp->libType == API_ServerLibrary)
+			aNormal.Push(*_lp);
+
+		if (_lp->libType == API_EmbeddedLibrary)
+			aEmbedded.Push(*_lp);
+
+		delete lp;
+	}
+
+	for (auto item : aNormal)
+		AddItem("LibPart data", item.name, (UInt32)item.size, io_cntlDlgData);
+
+	for (auto item : aEmbedded)
+		AddItem("Embedded LibPart data", item.name, (UInt32)item.size, io_cntlDlgData);
+}
+
 
 // -----------------------------------------------------------------------------
 //  List libparts
 // -----------------------------------------------------------------------------
 
-GS::Array<DataObject*> ListLibParts(APITypeDict& i_apiTypeDict)
+GS::Array<AbstractData*> ListLibParts(const APITypeDict& i_apiTypeDict)
 {
 	API_LibPart  libPart;
 	Int32        i, count;
 	GSErrCode    err;
 	GS::UniString path = "";
 	UInt64 fileSize = 0;
-	GS::Array<DataObject*> aResult;
+	GS::Array<AbstractData*> aResult;
 	GS::Array<API_LibraryInfo>    libInfo;
 	IO::Path    sEmbeddedLibPath = "";
 

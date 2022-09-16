@@ -19,7 +19,7 @@ APITypeDict::APITypeDict()
 	}
 }
 
-API_LibraryTypeID APITypeDict::GetLibPartType(API_LibPart& i_libPart)
+API_LibraryTypeID APITypeDict::GetLibPartType(const API_LibPart& i_libPart) const 
 {
 	GS::UniString path = "";
 	API_LibraryTypeID result = API_Undefined;

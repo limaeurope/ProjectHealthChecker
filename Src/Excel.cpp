@@ -4,10 +4,10 @@
 // -----------------------------------------------------------------------------
 // Open the selected XLSX file into a library part
 // -----------------------------------------------------------------------------
-bool	GetOpenFile(IO::Location* dloc,
-	const char* fileExtensions,
+bool	GetOpenFile(IO::Location* const dloc,
+	const char* const fileExtensions,
 	const GS::UniString& filterText,
-	DG::FileDialog::Type i_type = DG::FileDialog::Type::OpenFile)
+	const DG::FileDialog::Type i_type = DG::FileDialog::Type::OpenFile)
 {
 	if (dloc == nullptr)
 		return false;

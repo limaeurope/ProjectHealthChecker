@@ -190,6 +190,7 @@
     <ClCompile Include="Src\LibPart.cpp" />
     <ClCompile Include="Src\Navigator.cpp" />
     <ClCompile Include="Src\SEO.cpp" />
+    <ClCompile Include="Src\Table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="RINT\$(ProjectName).$(LanguageCode).grc">
@@ -265,6 +266,7 @@
     <ClInclude Include="Src\Navigator.hpp" />
     <ClInclude Include="Src\ProjectHealthChecker.hpp" />
     <ClInclude Include="Src\SEO.hpp" />
+    <ClInclude Include="Src\Table.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

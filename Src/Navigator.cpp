@@ -1,4 +1,32 @@
-#include "Navigator.hpp"
+#include	"Navigator.hpp"
+#include	"DataStructs.hpp"
+#include	"acTypes.hpp"
+
+
+void ProcessNavigatorItems(CntlDlgData& io_cntlDlgData)
+{
+	short iNavItems = 0;
+
+	for (UInt16 iMT = 1; iMT < ac_mapTypes.GetSize(); iMT++)
+		for (UInt16 iNIT = 1; iNIT < ac_navItemTypes.GetSize(); iNIT++)
+		{
+			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
+
+			if (iNavItems > 0 || io_cntlDlgData.iAddZeroValues)
+			{
+				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems, io_cntlDlgData);
+			}
+
+			// -------------------------------------
+
+			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
+
+			if (iNavItems > 0 || io_cntlDlgData.iAddZeroValues)
+			{
+				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems, io_cntlDlgData);
+			}
+		}
+}
 
 short GetChildrenNumber(API_NavigatorItem i_item,
 	const API_NavigatorItemTypeID& i_navID,

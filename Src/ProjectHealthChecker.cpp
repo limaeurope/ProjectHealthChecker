@@ -34,87 +34,26 @@ static GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS{};
 
 // ----------------------------------  -------------------------------
 
-static bool hasTexture(API_Attribute i_apiAttrib, AbstractData* i_attrs)
-{
-	return i_apiAttrib.material.texture.fileLoc != NULL;
-}
 
-static bool nameContains(API_Attribute i_apiAttrib, AbstractData* i_attrs)
+void ProcessElements(CntlDlgData& io_cntlDlgData)
 {
-	return GS::UniString(i_apiAttrib.header.name)
-		.FindFirst(static_cast<StringData*>(i_attrs)->string) < MaxUIndex;
-}
-
-static DataObject* getTextureSize(API_Attribute i_apiAttrib)
-{
-	if (i_apiAttrib.material.texture.status == 0) 
-		throw 1;
-	IO::Location loc{ *i_apiAttrib.material.texture.fileLoc };
-	IO::File f{loc};
-	GSErrCode err;
-	GS::UniString path = "";
-	UInt64 fileSize = 0;
-
-	if (!loc.IsEmpty())
+	for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
 	{
-		FileSizeReportObject* result = new FileSizeReportObject;
-		
-		err = loc.ToPath(&path);
-		if (err) throw err;
-		
-		result->path = path;
-		if (path.Contains("\\"))
-			result->name = path(path.FindLast("\\") + 1, path.GetLength() - path.FindLast("\\") - 1);
+		GS::Array<API_Guid> _array{};
+		char intStr[256], _sNumberOfWalls[256], _sNumberOfWalls2[256];
 
-		err = f.GetDataLength(&fileSize);
-		if (err) throw err;
+		GSErrCode err = ACAPI_Element_GetElemList(static_cast<API_ElemTypeID>(i), &_array);
 
-		result->size = fileSize;
-
-		return result;
+		auto _a = ac_types[i - 1].ToCStr().Get();
+		sprintf(_sNumberOfWalls2, "Number of %s", _a);
+		AddItem("Elements", _sNumberOfWalls2, _array.GetSize(), io_cntlDlgData);
 	}
-	else throw 1;
 }
 
-// ----------------------------------  -------------------------------
-
-static void AddSum(GS::UniString i_sTable ) {
-	//TODO
-}
-
-static void AddItem(GS::UniString i_sTable, GS::UniString i_sItem, UInt32 i_iItemNumber)
+void ProcessSEO(CntlDlgData& io_cntlDlgData)
 {
-	// Adds an item to both the UI report and the .xlsx output
-	if (!i_iItemNumber && !cntlDlgData.iAddZeroValues) return;
-
-	char sItem[256], _sNumberOfWalls[256], sInt[256];
-
-	//sprintf(sItem, "Number of %s", i_sItem.ToCStr().Get());
-	itoa(i_iItemNumber, sInt, 10);
-
-	if (!cntlDlgData.reportData.ContainsKey(i_sTable))
-	{ 
-		ReportData _rd{};
-		cntlDlgData.reportData.Add(i_sTable, _rd);
-	}
-
-	cntlDlgData.reportData[i_sTable].Add(i_sItem, i_iItemNumber);
-
-	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
-	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
-	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
-}
-
-static void AddList(GS::UniString i_sTable, GS::UniString i_sItem, UInt32 i_iItemNumber)
-{
-
-	if (!cntlDlgData.reportData.ContainsKey(i_sTable))
-	{
-		ReportData _rd{};
-		cntlDlgData.reportData.Add(i_sTable, _rd);
-	}
-
-	cntlDlgData.reportData[i_sTable].Add(i_sItem, i_iItemNumber);
+	AddItem("SEO Data", "Number of SEO Operators/Targets", GetSEOElements().GetSize(), io_cntlDlgData);
+	AddItem("SEO Data", "Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize(), io_cntlDlgData);
 }
 
 
@@ -143,105 +82,11 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 
 		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
 
-
-		GS::Array<DataObject*> lLibParts;
-
-		lLibParts = ListLibParts(apiTypeDict);
-
-		CountLibPartInstances(iLibPartInstanceS);
-
-		for (auto libPart : iLibPartInstanceS)
-		{
-			AddItem("Library Part Instances", *libPart.key, *libPart.value);
-		}
-
-		GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
-
-		for (DataObject* lp : lLibParts)
-		{
-			FileSizeReportObject* _lp = (FileSizeReportObject*)lp;
-			if (_lp->libType == API_BuiltInLibrary)
-				aSpecial.Push(*_lp);
-
-			if (_lp->libType == API_LocalLibrary
-				|| _lp->libType == API_ServerLibrary)
-				aNormal.Push(*_lp);
-
-			if (_lp->libType == API_EmbeddedLibrary)
-				aEmbedded.Push(*_lp);
-
-			delete lp;
-		}
-
-		for (auto item : aNormal)
-			AddItem("LibPart data", item.name, (UInt32)item.size);
-
-		for (auto item : aEmbedded)
-			AddItem("Embedded LibPart data", item.name, (UInt32)item.size);
-
-
-		for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
-		{
-			GS::Array<API_Guid> _array{};
-			char intStr[256], _sNumberOfWalls[256], _sNumberOfWalls2[256];
-
-			err = ACAPI_Element_GetElemList(static_cast<API_ElemTypeID>(i), &_array);
-
-			auto _a = ac_types[i-1].ToCStr().Get();
-			sprintf(_sNumberOfWalls2, "Number of %s", _a);
-			AddItem("Elements", _sNumberOfWalls2, _array.GetSize());
-		}
-
-		AddItem("SEO Data", "Number of SEO Operators/Targets", GetSEOElements().GetSize());
-		AddItem("SEO Data", "Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize());
-
-
-		short iNavItems = 0;
-
-		for (UInt16 iMT = 1; iMT < ac_mapTypes.GetSize(); iMT++)
-			for (UInt16 iNIT = 1; iNIT < ac_navItemTypes.GetSize(); iNIT++)
-			{
-				iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
-
-				if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
-				{
-					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
-				}
-
-				// -------------------------------------
-
-				iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
-
-				if (iNavItems > 0 || cntlDlgData.iAddZeroValues)
-				{
-					AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
-				}
-			}
-
-		AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID));
-
-		for (auto sFilter: cntlDlgData.filterStrings)
-		{ 
-			auto iCount = CountAttributes(API_LayerID, nameContains, &StringData{ sFilter });
-			AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);
-		}
-		
-		AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID));
-		AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, hasTexture));
-
-		GS::Array<DataObject*> lTextures;
-		
-		lTextures = ListAttributes(API_MaterialID, getTextureSize);
-
-		for (DataObject* tex : lTextures)
-		{
-			FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
-			AddItem("Texture data", _tex->name, (UInt16)_tex->size);
-			delete tex;
-		}
-
-		Int32 iLibParts;
-
+		ProcessLibPars(cntlDlgData, apiTypeDict, iLibPartInstanceS);
+		ProcessElements(cntlDlgData);
+		ProcessSEO(cntlDlgData);
+		ProcessNavigatorItems(cntlDlgData);
+		ProcessAttributes(cntlDlgData);
 
 		break;
 	}

@@ -8,7 +8,7 @@ public:
 
 	APITypeDict();
 
-	API_LibraryTypeID GetLibPartType(API_LibPart& i_libPart);
+	API_LibraryTypeID GetLibPartType(const API_LibPart& i_libPart) const;
 };
 
 #endif //_API_TYPE_DICT_H
