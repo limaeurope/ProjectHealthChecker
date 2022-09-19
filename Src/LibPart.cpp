@@ -4,7 +4,7 @@
 #include	"APITypeDict.hpp"
 
 
-void ProcessLibPars(CntlDlgData& io_cntlDlgData, 
+void ProcessLibParts(CntlDlgData& io_cntlDlgData, 
 	const APITypeDict& i_apiTypeDict, 
 	GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS)
 {

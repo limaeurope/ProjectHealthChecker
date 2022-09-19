@@ -1,19 +1,19 @@
 #include	"Attribute.hpp"
 #include	"Table.hpp"
 
-bool hasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
+bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
 	UNUSED_PARAMETER(i_attrs);
 	return i_apiAttrib.material.texture.fileLoc != NULL;
 }
 
-bool nameContains(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
+bool NameContains(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
 	return GS::UniString(i_apiAttrib.header.name)
 		.FindFirst(static_cast<StringData*>(i_attrs)->string) < MaxUIndex;
 }
 
-AbstractData* getTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
+AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
 	UNUSED_PARAMETER(i_attrs);
 	if (i_apiAttrib.material.texture.status == 0)
@@ -42,9 +42,8 @@ AbstractData* getTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_a
 
 		return result;
 	}
-	else throw 1;
+	else throw 1;	//TODO
 }
-
 
 // -----------------------------------------------------------------------------
 //  List attributes
@@ -56,16 +55,16 @@ void ProcessAttributes(CntlDlgData& io_cntlDlgData)
 
 	for (auto sFilter : io_cntlDlgData.filterStrings)
 	{
-		auto iCount = CountAttributes(API_LayerID, nameContains, &StringData{ sFilter });
+		auto iCount = CountAttributes(API_LayerID, NameContains, &StringData{ sFilter });
 		AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount, io_cntlDlgData);
 	}
 
 	AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID), io_cntlDlgData);
-	AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, hasTexture), io_cntlDlgData);
+	AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture), io_cntlDlgData);
 
 	GS::Array<AbstractData*> lTextures;
 
-	lTextures = ListAttributes(API_MaterialID, getTextureSize);
+	lTextures = ListAttributes(API_MaterialID, GetTextureSize);
 
 	for (AbstractData* tex : lTextures)
 	{
@@ -74,9 +73,8 @@ void ProcessAttributes(CntlDlgData& io_cntlDlgData)
 		delete tex;
 	}
 
-	Int32 iLibParts;
+	//Int32 iLibParts;
 }
-
 
 UInt32 CountAttributes(
 	const API_AttrTypeID i_attrType,
@@ -110,7 +108,6 @@ UInt32 CountAttributes(
 
 	return result;
 }
-
 
 GS::Array<AbstractData*> ListAttributes(
 	const API_AttrTypeID i_attrType,

@@ -6,11 +6,11 @@
 #include	"APICommon.h"
 #include	"DataStructs.hpp"
 
-bool hasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attr);
+bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attr);
 
-bool nameContains(const API_Attribute& i_apiAttrib, AbstractData* i_attrs);
+bool NameContains(const API_Attribute& i_apiAttrib, AbstractData* i_attrs);
 
-AbstractData* getTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_attr);
+AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_attr);
 
 // -----------------------------------------------------------------------------
 //  List attributes

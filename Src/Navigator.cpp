@@ -28,6 +28,7 @@ void ProcessNavigatorItems(CntlDlgData& io_cntlDlgData)
 		}
 }
 
+
 short GetChildrenNumber(API_NavigatorItem i_item,
 	const API_NavigatorItemTypeID& i_navID,
 	const GS::UniString& i_sInExclude /*= ""*/,

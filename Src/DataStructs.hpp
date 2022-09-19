@@ -8,13 +8,17 @@
 
 typedef GS::HashTable<GS::UniString, UInt32> ReportData;
 
+
 struct CntlDlgData {
 	Int32 iAddZeroValues;
+	GS::Array<Int32>	CheckBoxData{};
 	GS::HashTable<GS::UniString, ReportData> reportData;
 	GS::HashSet<GS::UniString> filterStrings;
 };
 
+
 struct AbstractData {};
+
 
 struct StringData :AbstractData {
 	GS::UniString string;
@@ -22,6 +26,7 @@ struct StringData :AbstractData {
 };
 
 //struct DataObject {};
+
 
 struct FileSizeReportObject : AbstractData
 {
@@ -31,6 +36,14 @@ struct FileSizeReportObject : AbstractData
 	bool isEmbedded;
 	API_LibraryTypeID libType;
 	UInt32 nInstances = 0;
+};
+
+
+struct PolygonReportObject: AbstractData
+{
+	GS::UniString name;
+	GS::HashTable<API_Guid, UInt32> arcsByHatch;
+	UInt32 nArcs = 0;
 };
 
 #endif	//_DATASTRUCTS_HPP

@@ -60,6 +60,7 @@
     <ACDevKit>..\ArchiCAD_API\API Development Kit $(ACVersion)</ACDevKit>
     <ACDevKitSupport>$(ACDevKit)\Support</ACDevKitSupport>
     <ACDevKitModules>$(ACDevKitSupport)\Modules</ACDevKitModules>
+    <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);$(ACDevKitSupport)\Inc;$(ACDevKitModules)\Geometry;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\InputOutput;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\VectorImage;$(ACDevKitModules)\LibXL;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\DGLib;$(ACDevKitModules)\Pattern</AdditionalIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(ACVersion)'=='24'" Label="Globals">
     <ProjectGuid>{DA52A917-60AF-4125-87A3-D0DFCC4A5F54}</ProjectGuid>
@@ -110,7 +111,6 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>ACVER=$(ACVersion);$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\RS;$(ACDevKitModules)\InputOutput;$(ACDevKitModules)\GSUtils</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
@@ -127,7 +127,7 @@
       <BrowseInformationFile>$(IntDir)</BrowseInformationFile>
       <CallingConvention>FastCall</CallingConvention>
       <CompileAs>CompileAsCpp</CompileAs>
-      <DisableSpecificWarnings>4996;4101;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4101;$(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -143,26 +143,27 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ACVersion)'== 24">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ACDevKitModules)\LibXL;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ACVersion)'== 25">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ACDevKitModules)\LibXL;$(ACDevKitModules)\RS;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Extensions\APIOutputFramework;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);$(ACDevKitModules)\RS</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ACVersion)'== 26">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ACDevKitModules)\LibXL;$(ACDevKitModules)\RS;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\InputOutput;$(ACDevKitSupport)\Extensions\APIOutputFramework;$(ACDevKitSupport)\Inc;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\DGLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);$(ACDevKitSupport)\Extensions\APIOutputFramework;$(ACDevKitModules)\RS</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(BuildType)'=='Debug'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;WINDOWS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ACVER=$(ACVersion);WIN32;_DEBUG;WINDOWS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+	  <DisableSpecificWarnings>4996;4101;4700;$(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -172,7 +173,7 @@
   <ItemDefinitionGroup Condition="'$(BuildType)'=='Release'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>WIN32;NDEBUG;WINDOWS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ACVER=$(ACVersion);WIN32;NDEBUG;WINDOWS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
@@ -189,6 +190,7 @@
     <ClCompile Include="Src\Excel.cpp" />
     <ClCompile Include="Src\LibPart.cpp" />
     <ClCompile Include="Src\Navigator.cpp" />
+    <ClCompile Include="Src\Profile.cpp" />
     <ClCompile Include="Src\SEO.cpp" />
     <ClCompile Include="Src\Table.cpp" />
   </ItemGroup>
@@ -239,6 +241,9 @@
     <Library Include="$(ACDevKitModules)\InputOutput\Win\InputOutputImp.lib">
       <FileType>Document</FileType>
     </Library>
+    <Library Include="$(ACDevKitModules)\VectorImage\Win\VectorImageImp.LIB">
+      <FileType>Document</FileType>
+    </Library>
     <Library Condition="'$(ACVersion)'== 24" Include="$(ACDevKitModules)\ObjectDatabase\Win\ObjectDatabaseImp.LIB">
       <FileType>Document</FileType>
     </Library>
@@ -254,6 +259,12 @@
     <Library Include="$(ACDevKitModules)\LibXL\Win\LibXLImp.lib">
       <FileType>Document</FileType>
     </Library>
+    <Library Include="$(ACDevKitModules)\Geometry\Win\GeometryImp.LIB">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="$(ACDevKitModules)\Pattern\Win\PatternImp.LIB">
+      <FileType>Document</FileType>
+    </Library>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\acTypes.hpp" />
@@ -264,6 +275,7 @@
     <ClInclude Include="Src\Excel.hpp" />
     <ClInclude Include="Src\LibPart.hpp" />
     <ClInclude Include="Src\Navigator.hpp" />
+    <ClInclude Include="Src\Profile.hpp" />
     <ClInclude Include="Src\ProjectHealthChecker.hpp" />
     <ClInclude Include="Src\SEO.hpp" />
     <ClInclude Include="Src\Table.hpp" />

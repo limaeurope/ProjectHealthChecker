@@ -516,52 +516,52 @@ Int32		FindArc (const API_PolyArc *parcs, Int32 nArcs, Int32 node)
 // Return the origin of the given arc
 // -----------------------------------------------------------------------------
 
-bool		ArcGetOrigo (const API_Coord	*begC,
-						 const API_Coord	*endC,
-						 double				angle,
-						 API_Coord			*origo)
-{
-	double	xm, ym, m;
-
-	if (fabs (angle) < EPS) {
-		origo->x = 0.0;
-		origo->y = 0.0;
-		return false;
-	}
-	xm = begC->x + endC->x;
-	ym = begC->y + endC->y;
-	if (fabs (fabs (angle) - PI) < EPS) {
-		origo->x = xm / 2;
-		origo->y = ym / 2;
-	} else {
-		m = 1.0 / tan (angle / 2.0);
-		origo->x = (xm - m * (endC->y - begC->y)) / 2;
-		origo->y = (ym + m * (endC->x - begC->x)) / 2;
-	}
-	return true;
-}		// ArcGetOrigo
+//bool		ArcGetOrigo (const API_Coord	*begC,
+//						 const API_Coord	*endC,
+//						 double				angle,
+//						 API_Coord			*origo)
+//{
+//	double	xm, ym, m;
+//
+//	if (fabs (angle) < EPS) {
+//		origo->x = 0.0;
+//		origo->y = 0.0;
+//		return false;
+//	}
+//	xm = begC->x + endC->x;
+//	ym = begC->y + endC->y;
+//	if (fabs (fabs (angle) - PI) < EPS) {
+//		origo->x = xm / 2;
+//		origo->y = ym / 2;
+//	} else {
+//		m = 1.0 / tan (angle / 2.0);
+//		origo->x = (xm - m * (endC->y - begC->y)) / 2;
+//		origo->y = (ym + m * (endC->x - begC->x)) / 2;
+//	}
+//	return true;
+//}		// ArcGetOrigo
 
 
 // -----------------------------------------------------------------------------
 // Return the angle of the line between the two 2D points
 // -----------------------------------------------------------------------------
 
-double		ComputeFiPtr (const API_Coord *c1, const API_Coord *c2, bool enableNegativeAngle /*= false*/)
-{
-	double		fi;
-	double		dx,dy;
-
-	dx = c2->x - c1->x;
-	dy = c2->y - c1->y;
-	if (fabs (dx) < EPS && fabs (dy) < EPS)
-		fi = 0.0;
-	else {
-		fi = atan2 (dy, dx);
-		if (fi < 0.0 && !enableNegativeAngle)
-			fi = fi + 2.0 * PI;
-	}
-	return (fi);
-}		// ComputeFiPtr
+//double		ComputeFiPtr (const API_Coord *c1, const API_Coord *c2, bool enableNegativeAngle /*= false*/)
+//{
+//	double		fi;
+//	double		dx,dy;
+//
+//	dx = c2->x - c1->x;
+//	dy = c2->y - c1->y;
+//	if (fabs (dx) < EPS && fabs (dy) < EPS)
+//		fi = 0.0;
+//	else {
+//		fi = atan2 (dy, dx);
+//		if (fi < 0.0 && !enableNegativeAngle)
+//			fi = fi + 2.0 * PI;
+//	}
+//	return (fi);
+//}		// ComputeFiPtr
 
 
 // -----------------------------------------------------------------------------

@@ -23,14 +23,14 @@
 
 /* -- Constants ------------------------------- */
 
-#if !defined (_Geometry_Test_TRANSL_)
-#define		PI			3.141592653589793		/* The Ludolph's constant	 */
-#define		RADDEG		57.29577951308232		/* Radian->degree conversion */
-#define		DEGRAD		0.017453292519943295	/* Degree->radian conversion */
+// #if !defined (_Geometry_Test_TRANSL_)
+// #define		PI			3.141592653589793		/* The Ludolph's constant	 */
+// #define		RADDEG		57.29577951308232		/* Radian->degree conversion */
+// #define		DEGRAD		0.017453292519943295	/* Degree->radian conversion */
 
-#define		EPS			1e-5
-#define 	MiddleEps6	1e-6
-#endif
+// #define		EPS			1e-5
+// #define 	MiddleEps6	1e-6
+// #endif
 
 
 /* -- Messages ------------------------------- */

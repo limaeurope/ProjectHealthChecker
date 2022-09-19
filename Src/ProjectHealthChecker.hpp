@@ -23,5 +23,6 @@
 #include	"Navigator.hpp"
 #include	"Excel.hpp"
 #include	"Table.hpp"
+#include	"Profile.hpp"
 
 #endif

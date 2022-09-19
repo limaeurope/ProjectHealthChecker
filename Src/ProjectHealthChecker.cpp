@@ -21,7 +21,7 @@
 
 // ---------------------------------- Variables --------------------------------
 
-static CntlDlgData			cntlDlgData{1};
+static CntlDlgData			cntlDlgData{ 1, {0, 0, 1, 1, 1, 1, 1, 1, 1} };
 static APITypeDict			apiTypeDict;
 static GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS{};
 
@@ -29,8 +29,14 @@ static GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS{};
 #define SOURCE_GROUP_POPUP	2
 #define EXPORT_BUTTON		3
 
-#define ZERO_CHECKBOX		2
-#define IMPORT_BUTTON		3
+#define LIBPART_CHECKBOX	2
+#define ELEMENT_CHECKBOX	3
+#define SEO_CHECKBOX		4
+#define NAVIGATOR_CHECKBOX	5
+#define LAYER_CHECKBOX		6
+#define PROFILE_CHECKBOX	7
+#define ZERO_CHECKBOX		8
+#define IMPORT_BUTTON		9
 
 // ----------------------------------  -------------------------------
 
@@ -69,6 +75,7 @@ static void		GetStringFromResource(GS::UniString* buffer, short resID, short str
 	return;
 }		// GetStringFromResource
 
+
 static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item, DGUserData userData, DGMessageData msgData)
 {
 	short result = 0;
@@ -82,11 +89,12 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 
 		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
 
-		ProcessLibPars(cntlDlgData, apiTypeDict, iLibPartInstanceS);
-		ProcessElements(cntlDlgData);
-		ProcessSEO(cntlDlgData);
-		ProcessNavigatorItems(cntlDlgData);
-		ProcessAttributes(cntlDlgData);
+		if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessLibParts(cntlDlgData, apiTypeDict, iLibPartInstanceS);
+		if (cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX]) ProcessElements(cntlDlgData);
+		if (cntlDlgData.CheckBoxData[SEO_CHECKBOX]) ProcessSEO(cntlDlgData);
+		if (cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems(cntlDlgData);
+		if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessAttributes(cntlDlgData);
+		if (cntlDlgData.CheckBoxData[PROFILE_CHECKBOX]) ProcessProfiles(cntlDlgData);
 
 		break;
 	}
@@ -118,7 +126,11 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 	{
 		GSErrCode err;
 
-		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
+		//DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
+
+		for (UInt16 i = LIBPART_CHECKBOX; i <= ZERO_CHECKBOX; i++)
+			DGSetItemValLong(dialID, i, cntlDlgData.CheckBoxData[i]);
+		break;
 
 		break;
 	}
@@ -135,9 +147,17 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		}
 	case DG_MSG_CHANGE:
 		switch (item) {
+		case LIBPART_CHECKBOX:
+		case ELEMENT_CHECKBOX:
+		case SEO_CHECKBOX:
+		case NAVIGATOR_CHECKBOX:
+		case LAYER_CHECKBOX:
+		case PROFILE_CHECKBOX:
 		case ZERO_CHECKBOX:
 			//TODO Refresh the dialog
 			cntlDlgData.iAddZeroValues = DGGetItemValLong(dialID, ZERO_CHECKBOX);
+			for (UInt16 i = LIBPART_CHECKBOX; i <= ZERO_CHECKBOX; i++)
+				cntlDlgData.CheckBoxData[i] = DGGetItemValLong(dialID, i);
 			break;
 		}
 		break;

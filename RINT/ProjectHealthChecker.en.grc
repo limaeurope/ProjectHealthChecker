@@ -34,12 +34,24 @@
 
 'GDLG'	32401	Modal			 40   40   490 366 	"Settings" {
 /* [  1] */ Button				380  332   100  24  LargePlain "Close"
-/* [  2] */ CheckBox			 10  288   260  24  LargePlain "Include zero valued data"
-/* [  3] */ Button				 10  332   250  24  LargePlain "Import filters from .xlsx..."
+/* [  2] */ CheckBox			 10  10   260  24  LargePlain "Library Part data"
+/* [  3] */ CheckBox			 10   34   260  24  LargePlain "Include Element data"
+/* [  4] */ CheckBox			 10   58   260  24  LargePlain "Include SEO data"
+/* [  5] */ CheckBox			 10   82   260  24  LargePlain "Include Navigator data"
+/* [  6] */ CheckBox			 10  106   260  24  LargePlain "Include Layer data"
+/* [  7] */ CheckBox			 10  130   260  24  LargePlain "Include Profile data"
+/* [  8] */ CheckBox			 10  154   260  24  LargePlain "Include zero valued data"
+/* [  9] */ Button				 10  332   250  24  LargePlain "Import filters from .xlsx..."
 }
 
 'DLGH'  32401  DLG_32500_Settings {
 1	""							Button_0
 2	""							CheckBox_1
-3	""							Button_1
+3	""							CheckBox_2
+4	""							CheckBox_3
+5	""							CheckBox_4
+6	""							CheckBox_5
+7	""							CheckBox_6
+8	""							CheckBox_7
+9	""							Button_1
 }
