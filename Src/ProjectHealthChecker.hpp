@@ -24,5 +24,6 @@
 #include	"Excel.hpp"
 #include	"Table.hpp"
 #include	"Profile.hpp"
+#include	"WinReg.hpp"
 
-#endif
+#endif //_PROJECT_HEALTH_CHECKER_H

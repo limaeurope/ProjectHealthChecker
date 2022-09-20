@@ -163,7 +163,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-	  <DisableSpecificWarnings>4996;4101;4700;$(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4101;4700;$(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -193,6 +193,7 @@
     <ClCompile Include="Src\Profile.cpp" />
     <ClCompile Include="Src\SEO.cpp" />
     <ClCompile Include="Src\Table.cpp" />
+    <ClCompile Include="Src\WinReg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="RINT\$(ProjectName).$(LanguageCode).grc">
@@ -279,6 +280,7 @@
     <ClInclude Include="Src\ProjectHealthChecker.hpp" />
     <ClInclude Include="Src\SEO.hpp" />
     <ClInclude Include="Src\Table.hpp" />
+    <ClInclude Include="Src\WinReg.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

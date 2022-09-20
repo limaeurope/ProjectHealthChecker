@@ -83,7 +83,7 @@ void	Do_ExportReportToExcel(CntlDlgData& io_cntlDlgData)
 		sheet->setCol(0, 1, 50.0);
 
 		GS::Array<GS::UniString> titles =
-		{ "Object type", "Number" };
+		{ "Object", "Number" };
 
 		for (UIndex ii = 0; ii < titles.GetSize(); ++ii) {
 			sheet->writeStr(0, ii, UNISTR_TO_LIBXLSTR(titles[ii]));

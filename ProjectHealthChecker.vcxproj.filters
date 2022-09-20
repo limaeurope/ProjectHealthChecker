@@ -31,6 +31,9 @@
     <ClCompile Include="Src\Profile.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Src\WinReg.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="$(ACDevKitModules)\GSRoot\Win\GSRootImp.lib">
@@ -55,6 +58,15 @@
       <Filter>Libs</Filter>
     </Library>
     <Library Include="$(ACDevKitModules)\RS\Win\RSImp.lib">
+      <Filter>Libs</Filter>
+    </Library>
+    <Library Include="$(ACDevKitModules)\Geometry\Win\GeometryImp.LIB">
+      <Filter>Libs</Filter>
+    </Library>
+    <Library Include="$(ACDevKitModules)\Pattern\Win\PatternImp.LIB">
+      <Filter>Libs</Filter>
+    </Library>
+    <Library Include="$(ACDevKitModules)\VectorImage\Win\VectorImageImp.LIB">
       <Filter>Libs</Filter>
     </Library>
   </ItemGroup>
@@ -124,6 +136,9 @@
       <Filter>Sources\Table</Filter>
     </ClInclude>
     <ClInclude Include="Src\Profile.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WinReg.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

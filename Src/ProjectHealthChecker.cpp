@@ -4,7 +4,6 @@
 //     -None-
 //
 // *****************************************************************************
-
 #define	_ELEMENT_TEST_TRANSL_
 
 
@@ -15,7 +14,6 @@
 #include	"APICommon.h"
 
 #include	"ProjectHealthChecker.hpp"
-
 
 // ---------------------------------- Types ------------------------------------
 
@@ -76,6 +74,7 @@ static void		GetStringFromResource(GS::UniString* buffer, short resID, short str
 }		// GetStringFromResource
 
 
+
 static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item, DGUserData userData, DGMessageData msgData)
 {
 	short result = 0;
@@ -86,6 +85,9 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	case DG_MSG_INIT:
 	{
 		GSErrCode err;
+
+		//SetRegInt(33, 
+		//	GS::UniString("tesztKey2"));
 
 		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
 
@@ -131,12 +133,18 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		for (UInt16 i = LIBPART_CHECKBOX; i <= ZERO_CHECKBOX; i++)
 			DGSetItemValLong(dialID, i, cntlDlgData.CheckBoxData[i]);
 		break;
-
-		break;
 	}
 	case DG_MSG_CLICK:
 		switch (item) {
 		case OK_BUTTON:
+			SetRegInt(cntlDlgData.CheckBoxData[LIBPART_CHECKBOX], GS::UniString("LibraryPartData"));
+			SetRegInt(cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX], GS::UniString("IncludeElementData"));
+			SetRegInt(cntlDlgData.CheckBoxData[SEO_CHECKBOX], GS::UniString("IncludeSEOData"));
+			SetRegInt(cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX], GS::UniString("IncludeNavigatorData"));
+			SetRegInt(cntlDlgData.CheckBoxData[LAYER_CHECKBOX], GS::UniString("IncludeLayerData"));
+			SetRegInt(cntlDlgData.CheckBoxData[PROFILE_CHECKBOX], GS::UniString("IncludeProfileData"));
+			SetRegInt(cntlDlgData.CheckBoxData[ZERO_CHECKBOX], GS::UniString("IncludeZeroValuedData"));
+
 			result = item;
 			break;
 		case IMPORT_BUTTON:
@@ -214,6 +222,14 @@ GSErrCode __ACENV_CALL ProjectHealthChecker (const API_MenuParams *menuParams)
 // -----------------------------------------------------------------------------
 API_AddonType __ACENV_CALL	CheckEnvironment (API_EnvirParams* envir)
 {
+	cntlDlgData.CheckBoxData[LIBPART_CHECKBOX] = GetRegInt(GS::UniString("LibraryPartData"));
+	cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX] = GetRegInt(GS::UniString("IncludeElementData"));
+	cntlDlgData.CheckBoxData[SEO_CHECKBOX] = GetRegInt(GS::UniString("IncludeSEOData"));
+	cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX] = GetRegInt(GS::UniString("IncludeNavigatorData"));
+	cntlDlgData.CheckBoxData[LAYER_CHECKBOX] = GetRegInt(GS::UniString("IncludeLayerData"));
+	cntlDlgData.CheckBoxData[PROFILE_CHECKBOX] = GetRegInt(GS::UniString("IncludeProfileData"));
+	cntlDlgData.CheckBoxData[ZERO_CHECKBOX] = GetRegInt(GS::UniString("IncludeZeroValuedData"));
+
 	RSGetIndString (&envir->addOnInfo.name, 32000, 1, ACAPI_GetOwnResModule ());
 	RSGetIndString (&envir->addOnInfo.description, 32000, 2, ACAPI_GetOwnResModule ());
 

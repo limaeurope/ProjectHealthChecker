@@ -7,12 +7,15 @@
 #include	"APICommon.h"
 
 typedef GS::HashTable<GS::UniString, UInt32> ReportData;
+//typedef GS::HashTable<GS::UniString, GS::Array<UInt32>> ReportMultiData;
+typedef GS::Array<GS::UniString> ReportDataHeader;
 
 
 struct CntlDlgData {
 	Int32 iAddZeroValues;
 	GS::Array<Int32>	CheckBoxData{};
 	GS::HashTable<GS::UniString, ReportData> reportData;
+	GS::HashTable<GS::UniString, ReportDataHeader> reportHeaders;
 	GS::HashSet<GS::UniString> filterStrings;
 };
 

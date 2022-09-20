@@ -1,5 +1,11 @@
 #include	"Table.hpp"
 
+//void SetHeader(const GS::UniString& i_sTable, const ReportDataHeader& reportDataHeader, CntlDlgData& io_cntlDlgData)
+//{
+//	if (io_cntlDlgData.reportHeaders.ContainsKey(i_sTable)
+//		for()
+//}
+
 void AddSum(const GS::UniString& i_sTable) {
 	//TODO
 }
