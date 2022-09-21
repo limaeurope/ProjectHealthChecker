@@ -20,20 +20,18 @@ GS::UniString GetRegString(GS::UniString i_key, GS::UniString i_path, HKEY i_hKe
 
 UInt32 GetRegInt(GS::UniString i_key, GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
 {
-	char sBuffer[255];
-	DWORD iBuffer = 255;
+	DWORD iBuffer = 0;
+	DWORD iBufferSize = 255;
 
 	LSTATUS _ = RegGetValueW(i_hKey,
 		i_path.ToUStr().Get(),		/*L"SOFTWARE\\GRAPHISOFT\\ARCHICAD\\Archicad 26.0.0 INT R1\\Add-On Manager",*/
 		i_key.ToUStr().Get(),		/*L"Use Default Location",*/
 		RRF_RT_REG_DWORD,
 		NULL,
-		&sBuffer,
-		&iBuffer);
+		&iBuffer,
+		&iBufferSize);
 
-	wchar_t* ws = (wchar_t*)sBuffer;
-
-	return UInt16(ws);
+	return UInt16(iBuffer);
 }
 
 HKEY GetOrCreateRegPath(GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)

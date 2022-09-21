@@ -38,6 +38,16 @@ static GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS{};
 
 // ----------------------------------  -------------------------------
 
+void InitUI()
+{
+	cntlDlgData.CheckBoxData[LIBPART_CHECKBOX] = GetRegInt("LibraryPartData");
+	cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX] = GetRegInt("IncludeElementData");
+	cntlDlgData.CheckBoxData[SEO_CHECKBOX] = GetRegInt("IncludeSEOData");
+	cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX] = GetRegInt("IncludeNavigatorData");
+	cntlDlgData.CheckBoxData[LAYER_CHECKBOX] = GetRegInt("IncludeLayerData");
+	cntlDlgData.CheckBoxData[PROFILE_CHECKBOX] = GetRegInt("IncludeProfileData");
+	cntlDlgData.CheckBoxData[ZERO_CHECKBOX] = GetRegInt(GS::UniString("IncludeZeroValuedData"));
+}
 
 void ProcessElements(CntlDlgData& io_cntlDlgData)
 {
@@ -202,6 +212,7 @@ static GSErrCode	Do_Settings()
 GSErrCode __ACENV_CALL ProjectHealthChecker (const API_MenuParams *menuParams)
 {
 	apiTypeDict = APITypeDict{};
+	InitUI();
 
 	return ACAPI_CallUndoableCommand ("Element Test API Function",
 		[&] () -> GSErrCode {
@@ -222,14 +233,6 @@ GSErrCode __ACENV_CALL ProjectHealthChecker (const API_MenuParams *menuParams)
 // -----------------------------------------------------------------------------
 API_AddonType __ACENV_CALL	CheckEnvironment (API_EnvirParams* envir)
 {
-	cntlDlgData.CheckBoxData[LIBPART_CHECKBOX] = GetRegInt(GS::UniString("LibraryPartData"));
-	cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX] = GetRegInt(GS::UniString("IncludeElementData"));
-	cntlDlgData.CheckBoxData[SEO_CHECKBOX] = GetRegInt(GS::UniString("IncludeSEOData"));
-	cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX] = GetRegInt(GS::UniString("IncludeNavigatorData"));
-	cntlDlgData.CheckBoxData[LAYER_CHECKBOX] = GetRegInt(GS::UniString("IncludeLayerData"));
-	cntlDlgData.CheckBoxData[PROFILE_CHECKBOX] = GetRegInt(GS::UniString("IncludeProfileData"));
-	cntlDlgData.CheckBoxData[ZERO_CHECKBOX] = GetRegInt(GS::UniString("IncludeZeroValuedData"));
-
 	RSGetIndString (&envir->addOnInfo.name, 32000, 1, ACAPI_GetOwnResModule ());
 	RSGetIndString (&envir->addOnInfo.description, 32000, 2, ACAPI_GetOwnResModule ());
 
