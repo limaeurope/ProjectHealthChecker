@@ -1,5 +1,5 @@
 #include	"Attribute.hpp"
-#include	"Table.hpp"
+#include	"../Table/Table.hpp"
 
 bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {

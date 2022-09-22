@@ -5,6 +5,7 @@
 #include	"APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
+#include	"Table/ResultTable.hpp"
 
 typedef GS::HashTable<GS::UniString, UInt32> ReportData;
 //typedef GS::HashTable<GS::UniString, GS::Array<UInt32>> ReportMultiData;
@@ -17,6 +18,7 @@ struct CntlDlgData {
 	GS::HashTable<GS::UniString, ReportData> reportData;
 	GS::HashTable<GS::UniString, ReportDataHeader> reportHeaders;
 	GS::HashSet<GS::UniString> filterStrings;
+	//ResultTable resultTable;
 };
 
 

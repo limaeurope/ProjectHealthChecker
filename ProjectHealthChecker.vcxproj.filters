@@ -10,29 +10,38 @@
     <ClCompile Include="Src\$(ProjectName).cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Attribute.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\LibPart.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Navigator.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\SEO.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Excel.cpp">
-      <Filter>Sources\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Table.cpp">
-      <Filter>Sources\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Profile.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Src\WinReg.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Table\Table.cpp">
+      <Filter>Sources\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Table\Excel.cpp">
+      <Filter>Sources\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Table\ResultTable.cpp">
+      <Filter>Sources\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ACSpecific\Profile.cpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ACSpecific\SEO.cpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ACSpecific\Attribute.cpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ACSpecific\Element.cpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ACSpecific\LibPart.cpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ACSpecific\Navigator.cpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SettingsSingleton.cpp">
+      <Filter>Sources\Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +109,9 @@
     <Filter Include="Sources\Table">
       <UniqueIdentifier>{08ca5310-72dd-4e6b-ab4f-a230ddb4ea97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\ACSpecific">
+      <UniqueIdentifier>{9f4bb474-660a-4153-ae56-5e7bbb24ceb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\acTypes.hpp">
@@ -117,29 +129,41 @@
     <ClInclude Include="Src\DataStructs.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Attribute.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\LibPart.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Navigator.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\SEO.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Excel.hpp">
-      <Filter>Sources\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Table.hpp">
-      <Filter>Sources\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Profile.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="Src\WinReg.hpp">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Table\Table.hpp">
+      <Filter>Sources\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Table\Excel.hpp">
+      <Filter>Sources\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Table\ResultTable.hpp">
+      <Filter>Sources\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ACSpecific\SEO.hpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ACSpecific\Profile.hpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ACSpecific\Attribute.hpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ACSpecific\Element.hpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ACSpecific\LibPart.hpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ACSpecific\Navigator.hpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\APIEnvir.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SettingsSingleton.hpp">
+      <Filter>Sources\Classes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #include	"Profile.hpp"
-#include	"Table.hpp"
+#include	"../Table/Table.hpp"
 #include	"VectorImageIterator.hpp"
+#include	"../SettingsSingleton.hpp"
 
 AbstractData* GetArcNumber(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
@@ -34,16 +35,22 @@ AbstractData* GetArcNumber(const API_Attribute& i_apiAttrib, AbstractData* i_att
 	return result;
 }
 
-void ProcessProfiles(CntlDlgData& io_cntlDlgData)
+void ProcessProfiles()
 {
-	AddItem("Layer data", "Number of Materials", CountAttributes(API_ProfileID), io_cntlDlgData);
+	ResultSheet rs{ "Profile data" };
+	SettingsSingleton::GetInstance()->resultTable.sheetDict.Add(rs.sName, rs);
+	rs.header = GS::Array<GS::UniString>{ "Profile data", "Number of Profiles" };
+
+	//AddItem("Layer data", "Number of Materials", CountAttributes(API_ProfileID), io_cntlDlgData);
 
 	GS::Array<AbstractData*> profileS = ListAttributes(API_ProfileID, GetArcNumber);
 
 	for (AbstractData* prof : profileS)
 	{
 		PolygonReportObject* _prof = (PolygonReportObject*)prof;
-		AddItem("Profile data", _prof->name, (UInt16)_prof->nArcs, io_cntlDlgData);
+		//AddItem("Profile data", _prof->name, (UInt16)_prof->nArcs, io_cntlDlgData);
+		rs.AddItem("Profile data", _prof->name, (UInt16)_prof->nArcs);
+
 		delete prof;
 	}
 }

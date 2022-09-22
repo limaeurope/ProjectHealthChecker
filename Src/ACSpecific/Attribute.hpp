@@ -1,10 +1,10 @@
 #ifndef _ATTRIBUTE_HPP
 #define _ATTRIBUTE_HPP
 
-#include	"APIEnvir.h"
+#include	"../APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
-#include	"APICommon.h"
-#include	"DataStructs.hpp"
+#include	"../APICommon.h"
+#include	"../DataStructs.hpp"
 
 bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attr);
 

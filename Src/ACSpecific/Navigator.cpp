@@ -1,6 +1,6 @@
-#include	"Navigator.hpp"
-#include	"DataStructs.hpp"
-#include	"acTypes.hpp"
+﻿#include	"Navigator.hpp"
+#include	"../DataStructs.hpp"
+#include	"../acTypes.hpp"
 
 
 void ProcessNavigatorItems(CntlDlgData& io_cntlDlgData)

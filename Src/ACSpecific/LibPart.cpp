@@ -1,7 +1,7 @@
 #include	"LibPart.hpp"
 #include	"File.hpp"
-#include	"Table.hpp"
-#include	"APITypeDict.hpp"
+#include	"../Table/Table.hpp"
+#include	"../APITypeDict.hpp"
 
 
 void ProcessLibParts(CntlDlgData& io_cntlDlgData, 

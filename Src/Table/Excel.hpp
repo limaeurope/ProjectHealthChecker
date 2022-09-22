@@ -1,12 +1,12 @@
 #ifndef _EXCEL_HPP
 #define _EXCEL_HPP
 
-#include	"APIEnvir.h"
+#include	"../APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
-#include	"APICommon.h"
+#include	"../APICommon.h"
 #include	"FileSystem.hpp"
 #include	"DGFileDialog.hpp"
-#include	"DataStructs.hpp"
+#include	"../DataStructs.hpp"
 
 
 // -----------------------------------------------------------------------------

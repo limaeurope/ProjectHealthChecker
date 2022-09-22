@@ -2,11 +2,11 @@
 #ifndef _LIBPART_HPP
 #define _LIBPART_HPP
 
-#include	"APIEnvir.h"
+#include	"../APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
-#include	"APICommon.h"
-#include	"DataStructs.hpp"
-#include	"APITypeDict.hpp"
+#include	"../APICommon.h"
+#include	"../DataStructs.hpp"
+#include	"../APITypeDict.hpp"
 
 
 void ProcessLibParts(CntlDlgData& io_cntlDlgData,

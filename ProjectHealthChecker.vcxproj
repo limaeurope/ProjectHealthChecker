@@ -186,13 +186,16 @@
     <ClCompile Include="Src\$(ProjectName).cpp" />
     <ClCompile Include="Src\APICommon.c" />
     <ClCompile Include="Src\APITypeDict.cpp" />
-    <ClCompile Include="Src\Attribute.cpp" />
-    <ClCompile Include="Src\Excel.cpp" />
-    <ClCompile Include="Src\LibPart.cpp" />
-    <ClCompile Include="Src\Navigator.cpp" />
-    <ClCompile Include="Src\Profile.cpp" />
-    <ClCompile Include="Src\SEO.cpp" />
-    <ClCompile Include="Src\Table.cpp" />
+    <ClCompile Include="Src\ACSpecific\Attribute.cpp" />
+    <ClCompile Include="Src\ACSpecific\Element.cpp" />
+    <ClCompile Include="Src\SettingsSingleton.cpp" />
+    <ClCompile Include="Src\Table\Excel.cpp" />
+    <ClCompile Include="Src\ACSpecific\LibPart.cpp" />
+    <ClCompile Include="Src\ACSpecific\Navigator.cpp" />
+    <ClCompile Include="Src\ACSpecific\Profile.cpp" />
+    <ClCompile Include="Src\Table\ResultTable.cpp" />
+    <ClCompile Include="Src\ACSpecific\SEO.cpp" />
+    <ClCompile Include="Src\Table\Table.cpp" />
     <ClCompile Include="Src\WinReg.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -270,16 +273,20 @@
   <ItemGroup>
     <ClInclude Include="Src\acTypes.hpp" />
     <ClInclude Include="Src\APICommon.h" />
+    <ClInclude Include="Src\APIEnvir.h" />
     <ClInclude Include="Src\APITypeDict.hpp" />
-    <ClInclude Include="Src\Attribute.hpp" />
+    <ClInclude Include="Src\ACSpecific\Attribute.hpp" />
     <ClInclude Include="Src\DataStructs.hpp" />
-    <ClInclude Include="Src\Excel.hpp" />
-    <ClInclude Include="Src\LibPart.hpp" />
-    <ClInclude Include="Src\Navigator.hpp" />
-    <ClInclude Include="Src\Profile.hpp" />
+    <ClInclude Include="Src\ACSpecific\Element.hpp" />
+    <ClInclude Include="Src\SettingsSingleton.hpp" />
+    <ClInclude Include="Src\Table\Excel.hpp" />
+    <ClInclude Include="Src\ACSpecific\LibPart.hpp" />
+    <ClInclude Include="Src\ACSpecific\Navigator.hpp" />
+    <ClInclude Include="Src\ACSpecific\Profile.hpp" />
     <ClInclude Include="Src\ProjectHealthChecker.hpp" />
-    <ClInclude Include="Src\SEO.hpp" />
-    <ClInclude Include="Src\Table.hpp" />
+    <ClInclude Include="Src\Table\ResultTable.hpp" />
+    <ClInclude Include="Src\ACSpecific\SEO.hpp" />
+    <ClInclude Include="Src\Table\Table.hpp" />
     <ClInclude Include="Src\WinReg.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

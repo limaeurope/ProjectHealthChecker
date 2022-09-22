@@ -1,5 +1,6 @@
 #include	"Excel.hpp"
 #include	"LibXL/libxl.h"
+#define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
 
 // -----------------------------------------------------------------------------
 // Open the selected XLSX file into a library part
@@ -28,13 +29,6 @@ bool	GetOpenFile(IO::Location* const dloc,
 	return true;
 }
 
-
-
-// -----------------------------------------------------------------------------
-// Export GUID and a few basic parameters of all walls placed in the current project.
-// -----------------------------------------------------------------------------
-
-#define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
 
 void	Do_ImportNamesFromExcel(CntlDlgData& io_cntlDlgData)
 {

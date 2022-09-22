@@ -6,7 +6,6 @@
 // *****************************************************************************
 #define	_ELEMENT_TEST_TRANSL_
 
-
 // ---------------------------------- Includes ---------------------------------
 
 #include	"APIEnvir.h"
@@ -14,27 +13,29 @@
 #include	"APICommon.h"
 
 #include	"ProjectHealthChecker.hpp"
+//#include	"Table/ResultTable.hpp"
+//#include	"Table/Table.hpp"
+#include	"DataStructs.hpp"
+#include	"APITypeDict.hpp"
+#include	"WinReg.hpp"
+#include	"ACSpecific/Element.hpp"
+#include	"ACSpecific/SEO.hpp"
+#include	"ACSpecific/LibPart.hpp"
+#include	"ACSpecific/Attribute.hpp"
+#include	"ACSpecific/Navigator.hpp"
+#include	"ACSpecific/Profile.hpp"
+#include	"Table/Excel.hpp"
 
 // ---------------------------------- Types ------------------------------------
 
 // ---------------------------------- Variables --------------------------------
 
-static CntlDlgData			cntlDlgData{ 1, {0, 0, 1, 1, 1, 1, 1, 1, 1} };
-static APITypeDict			apiTypeDict;
-static GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS{};
+static CntlDlgData							cntlDlgData{ 1, {0, 0, 1, 1, 1, 1, 1, 1, 1} };
+static APITypeDict							apiTypeDict;
+static GS::HashTable<GS::UniString,	UInt32> iLibPartInstanceS{};
+static ResultTable							resultTable;
 
-#define OK_BUTTON			1
-#define SOURCE_GROUP_POPUP	2
-#define EXPORT_BUTTON		3
 
-#define LIBPART_CHECKBOX	2
-#define ELEMENT_CHECKBOX	3
-#define SEO_CHECKBOX		4
-#define NAVIGATOR_CHECKBOX	5
-#define LAYER_CHECKBOX		6
-#define PROFILE_CHECKBOX	7
-#define ZERO_CHECKBOX		8
-#define IMPORT_BUTTON		9
 
 // ----------------------------------  -------------------------------
 
@@ -49,20 +50,7 @@ void InitUI()
 	cntlDlgData.CheckBoxData[ZERO_CHECKBOX] = GetRegInt(GS::UniString("IncludeZeroValuedData"));
 }
 
-void ProcessElements(CntlDlgData& io_cntlDlgData)
-{
-	for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
-	{
-		GS::Array<API_Guid> _array{};
-		char intStr[256], _sNumberOfWalls[256], _sNumberOfWalls2[256];
 
-		GSErrCode err = ACAPI_Element_GetElemList(static_cast<API_ElemTypeID>(i), &_array);
-
-		auto _a = ac_types[i - 1].ToCStr().Get();
-		sprintf(_sNumberOfWalls2, "Number of %s", _a);
-		AddItem("Elements", _sNumberOfWalls2, _array.GetSize(), io_cntlDlgData);
-	}
-}
 
 void ProcessSEO(CntlDlgData& io_cntlDlgData)
 {
@@ -101,12 +89,12 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 
 		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
 
-		if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessLibParts(cntlDlgData, apiTypeDict, iLibPartInstanceS);
-		if (cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX]) ProcessElements(cntlDlgData);
-		if (cntlDlgData.CheckBoxData[SEO_CHECKBOX]) ProcessSEO(cntlDlgData);
-		if (cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems(cntlDlgData);
-		if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessAttributes(cntlDlgData);
-		if (cntlDlgData.CheckBoxData[PROFILE_CHECKBOX]) ProcessProfiles(cntlDlgData);
+		//if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessLibParts(cntlDlgData, apiTypeDict, iLibPartInstanceS);
+		//if (cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX]) ProcessElements(cntlDlgData);
+		//if (cntlDlgData.CheckBoxData[SEO_CHECKBOX]) ProcessSEO(cntlDlgData);
+		//if (cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems(cntlDlgData);
+		//if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessAttributes(cntlDlgData);
+		if (cntlDlgData.CheckBoxData[PROFILE_CHECKBOX]) ProcessProfiles();
 
 		break;
 	}
@@ -147,13 +135,13 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 	case DG_MSG_CLICK:
 		switch (item) {
 		case OK_BUTTON:
-			SetRegInt(cntlDlgData.CheckBoxData[LIBPART_CHECKBOX], GS::UniString("LibraryPartData"));
-			SetRegInt(cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX], GS::UniString("IncludeElementData"));
-			SetRegInt(cntlDlgData.CheckBoxData[SEO_CHECKBOX], GS::UniString("IncludeSEOData"));
-			SetRegInt(cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX], GS::UniString("IncludeNavigatorData"));
-			SetRegInt(cntlDlgData.CheckBoxData[LAYER_CHECKBOX], GS::UniString("IncludeLayerData"));
-			SetRegInt(cntlDlgData.CheckBoxData[PROFILE_CHECKBOX], GS::UniString("IncludeProfileData"));
-			SetRegInt(cntlDlgData.CheckBoxData[ZERO_CHECKBOX], GS::UniString("IncludeZeroValuedData"));
+			//SetRegInt(cntlDlgData.CheckBoxData[LIBPART_CHECKBOX], GS::UniString("LibraryPartData"));
+			//SetRegInt(cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX], GS::UniString("IncludeElementData"));
+			//SetRegInt(cntlDlgData.CheckBoxData[SEO_CHECKBOX], GS::UniString("IncludeSEOData"));
+			//SetRegInt(cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX], GS::UniString("IncludeNavigatorData"));
+			//SetRegInt(cntlDlgData.CheckBoxData[LAYER_CHECKBOX], GS::UniString("IncludeLayerData"));
+			//SetRegInt(cntlDlgData.CheckBoxData[PROFILE_CHECKBOX], GS::UniString("IncludeProfileData"));
+			//SetRegInt(cntlDlgData.CheckBoxData[ZERO_CHECKBOX], GS::UniString("IncludeZeroValuedData"));
 
 			result = item;
 			break;
