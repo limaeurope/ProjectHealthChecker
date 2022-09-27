@@ -5,20 +5,17 @@
 #include	"APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
-#include	"Table/ResultTable.hpp"
 
 typedef GS::HashTable<GS::UniString, UInt32> ReportData;
-//typedef GS::HashTable<GS::UniString, GS::Array<UInt32>> ReportMultiData;
 typedef GS::Array<GS::UniString> ReportDataHeader;
 
 
 struct CntlDlgData {
 	Int32 iAddZeroValues;
 	GS::Array<Int32>	CheckBoxData{};
-	GS::HashTable<GS::UniString, ReportData> reportData;
+	GS::HashTable<GS::UniString, ReportData> ReportData;
 	GS::HashTable<GS::UniString, ReportDataHeader> reportHeaders;
 	GS::HashSet<GS::UniString> filterStrings;
-	//ResultTable resultTable;
 };
 
 
@@ -29,9 +26,6 @@ struct StringData :AbstractData {
 	GS::UniString string;
 	StringData(GS::UniString s) :string(s) {}
 };
-
-//struct DataObject {};
-
 
 struct FileSizeReportObject : AbstractData
 {

@@ -22,8 +22,8 @@ bool	GetOpenFile(IO::Location* const dloc,
 // Export GUID and a few basic parameters of all walls placed in the current project.
 // -----------------------------------------------------------------------------
 
-void	Do_ImportNamesFromExcel(CntlDlgData& io_cntlDlgData);
+void	Do_ImportNamesFromExcel();
 
-void	Do_ExportReportToExcel(CntlDlgData& io_cntlDlgData);
+void	Do_ExportReportToExcel();
 
 #endif //_EXCEL_HPP

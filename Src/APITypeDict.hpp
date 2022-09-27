@@ -1,6 +1,9 @@
-#if !defined _API_TYPE_DICT_H
+#ifndef _API_TYPE_DICT_H
 #define _API_TYPE_DICT_H
 
+#include	"APIEnvir.h"
+#include	"ACAPinc.h"					// also includes APIdefs.h
+#include	"APICommon.h"
 
 class APITypeDict {
 public:

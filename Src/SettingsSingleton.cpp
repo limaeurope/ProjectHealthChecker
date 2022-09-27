@@ -3,42 +3,41 @@
 #include	"ProjectHealthChecker.hpp"
 #include	"WinReg.hpp"
 
+const APITypeDict SettingsSingleton::ApiTypeDict = APITypeDict();
 
 SettingsSingleton::SettingsSingleton()
 {
-	cntlDlgData.CheckBoxData = GS::Array<Int32>{0, 0, 1, 1, 1, 1, 1, 1, 1};
-	//cntlDlgData.reportData  = GS::HashTable<GS::UniString, ReportData>{};
-	//cntlDlgData.reportHeaders = GS::HashTable<GS::UniString, ReportDataHeader>{};
-	//cntlDlgData.filterStrings = GS::HashSet<GS::UniString>{};
+	CheckBoxData = {0, 0, 1, 1, 1, 1, 1, 1, 1};
+	ReportData = {};
+	ReportHeaders = {};
+	FilterStrings = {};
 
-	cntlDlgData.CheckBoxData[LIBPART_CHECKBOX] = GetRegInt("LibraryPartData");
-	cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX] = GetRegInt("IncludeElementData");
-	cntlDlgData.CheckBoxData[SEO_CHECKBOX] = GetRegInt("IncludeSEOData");
-	cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX] = GetRegInt("IncludeNavigatorData");
-	cntlDlgData.CheckBoxData[LAYER_CHECKBOX] = GetRegInt("IncludeLayerData");
-	cntlDlgData.CheckBoxData[PROFILE_CHECKBOX] = GetRegInt("IncludeProfileData");
-	cntlDlgData.CheckBoxData[ZERO_CHECKBOX] = GetRegInt(GS::UniString("IncludeZeroValuedData"));
+
+	CheckBoxData[LIBPART_CHECKBOX]		= GetRegInt("LibraryPartData");
+	CheckBoxData[ELEMENT_CHECKBOX]		= GetRegInt("IncludeElementData");
+	CheckBoxData[SEO_CHECKBOX]			= GetRegInt("IncludeSEOData");
+	CheckBoxData[NAVIGATOR_CHECKBOX]	= GetRegInt("IncludeNavigatorData");
+	CheckBoxData[LAYER_CHECKBOX]		= GetRegInt("IncludeLayerData");
+	CheckBoxData[PROFILE_CHECKBOX]		= GetRegInt("IncludeProfileData");
+	CheckBoxData[ZERO_CHECKBOX]	= GetRegInt(GS::UniString("IncludeZeroValuedData"));
 }
 
 SettingsSingleton::~SettingsSingleton()
 {
-	SetRegInt(cntlDlgData.CheckBoxData[LIBPART_CHECKBOX], GS::UniString("LibraryPartData"));
-	SetRegInt(cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX], GS::UniString("IncludeElementData"));
-	SetRegInt(cntlDlgData.CheckBoxData[SEO_CHECKBOX], GS::UniString("IncludeSEOData"));
-	SetRegInt(cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX], GS::UniString("IncludeNavigatorData"));
-	SetRegInt(cntlDlgData.CheckBoxData[LAYER_CHECKBOX], GS::UniString("IncludeLayerData"));
-	SetRegInt(cntlDlgData.CheckBoxData[PROFILE_CHECKBOX], GS::UniString("IncludeProfileData"));
-	SetRegInt(cntlDlgData.CheckBoxData[ZERO_CHECKBOX], GS::UniString("IncludeZeroValuedData"));
-
-	delete singleton;
+	SetRegInt(CheckBoxData[LIBPART_CHECKBOX],	"LibraryPartData");
+	SetRegInt(CheckBoxData[ELEMENT_CHECKBOX],	"IncludeElementData");
+	SetRegInt(CheckBoxData[SEO_CHECKBOX],		"IncludeSEOData");
+	SetRegInt(CheckBoxData[NAVIGATOR_CHECKBOX],	"IncludeNavigatorData");
+	SetRegInt(CheckBoxData[LAYER_CHECKBOX],		"IncludeLayerData");
+	SetRegInt(CheckBoxData[PROFILE_CHECKBOX],	"IncludeProfileData");
+	SetRegInt(CheckBoxData[ZERO_CHECKBOX], GS::UniString("IncludeZeroValuedData"));
 }
 
-SettingsSingleton* SettingsSingleton::GetInstance()
+SettingsSingleton& SettingsSingleton::GetInstance()
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	if (!singleton)
-		singleton = new SettingsSingleton();
+	static SettingsSingleton singleton;
 
 	return singleton;
 }

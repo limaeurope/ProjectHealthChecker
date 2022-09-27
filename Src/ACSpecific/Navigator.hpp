@@ -6,7 +6,7 @@
 #include	"../APICommon.h"
 #include	"../Table/Table.hpp"
 
-void ProcessNavigatorItems(CntlDlgData& io_cntlDlgData);
+void ProcessNavigatorItems();
 
 short GetChildrenNumber(API_NavigatorItem i_item,
 	const API_NavigatorItemTypeID& i_navID,

@@ -1,22 +1,20 @@
 #include	"LibPart.hpp"
 #include	"File.hpp"
 #include	"../Table/Table.hpp"
-#include	"../APITypeDict.hpp"
+#include	"../SettingsSingleton.hpp"
 
 
-void ProcessLibParts(CntlDlgData& io_cntlDlgData, 
-	const APITypeDict& i_apiTypeDict, 
-	GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS)
+void ProcessLibParts(GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS)
 {
 	GS::Array<AbstractData*> lLibParts;
 
-	lLibParts = ListLibParts(i_apiTypeDict);
+	lLibParts = ListLibParts();
 
 	CountLibPartInstances(io_iLibPartInstanceS);
 
 	for (auto libPart : io_iLibPartInstanceS)
 	{
-		AddItem("Library Part Instances", *libPart.key, *libPart.value, io_cntlDlgData);
+		AddItem("Library Part Instances", *libPart.key, *libPart.value);
 	}
 
 	GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
@@ -38,18 +36,17 @@ void ProcessLibParts(CntlDlgData& io_cntlDlgData,
 	}
 
 	for (auto item : aNormal)
-		AddItem("LibPart data", item.name, (UInt32)item.size, io_cntlDlgData);
+		AddItem("LibPart data", item.name, (UInt32)item.size);
 
 	for (auto item : aEmbedded)
-		AddItem("Embedded LibPart data", item.name, (UInt32)item.size, io_cntlDlgData);
+		AddItem("Embedded LibPart data", item.name, (UInt32)item.size);
 }
-
 
 // -----------------------------------------------------------------------------
 //  List libparts
 // -----------------------------------------------------------------------------
 
-GS::Array<AbstractData*> ListLibParts(const APITypeDict& i_apiTypeDict)
+GS::Array<AbstractData*> ListLibParts()
 {
 	API_LibPart  libPart;
 	Int32        i, count;
@@ -99,7 +96,7 @@ GS::Array<AbstractData*> ListLibParts(const APITypeDict& i_apiTypeDict)
 						result->isEmbedded = path.Contains(GS::UniString(sEmbeddedLibPath)) ? true : false;
 					}
 
-					result->libType = i_apiTypeDict.GetLibPartType(libPart);
+					result->libType = SettingsSingleton::GetLibPartType(libPart);
 
 					aResult.Push(result);
 

@@ -4,7 +4,7 @@
 #include	"../Table/Table.hpp"
 
 
-void ProcessElements(CntlDlgData& io_cntlDlgData)
+void ProcessElements()
 {
 	for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
 	{
@@ -15,7 +15,7 @@ void ProcessElements(CntlDlgData& io_cntlDlgData)
 
 		auto _a = ac_types[i - 1].ToCStr().Get();
 		sprintf(_sNumberOfWalls2, "Number of %s", _a);
-		AddItem("Elements", _sNumberOfWalls2, _array.GetSize(), io_cntlDlgData);
+		AddItem("Elements", _sNumberOfWalls2, _array.GetSize());
 	}
 }
 

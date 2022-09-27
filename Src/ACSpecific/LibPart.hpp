@@ -6,14 +6,11 @@
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"../APICommon.h"
 #include	"../DataStructs.hpp"
-#include	"../APITypeDict.hpp"
 
 
-void ProcessLibParts(CntlDlgData& io_cntlDlgData,
-	const APITypeDict& i_apiTypeDict,
-	GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS);
+void ProcessLibParts(GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS);
 
-inline GS::Array<AbstractData*> ListLibParts(const APITypeDict& i_apiTypeDict);
+inline GS::Array<AbstractData*> ListLibParts();
 
 void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS);
 

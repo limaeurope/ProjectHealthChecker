@@ -10,21 +10,19 @@ void ResultSheet::AddItem(const GS::UniString& i_sTable,
 	const UInt32 i_iItemNumber)
 	// Adds an item to both the UI report and the .xlsx output
 {
-	CntlDlgData cntlDlgData = SettingsSingleton::GetInstance()->cntlDlgData;
-
-	if (!i_iItemNumber && !cntlDlgData.iAddZeroValues) return;
+	if (!i_iItemNumber && !SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX]) return;
 
 	char sItem[256], _sNumberOfWalls[256], sInt[256];
 
 	itoa(i_iItemNumber, sInt, 10);
 
-	if (!cntlDlgData.reportData.ContainsKey(i_sTable))
+	if (!SettingsSingleton::GetInstance().ReportData.ContainsKey(i_sTable))
 	{
 		ReportData _rd{};
-		cntlDlgData.reportData.Add(i_sTable, _rd);
+		SettingsSingleton::GetInstance().ReportData.Add(i_sTable, _rd);
 	}
 
-	cntlDlgData.reportData[i_sTable].Add(i_sItem, i_iItemNumber);
+	SettingsSingleton::GetInstance().ReportData[i_sTable].Add(i_sItem, i_iItemNumber);
 
 	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
 	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
@@ -35,7 +33,7 @@ void ResultTable::ExportReportToExcel()
 {
 	libxl::Book* book = xlCreateXMLBook();
 
-	for (auto item : SettingsSingleton::GetInstance()->cntlDlgData.reportData) {
+	for (auto item : SettingsSingleton::GetInstance().ReportData) {
 		const GS::UniString _k = *item.key;
 		libxl::Sheet* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(_k));
 		sheet->setCol(0, 1, 50.0);
@@ -51,7 +49,7 @@ void ResultTable::ExportReportToExcel()
 
 		for (auto iitem : *item.value)
 		{
-			if (iitem.value > 0 || SettingsSingleton::GetInstance()->cntlDlgData.iAddZeroValues)
+			if (iitem.value > 0 || SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
 			{
 				sheet->writeStr(ii, 0, iitem.key->ToUStr());
 				sheet->writeNum(ii++, 1, *iitem.value);

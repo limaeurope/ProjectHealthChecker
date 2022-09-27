@@ -13,10 +13,7 @@
 #include	"APICommon.h"
 
 #include	"ProjectHealthChecker.hpp"
-//#include	"Table/ResultTable.hpp"
-//#include	"Table/Table.hpp"
-#include	"DataStructs.hpp"
-#include	"APITypeDict.hpp"
+#include	"SettingsSingleton.hpp"
 #include	"WinReg.hpp"
 #include	"ACSpecific/Element.hpp"
 #include	"ACSpecific/SEO.hpp"
@@ -26,36 +23,21 @@
 #include	"ACSpecific/Profile.hpp"
 #include	"Table/Excel.hpp"
 
+
 // ---------------------------------- Types ------------------------------------
 
 // ---------------------------------- Variables --------------------------------
 
-static CntlDlgData							cntlDlgData{ 1, {0, 0, 1, 1, 1, 1, 1, 1, 1} };
-static APITypeDict							apiTypeDict;
+DGMessageData								cntlDlgData;	//Dummy
 static GS::HashTable<GS::UniString,	UInt32> iLibPartInstanceS{};
 static ResultTable							resultTable;
 
-
-
 // ----------------------------------  -------------------------------
 
-void InitUI()
+void ProcessSEO()
 {
-	cntlDlgData.CheckBoxData[LIBPART_CHECKBOX] = GetRegInt("LibraryPartData");
-	cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX] = GetRegInt("IncludeElementData");
-	cntlDlgData.CheckBoxData[SEO_CHECKBOX] = GetRegInt("IncludeSEOData");
-	cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX] = GetRegInt("IncludeNavigatorData");
-	cntlDlgData.CheckBoxData[LAYER_CHECKBOX] = GetRegInt("IncludeLayerData");
-	cntlDlgData.CheckBoxData[PROFILE_CHECKBOX] = GetRegInt("IncludeProfileData");
-	cntlDlgData.CheckBoxData[ZERO_CHECKBOX] = GetRegInt(GS::UniString("IncludeZeroValuedData"));
-}
-
-
-
-void ProcessSEO(CntlDlgData& io_cntlDlgData)
-{
-	AddItem("SEO Data", "Number of SEO Operators/Targets", GetSEOElements().GetSize(), io_cntlDlgData);
-	AddItem("SEO Data", "Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize(), io_cntlDlgData);
+	AddItem("SEO Data", "Number of SEO Operators/Targets", GetSEOElements().GetSize());
+	AddItem("SEO Data", "Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize());
 }
 
 
@@ -84,17 +66,14 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	{
 		GSErrCode err;
 
-		//SetRegInt(33, 
-		//	GS::UniString("tesztKey2"));
+		auto _settings = SettingsSingleton::GetInstance().CheckBoxData;
 
-		DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
-
-		//if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessLibParts(cntlDlgData, apiTypeDict, iLibPartInstanceS);
-		//if (cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX]) ProcessElements(cntlDlgData);
-		//if (cntlDlgData.CheckBoxData[SEO_CHECKBOX]) ProcessSEO(cntlDlgData);
-		//if (cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems(cntlDlgData);
-		//if (cntlDlgData.CheckBoxData[LIBPART_CHECKBOX]) ProcessAttributes(cntlDlgData);
-		if (cntlDlgData.CheckBoxData[PROFILE_CHECKBOX]) ProcessProfiles();
+		if (_settings[LIBPART_CHECKBOX]) ProcessLibParts(iLibPartInstanceS);
+		if (_settings[ELEMENT_CHECKBOX]) ProcessElements();
+		if (_settings[SEO_CHECKBOX]) ProcessSEO();
+		if (_settings[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems();
+		if (_settings[LIBPART_CHECKBOX]) ProcessAttributes();
+		if (_settings[PROFILE_CHECKBOX]) ProcessProfiles();
 
 		break;
 	}
@@ -104,7 +83,7 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 			result = item;
 			break;
 		case EXPORT_BUTTON:
-			Do_ExportReportToExcel(cntlDlgData);
+			Do_ExportReportToExcel();
 
 			result = item;
 			break;
@@ -126,27 +105,17 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 	{
 		GSErrCode err;
 
-		//DGSetItemValLong(dialID, ZERO_CHECKBOX, cntlDlgData.iAddZeroValues);
-
 		for (UInt16 i = LIBPART_CHECKBOX; i <= ZERO_CHECKBOX; i++)
-			DGSetItemValLong(dialID, i, cntlDlgData.CheckBoxData[i]);
+			DGSetItemValLong(dialID, i, SettingsSingleton::GetInstance().CheckBoxData[i]);
 		break;
 	}
 	case DG_MSG_CLICK:
 		switch (item) {
 		case OK_BUTTON:
-			//SetRegInt(cntlDlgData.CheckBoxData[LIBPART_CHECKBOX], GS::UniString("LibraryPartData"));
-			//SetRegInt(cntlDlgData.CheckBoxData[ELEMENT_CHECKBOX], GS::UniString("IncludeElementData"));
-			//SetRegInt(cntlDlgData.CheckBoxData[SEO_CHECKBOX], GS::UniString("IncludeSEOData"));
-			//SetRegInt(cntlDlgData.CheckBoxData[NAVIGATOR_CHECKBOX], GS::UniString("IncludeNavigatorData"));
-			//SetRegInt(cntlDlgData.CheckBoxData[LAYER_CHECKBOX], GS::UniString("IncludeLayerData"));
-			//SetRegInt(cntlDlgData.CheckBoxData[PROFILE_CHECKBOX], GS::UniString("IncludeProfileData"));
-			//SetRegInt(cntlDlgData.CheckBoxData[ZERO_CHECKBOX], GS::UniString("IncludeZeroValuedData"));
-
 			result = item;
 			break;
 		case IMPORT_BUTTON:
-			Do_ImportNamesFromExcel(cntlDlgData);
+			Do_ImportNamesFromExcel();
 
 			result = item;
 			break;
@@ -161,9 +130,8 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		case PROFILE_CHECKBOX:
 		case ZERO_CHECKBOX:
 			//TODO Refresh the dialog
-			cntlDlgData.iAddZeroValues = DGGetItemValLong(dialID, ZERO_CHECKBOX);
 			for (UInt16 i = LIBPART_CHECKBOX; i <= ZERO_CHECKBOX; i++)
-				cntlDlgData.CheckBoxData[i] = DGGetItemValLong(dialID, i);
+				SettingsSingleton::GetInstance().CheckBoxData[i] = DGGetItemValLong(dialID, i);
 			break;
 		}
 		break;
@@ -199,9 +167,6 @@ static GSErrCode	Do_Settings()
 
 GSErrCode __ACENV_CALL ProjectHealthChecker (const API_MenuParams *menuParams)
 {
-	apiTypeDict = APITypeDict{};
-	InitUI();
-
 	return ACAPI_CallUndoableCommand ("Element Test API Function",
 		[&] () -> GSErrCode {
 

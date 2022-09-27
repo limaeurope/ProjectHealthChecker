@@ -1,5 +1,8 @@
 #ifndef	_AC_TYPES_
 #define	_AC_TYPES_
+#include	"APIEnvir.h"
+#include	"ACAPinc.h"					// also includes APIdefs.h
+#include	"APICommon.h"
 
 static const GS::Array<GS::UniString> ac_types{
 	"Walls",

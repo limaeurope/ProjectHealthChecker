@@ -16,7 +16,7 @@ AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_a
 //  List attributes
 // -----------------------------------------------------------------------------
 
-void ProcessAttributes(CntlDlgData& io_cntlDlgData);
+void ProcessAttributes();
 
 UInt32 CountAttributes(
 	const API_AttrTypeID i_attrType,

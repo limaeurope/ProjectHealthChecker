@@ -1,5 +1,6 @@
 #include	"Attribute.hpp"
 #include	"../Table/Table.hpp"
+#include	"../SettingsSingleton.hpp"
 
 bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
@@ -49,18 +50,18 @@ AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_a
 //  List attributes
 // -----------------------------------------------------------------------------
 
-void ProcessAttributes(CntlDlgData& io_cntlDlgData)
+void ProcessAttributes()
 {
-	AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID), io_cntlDlgData);
+	AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID));
 
-	for (auto sFilter : io_cntlDlgData.filterStrings)
+	for (auto sFilter : SettingsSingleton::GetInstance().FilterStrings)
 	{
 		auto iCount = CountAttributes(API_LayerID, NameContains, &StringData{ sFilter });
-		AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount, io_cntlDlgData);
+		AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);
 	}
 
-	AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID), io_cntlDlgData);
-	AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture), io_cntlDlgData);
+	AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID));
+	AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture));
 
 	GS::Array<AbstractData*> lTextures;
 
@@ -69,11 +70,9 @@ void ProcessAttributes(CntlDlgData& io_cntlDlgData)
 	for (AbstractData* tex : lTextures)
 	{
 		FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
-		AddItem("Texture data", _tex->name, (UInt16)_tex->size, io_cntlDlgData);
+		AddItem("Texture data", _tex->name, (UInt16)_tex->size);
 		delete tex;
 	}
-
-	//Int32 iLibParts;
 }
 
 UInt32 CountAttributes(

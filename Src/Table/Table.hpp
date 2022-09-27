@@ -10,8 +10,7 @@
 
 void AddItem(const GS::UniString& i_sTable, 
 	const GS::UniString& i_sItem, 
-	const UInt32 i_iItemNumber, 
-	CntlDlgData& i_cntlDlgData);
+	const UInt32 i_iItemNumber);
 
 //void AddList(const GS::UniString& i_sTable, 
 //	const GS::UniString& i_sItem, 

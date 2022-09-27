@@ -1,9 +1,10 @@
 ﻿#include	"Navigator.hpp"
 #include	"../DataStructs.hpp"
 #include	"../acTypes.hpp"
+#include	"../SettingsSingleton.hpp"
 
 
-void ProcessNavigatorItems(CntlDlgData& io_cntlDlgData)
+void ProcessNavigatorItems()
 {
 	short iNavItems = 0;
 
@@ -12,18 +13,18 @@ void ProcessNavigatorItems(CntlDlgData& io_cntlDlgData)
 		{
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
 
-			if (iNavItems > 0 || io_cntlDlgData.iAddZeroValues)
+			if (iNavItems > 0 || SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
 			{
-				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems, io_cntlDlgData);
+				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
 			}
 
 			// -------------------------------------
 
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
 
-			if (iNavItems > 0 || io_cntlDlgData.iAddZeroValues)
+			if (iNavItems > 0 || SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
 			{
-				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems, io_cntlDlgData);
+				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
 			}
 		}
 }

@@ -6,6 +6,6 @@
 #include	"../APICommon.h"
 #include	"../DataStructs.hpp"
 
-void ProcessElements(CntlDlgData& io_cntlDlgData);
+void ProcessElements();
 
 #endif	//_ELEMENT_HPP

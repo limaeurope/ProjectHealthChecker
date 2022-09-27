@@ -4,9 +4,7 @@
 #include	"../APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"../APICommon.h"
-//#include	"Excel.hpp"
 #include	"LibXL/libxl.h"
-#include	"../DataStructs.hpp"
 
 struct Row {
 	GS::UniString	textField;
@@ -16,7 +14,7 @@ struct Row {
 class ResultSheet
 {
 public:
-	ResultSheet();
+	ResultSheet() {};
 	ResultSheet(GS::UniString name) :sName(name){};
 	GS::Array<GS::UniString>	header;
 	GS::Array<Row>				rowS;

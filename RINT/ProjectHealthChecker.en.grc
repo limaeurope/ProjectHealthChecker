@@ -4,7 +4,7 @@
 
 
 'STR#' 32000 "Add-on Name and Description" {
-/* [  1] */		"ProjectHealthChecker"
+/* [  1] */		"Project Health Check"
 /* [  2] */		"Add-on; Copies a Property's Option Set to another Property"
 }
 
