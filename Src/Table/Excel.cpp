@@ -1,6 +1,6 @@
 #include	"Excel.hpp"
 #include	"LibXL/libxl.h"
-#include	"../SettingsSingleton.hpp"
+#include	"SettingsSingleton.hpp"
 #define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
 
 // -----------------------------------------------------------------------------

@@ -5,6 +5,7 @@
 #include	"APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
+#include	"AttributeUsage.hpp"
 
 typedef GS::HashTable<GS::UniString, UInt32> ReportData;
 typedef GS::Array<GS::UniString> ReportDataHeader;
@@ -22,10 +23,17 @@ struct CntlDlgData {
 struct AbstractData {};
 
 
+struct AttributeData :AbstractData {
+	AttributeUsage	attributeUsage;
+	AttributeData(AttributeUsage au) :attributeUsage(au) {}
+};
+
+
 struct StringData :AbstractData {
 	GS::UniString string;
 	StringData(GS::UniString s) :string(s) {}
 };
+
 
 struct FileSizeReportObject : AbstractData
 {
@@ -44,5 +52,13 @@ struct PolygonReportObject: AbstractData
 	GS::HashTable<API_Guid, UInt32> arcsByHatch;
 	UInt32 nArcs = 0;
 };
+
+
+struct LayerReportObject: AbstractData
+{
+	GS::UniString name;
+	int nInstances;
+};
+
 
 #endif	//_DATASTRUCTS_HPP

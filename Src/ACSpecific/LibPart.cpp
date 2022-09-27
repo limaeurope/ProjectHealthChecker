@@ -1,10 +1,10 @@
 #include	"LibPart.hpp"
 #include	"File.hpp"
-#include	"../Table/Table.hpp"
-#include	"../SettingsSingleton.hpp"
+#include	"Table.hpp"
+#include	"SettingsSingleton.hpp"
 
 
-void ProcessLibParts(GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS)
+void ProcessLibParts(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS)
 {
 	GS::Array<AbstractData*> lLibParts;
 
@@ -14,7 +14,8 @@ void ProcessLibParts(GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS)
 
 	for (auto libPart : io_iLibPartInstanceS)
 	{
-		AddItem("Library Part Instances", *libPart.key, *libPart.value);
+		if (!(*libPart.value) || !SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
+			AddItem("Library Part Instances", *libPart.key, *libPart.value);
 	}
 
 	GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
@@ -126,7 +127,7 @@ inline GS::UniString GetLibPartName(const API_LibPart& i_libPart)
 	return sResult;
 }
 
-void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32> io_iLibPartInstanceS)
+void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS)
 {
 	GS::Array<API_Guid> libPartGuidS;
 	API_LibPart			libPart;
@@ -182,7 +183,9 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32> io_iLibPartInsta
 			}
 			if (err) throw err;
 
-			if (io_iLibPartInstanceS.ContainsKey(sLibPart = (GetLibPartName(libPart))))
+			auto sLibPart = GetLibPartName(libPart);
+
+			if (io_iLibPartInstanceS.ContainsKey(sLibPart))
 			{
 				io_iLibPartInstanceS[sLibPart]++;
 			}

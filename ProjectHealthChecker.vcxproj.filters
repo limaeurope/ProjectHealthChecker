@@ -1,16 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Src\APITypeDict.cpp">
-      <Filter>Sources\Classes</Filter>
-    </ClCompile>
     <ClCompile Include="Src\APICommon.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Src\$(ProjectName).cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\WinReg.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Src\Table\Table.cpp">
@@ -40,8 +34,20 @@
     <ClCompile Include="Src\ACSpecific\Navigator.cpp">
       <Filter>Sources\ACSpecific</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SettingsSingleton.cpp">
-      <Filter>Sources\Classes</Filter>
+    <ClCompile Include="Src\Data\AttributeUsage.cpp">
+      <Filter>Sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Data\SettingsSingleton.cpp">
+      <Filter>Sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Data\WinReg.cpp">
+      <Filter>Sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Data\APITypeDict.cpp">
+      <Filter>Sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utils\Utils.cpp">
+      <Filter>Sources\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,33 +109,27 @@
     <Filter Include="Sources\Constants">
       <UniqueIdentifier>{ee35b3d3-9334-461d-a023-2e13d2195a07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Classes">
-      <UniqueIdentifier>{c8a9fa03-4879-4652-b02b-e28343b3b05c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Table">
       <UniqueIdentifier>{08ca5310-72dd-4e6b-ab4f-a230ddb4ea97}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\ACSpecific">
       <UniqueIdentifier>{9f4bb474-660a-4153-ae56-5e7bbb24ceb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Data">
+      <UniqueIdentifier>{c8a9fa03-4879-4652-b02b-e28343b3b05c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Utils">
+      <UniqueIdentifier>{2053e04e-b1c7-42e7-b062-d04bd6676ccf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\acTypes.hpp">
       <Filter>Sources\Constants</Filter>
     </ClInclude>
-    <ClInclude Include="Src\APITypeDict.hpp">
-      <Filter>Sources\Classes</Filter>
-    </ClInclude>
     <ClInclude Include="Src\APICommon.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Src\ProjectHealthChecker.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\DataStructs.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\WinReg.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Src\Table\Table.hpp">
@@ -162,8 +162,23 @@
     <ClInclude Include="Src\APIEnvir.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SettingsSingleton.hpp">
-      <Filter>Sources\Classes</Filter>
+    <ClInclude Include="Src\Data\AttributeUsage.hpp">
+      <Filter>Sources\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Data\SettingsSingleton.hpp">
+      <Filter>Sources\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Data\DataStructs.hpp">
+      <Filter>Sources\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Data\WinReg.hpp">
+      <Filter>Sources\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Data\APITypeDict.hpp">
+      <Filter>Sources\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utils\Utils.hpp">
+      <Filter>Sources\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

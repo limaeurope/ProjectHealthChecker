@@ -1,7 +1,7 @@
 ﻿#include	"Navigator.hpp"
-#include	"../DataStructs.hpp"
-#include	"../acTypes.hpp"
-#include	"../SettingsSingleton.hpp"
+#include	"DataStructs.hpp"
+#include	"acTypes.hpp"
+#include	"SettingsSingleton.hpp"
 
 
 void ProcessNavigatorItems()

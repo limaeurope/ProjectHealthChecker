@@ -13,8 +13,8 @@
 #include	"APICommon.h"
 
 #include	"ProjectHealthChecker.hpp"
-#include	"SettingsSingleton.hpp"
-#include	"WinReg.hpp"
+#include	"Data/SettingsSingleton.hpp"
+#include	"Data/WinReg.hpp"
 #include	"ACSpecific/Element.hpp"
 #include	"ACSpecific/SEO.hpp"
 #include	"ACSpecific/LibPart.hpp"
@@ -22,6 +22,7 @@
 #include	"ACSpecific/Navigator.hpp"
 #include	"ACSpecific/Profile.hpp"
 #include	"Table/Excel.hpp"
+#include	"AttributeUsage.hpp"
 
 
 // ---------------------------------- Types ------------------------------------
@@ -31,7 +32,7 @@
 DGMessageData								cntlDlgData;	//Dummy
 static GS::HashTable<GS::UniString,	UInt32> iLibPartInstanceS{};
 static ResultTable							resultTable;
-
+//static AttributeUsage						attributeUsage;
 // ----------------------------------  -------------------------------
 
 void ProcessSEO()
@@ -53,8 +54,6 @@ static void		GetStringFromResource(GS::UniString* buffer, short resID, short str
 	return;
 }		// GetStringFromResource
 
-
-
 static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item, DGUserData userData, DGMessageData msgData)
 {
 	short result = 0;
@@ -66,14 +65,15 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	{
 		GSErrCode err;
 
-		auto _settings = SettingsSingleton::GetInstance().CheckBoxData;
+		auto settings = SettingsSingleton::GetInstance().CheckBoxData;
+		AttributeUsage attributeUsage{};
 
-		if (_settings[LIBPART_CHECKBOX]) ProcessLibParts(iLibPartInstanceS);
-		if (_settings[ELEMENT_CHECKBOX]) ProcessElements();
-		if (_settings[SEO_CHECKBOX]) ProcessSEO();
-		if (_settings[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems();
-		if (_settings[LIBPART_CHECKBOX]) ProcessAttributes();
-		if (_settings[PROFILE_CHECKBOX]) ProcessProfiles();
+		if (settings[LIBPART_CHECKBOX]) ProcessLibParts(iLibPartInstanceS);
+		if (settings[ELEMENT_CHECKBOX]) ProcessElements();
+		if (settings[SEO_CHECKBOX]) ProcessSEO();
+		if (settings[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems();
+		if (settings[LAYER_CHECKBOX]) ProcessAttributes(attributeUsage);
+		if (settings[PROFILE_CHECKBOX]) ProcessProfiles();
 
 		break;
 	}
@@ -105,7 +105,7 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 	{
 		GSErrCode err;
 
-		for (UInt16 i = LIBPART_CHECKBOX; i <= ZERO_CHECKBOX; i++)
+		for (UInt16 i = LIBPART_CHECKBOX; i <= MAX_CHECKBOX; i++)
 			DGSetItemValLong(dialID, i, SettingsSingleton::GetInstance().CheckBoxData[i]);
 		break;
 	}
@@ -129,8 +129,9 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		case LAYER_CHECKBOX:
 		case PROFILE_CHECKBOX:
 		case ZERO_CHECKBOX:
+		case COUNT_INSTANCES:
 			//TODO Refresh the dialog
-			for (UInt16 i = LIBPART_CHECKBOX; i <= ZERO_CHECKBOX; i++)
+			for (UInt16 i = LIBPART_CHECKBOX; i <= MAX_CHECKBOX; i++)
 				SettingsSingleton::GetInstance().CheckBoxData[i] = DGGetItemValLong(dialID, i);
 			break;
 		}

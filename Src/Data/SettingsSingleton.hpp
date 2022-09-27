@@ -3,7 +3,7 @@
 
 #include	<mutex>
 #include	"APITypeDict.hpp"
-#include	"DataStructs.hpp"
+#include	"Data/DataStructs.hpp"
 #include	"Table/ResultTable.hpp"
 
 
@@ -14,7 +14,9 @@
 #define LAYER_CHECKBOX		6
 #define PROFILE_CHECKBOX	7
 #define ZERO_CHECKBOX		8
-#define IMPORT_BUTTON		9
+#define COUNT_INSTANCES		9
+#define MAX_CHECKBOX		COUNT_INSTANCES		
+#define IMPORT_BUTTON		10
 
 class SettingsSingleton {
 	SettingsSingleton();
@@ -23,9 +25,9 @@ class SettingsSingleton {
 	bool operator=(const SettingsSingleton&) {};
 public:
 	static const APITypeDict ApiTypeDict;
-	GS::Array<Int32> CheckBoxData;
+	GS::HashTable<int, Int32> CheckBoxData;
 	GS::HashTable<GS::UniString, ReportData> ReportData;
-	GS::HashTable<GS::UniString, ReportDataHeader> ReportHeaders;
+	//GS::HashTable<GS::UniString, ReportDataHeader> ReportHeaders;
 	GS::HashSet<GS::UniString> FilterStrings;
 
 	ResultTable	ResultTable;

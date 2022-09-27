@@ -60,7 +60,7 @@
     <ACDevKit>..\ArchiCAD_API\API Development Kit $(ACVersion)</ACDevKit>
     <ACDevKitSupport>$(ACDevKit)\Support</ACDevKitSupport>
     <ACDevKitModules>$(ACDevKitSupport)\Modules</ACDevKitModules>
-    <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);$(ACDevKitSupport)\Inc;$(ACDevKitModules)\Geometry;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\InputOutput;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\VectorImage;$(ACDevKitModules)\LibXL;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\DGLib;$(ACDevKitModules)\Pattern</AdditionalIncludeDirectories>
+    <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);$(ACDevKitSupport)\Inc;$(ACDevKitModules)\Geometry;$(ACDevKitModules)\Graphix;$(ACDevKitModules)\GSRoot;$(ACDevKitModules)\InputOutput;$(ACDevKitModules)\GSUtils;$(ACDevKitModules)\VectorImage;$(ACDevKitModules)\LibXL;$(ACDevKitModules)\TextEngine;$(ACDevKitModules)\DGLib;$(ACDevKitModules)\Pattern;Src;Src/ACSpecific;Src/Data;Src/Table</AdditionalIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(ACVersion)'=='24'" Label="Globals">
     <ProjectGuid>{DA52A917-60AF-4125-87A3-D0DFCC4A5F54}</ProjectGuid>
@@ -185,10 +185,12 @@
   <ItemGroup>
     <ClCompile Include="Src\$(ProjectName).cpp" />
     <ClCompile Include="Src\APICommon.c" />
-    <ClCompile Include="Src\APITypeDict.cpp" />
     <ClCompile Include="Src\ACSpecific\Attribute.cpp" />
     <ClCompile Include="Src\ACSpecific\Element.cpp" />
-    <ClCompile Include="Src\SettingsSingleton.cpp" />
+    <ClCompile Include="Src\Data\APITypeDict.cpp" />
+    <ClCompile Include="Src\Data\AttributeUsage.cpp" />
+    <ClCompile Include="Src\Data\SettingsSingleton.cpp" />
+    <ClCompile Include="Src\Data\WinReg.cpp" />
     <ClCompile Include="Src\Table\Excel.cpp" />
     <ClCompile Include="Src\ACSpecific\LibPart.cpp" />
     <ClCompile Include="Src\ACSpecific\Navigator.cpp" />
@@ -196,7 +198,7 @@
     <ClCompile Include="Src\Table\ResultTable.cpp" />
     <ClCompile Include="Src\ACSpecific\SEO.cpp" />
     <ClCompile Include="Src\Table\Table.cpp" />
-    <ClCompile Include="Src\WinReg.cpp" />
+    <ClCompile Include="Src\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="RINT\$(ProjectName).$(LanguageCode).grc">
@@ -274,11 +276,13 @@
     <ClInclude Include="Src\acTypes.hpp" />
     <ClInclude Include="Src\APICommon.h" />
     <ClInclude Include="Src\APIEnvir.h" />
-    <ClInclude Include="Src\APITypeDict.hpp" />
     <ClInclude Include="Src\ACSpecific\Attribute.hpp" />
-    <ClInclude Include="Src\DataStructs.hpp" />
     <ClInclude Include="Src\ACSpecific\Element.hpp" />
-    <ClInclude Include="Src\SettingsSingleton.hpp" />
+    <ClInclude Include="Src\Data\APITypeDict.hpp" />
+    <ClInclude Include="Src\Data\AttributeUsage.hpp" />
+    <ClInclude Include="Src\Data\DataStructs.hpp" />
+    <ClInclude Include="Src\Data\SettingsSingleton.hpp" />
+    <ClInclude Include="Src\Data\WinReg.hpp" />
     <ClInclude Include="Src\Table\Excel.hpp" />
     <ClInclude Include="Src\ACSpecific\LibPart.hpp" />
     <ClInclude Include="Src\ACSpecific\Navigator.hpp" />
@@ -287,7 +291,7 @@
     <ClInclude Include="Src\Table\ResultTable.hpp" />
     <ClInclude Include="Src\ACSpecific\SEO.hpp" />
     <ClInclude Include="Src\Table\Table.hpp" />
-    <ClInclude Include="Src\WinReg.hpp" />
+    <ClInclude Include="Src\Utils\Utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

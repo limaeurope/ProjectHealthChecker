@@ -1,6 +1,6 @@
 #include	"ResultTable.hpp"
 #include	"DGFileDialog.hpp"
-#include	"../SettingsSingleton.hpp"
+#include	"../Data/SettingsSingleton.hpp"
 #include	"Excel.hpp"
 #define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
 

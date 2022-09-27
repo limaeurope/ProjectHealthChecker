@@ -1,5 +1,5 @@
 #include	"Table.hpp"
-#include	"../SettingsSingleton.hpp"
+#include	"SettingsSingleton.hpp"
 
 //void SetHeader(const GS::UniString& i_sTable, const ReportDataHeader& reportDataHeader, CntlDlgData& io_cntlDlgData)
 //{

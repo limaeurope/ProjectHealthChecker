@@ -1,7 +1,7 @@
 
 #include	"Element.hpp"
-#include	"../ACTypes.hpp"
-#include	"../Table/Table.hpp"
+#include	"ACTypes.hpp"
+#include	"Table.hpp"
 
 
 void ProcessElements()

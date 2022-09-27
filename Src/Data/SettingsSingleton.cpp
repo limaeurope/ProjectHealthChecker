@@ -7,19 +7,19 @@ const APITypeDict SettingsSingleton::ApiTypeDict = APITypeDict();
 
 SettingsSingleton::SettingsSingleton()
 {
-	CheckBoxData = {0, 0, 1, 1, 1, 1, 1, 1, 1};
+	//CheckBoxData = {};
 	ReportData = {};
-	ReportHeaders = {};
+	//ReportHeaders = {};
 	FilterStrings = {};
 
-
-	CheckBoxData[LIBPART_CHECKBOX]		= GetRegInt("LibraryPartData");
-	CheckBoxData[ELEMENT_CHECKBOX]		= GetRegInt("IncludeElementData");
-	CheckBoxData[SEO_CHECKBOX]			= GetRegInt("IncludeSEOData");
-	CheckBoxData[NAVIGATOR_CHECKBOX]	= GetRegInt("IncludeNavigatorData");
-	CheckBoxData[LAYER_CHECKBOX]		= GetRegInt("IncludeLayerData");
-	CheckBoxData[PROFILE_CHECKBOX]		= GetRegInt("IncludeProfileData");
-	CheckBoxData[ZERO_CHECKBOX]	= GetRegInt(GS::UniString("IncludeZeroValuedData"));
+	CheckBoxData.Put(LIBPART_CHECKBOX,	GetRegInt("LibraryPartData"));
+	CheckBoxData.Put(ELEMENT_CHECKBOX,	GetRegInt("IncludeElementData"));
+	CheckBoxData.Put(SEO_CHECKBOX,		GetRegInt("IncludeSEOData"));
+	CheckBoxData.Put(NAVIGATOR_CHECKBOX,GetRegInt("IncludeNavigatorData"));
+	CheckBoxData.Put(LAYER_CHECKBOX,	GetRegInt("IncludeLayerData"));
+	CheckBoxData.Put(PROFILE_CHECKBOX,	GetRegInt("IncludeProfileData"));
+	CheckBoxData.Put(COUNT_INSTANCES,	GetRegInt("CountInstances"));
+	CheckBoxData.Put(ZERO_CHECKBOX,		GetRegInt(GS::UniString("IncludeZeroValuedData")));
 }
 
 SettingsSingleton::~SettingsSingleton()
@@ -30,6 +30,7 @@ SettingsSingleton::~SettingsSingleton()
 	SetRegInt(CheckBoxData[NAVIGATOR_CHECKBOX],	"IncludeNavigatorData");
 	SetRegInt(CheckBoxData[LAYER_CHECKBOX],		"IncludeLayerData");
 	SetRegInt(CheckBoxData[PROFILE_CHECKBOX],	"IncludeProfileData");
+	SetRegInt(CheckBoxData[COUNT_INSTANCES],	"CountInstances");
 	SetRegInt(CheckBoxData[ZERO_CHECKBOX], GS::UniString("IncludeZeroValuedData"));
 }
 

@@ -1,6 +1,9 @@
-#include	"Attribute.hpp"
-#include	"../Table/Table.hpp"
-#include	"../SettingsSingleton.hpp"
+﻿#include	"Attribute.hpp"
+#include	"Table.hpp"
+#include	"SettingsSingleton.hpp"
+#include	"APIdefs_Elements.h"
+#include	"APIdefs_Attributes.h"
+
 
 bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
@@ -46,11 +49,30 @@ AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_a
 	else throw 1;	//TODO
 }
 
+AbstractData* CountLayerContents(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
+{
+	LayerReportObject* result = new LayerReportObject;
+
+	const auto idx = i_apiAttrib.layer.head.index;
+	//auto attrs = static_cast<AttributeData*>(i_attrs);
+	auto attrs = (AttributeData*)(i_attrs);
+	auto lct = attrs->attributeUsage.layerContentTable;
+
+	if (lct.ContainsKey(idx))
+	{
+		result->nInstances = lct[idx];
+		result->name = GS::UniString(i_apiAttrib.layer.head.name);
+	}
+
+	return result;
+}
+
+
 // -----------------------------------------------------------------------------
 //  List attributes
 // -----------------------------------------------------------------------------
 
-void ProcessAttributes()
+void ProcessAttributes(AttributeUsage& i_attributeUsage)
 {
 	AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID));
 
@@ -60,8 +82,20 @@ void ProcessAttributes()
 		AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);
 	}
 
-	AddItem("Layer data", "Number of Materials", CountAttributes(API_MaterialID));
-	AddItem("Layer data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture));
+	GS::Array<AbstractData*> lLayers;
+
+	AttributeData ad{ i_attributeUsage };
+
+	lLayers = ListAttributes(API_LayerID, CountLayerContents, &ad);
+
+	for (AbstractData* lay : lLayers)
+	{
+		LayerReportObject* _lay = (LayerReportObject*)lay;
+		AddItem("Texture data", _lay ->name, (UInt16)_lay->nInstances);
+	}
+
+	AddItem("Material data", "Number of Materials", CountAttributes(API_MaterialID));
+	AddItem("Material data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture));
 
 	GS::Array<AbstractData*> lTextures;
 
@@ -110,7 +144,8 @@ UInt32 CountAttributes(
 
 GS::Array<AbstractData*> ListAttributes(
 	const API_AttrTypeID i_attrType,
-	AbstractData* (*i_func)(const API_Attribute&, AbstractData*) /*= nullptr*/)
+	AbstractData* (*i_func)(const API_Attribute&, AbstractData*) /*= nullptr*/,
+	AbstractData* i_attrs /*= nullptr*/)
 {
 	API_Attribute			attrib;
 	API_AttributeIndex		count;
@@ -135,7 +170,7 @@ GS::Array<AbstractData*> ListAttributes(
 
 				if (err == NoError)
 				{
-					resultThis = i_func(attrib, nullptr);
+					resultThis = i_func(attrib, i_attrs);
 					io_attrs.Push(resultThis);
 				}
 			}

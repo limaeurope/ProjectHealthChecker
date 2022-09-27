@@ -6,7 +6,7 @@
 #include	"../APICommon.h"
 #include	"FileSystem.hpp"
 #include	"DGFileDialog.hpp"
-#include	"../DataStructs.hpp"
+#include	"../Data/DataStructs.hpp"
 
 
 // -----------------------------------------------------------------------------

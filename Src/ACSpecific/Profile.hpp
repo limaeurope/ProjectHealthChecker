@@ -1,7 +1,7 @@
 #include	"../APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"../APICommon.h"
-#include	"../DataStructs.hpp"
+#include	"../Data/DataStructs.hpp"
 #include	"Attribute.hpp"
 
 
