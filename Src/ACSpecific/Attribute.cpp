@@ -76,7 +76,7 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 {
 	AddItem("Layer data", "Number of Layers", CountAttributes(API_LayerID));
 
-	for (auto sFilter : SettingsSingleton::GetInstance().FilterStrings)
+	for (auto sFilter : SETTINGS().FilterStrings)
 	{
 		auto iCount = CountAttributes(API_LayerID, NameContains, &StringData{ sFilter });
 		AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);

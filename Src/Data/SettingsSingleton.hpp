@@ -15,7 +15,7 @@
 #define PROFILE_CHECKBOX	7
 #define ZERO_CHECKBOX		8
 #define COUNT_INSTANCES		9
-#define MAX_CHECKBOX		COUNT_INSTANCES		
+#define CHECKBOX_MAX		COUNT_INSTANCES		
 #define IMPORT_BUTTON		10
 
 class SettingsSingleton {
@@ -37,6 +37,7 @@ public:
 };
 
 static std::mutex _mutex;
+extern SettingsSingleton& (*SETTINGS)();
 
 #endif // !_SETTINGSSINGLETON_HPP
 

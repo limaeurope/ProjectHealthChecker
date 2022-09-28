@@ -13,7 +13,7 @@ void ProcessNavigatorItems()
 		{
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
 
-			if (iNavItems > 0 || SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
+			if (iNavItems > 0 || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
 				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
 			}
@@ -22,7 +22,7 @@ void ProcessNavigatorItems()
 
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
 
-			if (iNavItems > 0 || SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
+			if (iNavItems > 0 || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
 				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
 			}

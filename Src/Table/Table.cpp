@@ -16,19 +16,19 @@ void AddItem(const GS::UniString& i_sTable,
 	const UInt32 i_iItemNumber)
 	// Adds an item to both the UI report and the .xlsx output
 {
-	if (!i_iItemNumber && !SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX]) return;
+	if (!i_iItemNumber && !SETTINGS().CheckBoxData[ZERO_CHECKBOX]) return;
 
 	char sItem[256], _sNumberOfWalls[256], sInt[256];
 
 	itoa(i_iItemNumber, sInt, 10);
 
-	if (!SettingsSingleton::GetInstance().ReportData.ContainsKey(i_sTable))
+	if (!SETTINGS().ReportData.ContainsKey(i_sTable))
 	{
 		ReportData _rd{};
-		SettingsSingleton::GetInstance().ReportData.Add(i_sTable, _rd);
+		SETTINGS().ReportData.Add(i_sTable, _rd);
 	}
 
-	SettingsSingleton::GetInstance().ReportData[i_sTable].Add(i_sItem, i_iItemNumber);
+	SETTINGS().ReportData[i_sTable].Add(i_sItem, i_iItemNumber);
 
 	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
 	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);

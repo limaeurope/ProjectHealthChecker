@@ -38,7 +38,7 @@ AbstractData* GetArcNumber(const API_Attribute& i_apiAttrib, AbstractData* i_att
 void ProcessProfiles()
 {
 	ResultSheet rs{ "Profile data" };
-	SettingsSingleton::GetInstance().ResultTable.sheetDict.Add(rs.sName, rs);
+	SETTINGS().ResultTable.sheetDict.Add(rs.sName, rs);
 	rs.header = GS::Array<GS::UniString>{ "Profile data", "Number of Profiles" };
 
 	GS::Array<AbstractData*> profileS = ListAttributes(API_ProfileID, GetArcNumber);

@@ -32,6 +32,7 @@
 DGMessageData								cntlDlgData;	//Dummy
 static GS::HashTable<GS::UniString,	UInt32> iLibPartInstanceS{};
 static ResultTable							resultTable;
+
 //static AttributeUsage						attributeUsage;
 // ----------------------------------  -------------------------------
 
@@ -65,15 +66,14 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	{
 		GSErrCode err;
 
-		auto settings = SettingsSingleton::GetInstance().CheckBoxData;
 		AttributeUsage attributeUsage{};
 
-		if (settings[LIBPART_CHECKBOX]) ProcessLibParts(iLibPartInstanceS);
-		if (settings[ELEMENT_CHECKBOX]) ProcessElements();
-		if (settings[SEO_CHECKBOX]) ProcessSEO();
-		if (settings[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems();
-		if (settings[LAYER_CHECKBOX]) ProcessAttributes(attributeUsage);
-		if (settings[PROFILE_CHECKBOX]) ProcessProfiles();
+		if (SETTINGS().CheckBoxData[LIBPART_CHECKBOX]) ProcessLibParts(iLibPartInstanceS);
+		if (SETTINGS().CheckBoxData[ELEMENT_CHECKBOX]) ProcessElements();
+		if (SETTINGS().CheckBoxData[SEO_CHECKBOX]) ProcessSEO();
+		if (SETTINGS().CheckBoxData[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems();
+		if (SETTINGS().CheckBoxData[LAYER_CHECKBOX]) ProcessAttributes(attributeUsage);
+		if (SETTINGS().CheckBoxData[PROFILE_CHECKBOX]) ProcessProfiles();
 
 		break;
 	}
@@ -105,8 +105,8 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 	{
 		GSErrCode err;
 
-		for (UInt16 i = LIBPART_CHECKBOX; i <= MAX_CHECKBOX; i++)
-			DGSetItemValLong(dialID, i, SettingsSingleton::GetInstance().CheckBoxData[i]);
+		for (UInt16 i = LIBPART_CHECKBOX; i <= CHECKBOX_MAX; i++)
+			DGSetItemValLong(dialID, i, SETTINGS().CheckBoxData[i]);
 		break;
 	}
 	case DG_MSG_CLICK:
@@ -131,8 +131,8 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		case ZERO_CHECKBOX:
 		case COUNT_INSTANCES:
 			//TODO Refresh the dialog
-			for (UInt16 i = LIBPART_CHECKBOX; i <= MAX_CHECKBOX; i++)
-				SettingsSingleton::GetInstance().CheckBoxData[i] = DGGetItemValLong(dialID, i);
+			for (UInt16 i = LIBPART_CHECKBOX; i <= CHECKBOX_MAX; i++)
+				SETTINGS().CheckBoxData[i] = DGGetItemValLong(dialID, i);
 			break;
 		}
 		break;

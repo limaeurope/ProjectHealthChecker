@@ -14,7 +14,7 @@ void ProcessLibParts(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS)
 
 	for (auto libPart : io_iLibPartInstanceS)
 	{
-		if (!(*libPart.value) || !SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
+		if (!(*libPart.value) || !SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			AddItem("Library Part Instances", *libPart.key, *libPart.value);
 	}
 

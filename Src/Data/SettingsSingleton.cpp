@@ -4,6 +4,7 @@
 #include	"WinReg.hpp"
 
 const APITypeDict SettingsSingleton::ApiTypeDict = APITypeDict();
+SettingsSingleton& (*SETTINGS)() = SettingsSingleton::GetInstance;
 
 SettingsSingleton::SettingsSingleton()
 {
