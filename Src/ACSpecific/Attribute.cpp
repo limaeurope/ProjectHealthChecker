@@ -54,7 +54,6 @@ AbstractData* CountLayerContents(const API_Attribute& i_apiAttrib, AbstractData*
 	LayerReportObject* result = new LayerReportObject;
 
 	const auto idx = i_apiAttrib.layer.head.index;
-	//auto attrs = static_cast<AttributeData*>(i_attrs);
 	auto attrs = (AttributeData*)(i_attrs);
 	auto lct = attrs->attributeUsage.layerContentTable;
 
@@ -65,6 +64,45 @@ AbstractData* CountLayerContents(const API_Attribute& i_apiAttrib, AbstractData*
 	}
 
 	return result;
+}
+
+template <typename T>
+AbstractData* CountAttributeContents(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
+{
+	AttributeReportObject* result = new AttributeReportObject;
+
+	GS::HashTable<T, int>  t = ((StructDefObject<T>*)i_attrs)->table;
+	T i = (T)i_apiAttrib.header.index;
+	result->id = i;
+	result->name = GS::UniString(i_apiAttrib.header.name);
+	if (t.ContainsKey(i))
+		result->nInstances = t[i];
+	else
+		result->nInstances = 0;
+
+	return result;
+}
+
+template<typename T>
+void AddAttributeListToTable(API_AttrTypeID i_attrID, GS::HashTable<T, int> i_table, GS::UniString i_sTable, bool i_hasName = true)
+{
+	GS::Array<AbstractData*> resultArray;
+
+	resultArray = ListAttributes(i_attrID, CountAttributeContents<T>, &StructDefObject<T> {i_table});
+
+	for (AbstractData* attrib: resultArray)
+	{
+		AttributeReportObject* _attrib = (AttributeReportObject*)attrib;
+
+		if (i_hasName)
+			AddItem(i_sTable, GS::UniString(_attrib->name), (UInt16)_attrib->nInstances);
+		else
+		{
+			char sAttrib[4];
+			itoa(_attrib->id, sAttrib, 10);
+			AddItem(i_sTable, GS::UniString(sAttrib), (UInt16)_attrib->nInstances);
+		}
+	}
 }
 
 
@@ -82,20 +120,19 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 		AddItem("Layer data", "Number of Layers containing the string \"" + sFilter + "\"", iCount);
 	}
 
-	GS::Array<AbstractData*> lLayers;
-
 	AttributeData ad{ i_attributeUsage };
+
+
+	GS::Array<AbstractData*> lLayers;
 
 	lLayers = ListAttributes(API_LayerID, CountLayerContents, &ad);
 
 	for (AbstractData* lay : lLayers)
 	{
 		LayerReportObject* _lay = (LayerReportObject*)lay;
-		AddItem("Texture data", _lay ->name, (UInt16)_lay->nInstances);
+		AddItem("Layer data", _lay ->name, (UInt16)_lay->nInstances);
 	}
 
-	AddItem("Material data", "Number of Materials", CountAttributes(API_MaterialID));
-	AddItem("Material data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture));
 
 	GS::Array<AbstractData*> lTextures;
 
@@ -105,8 +142,20 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 	{
 		FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
 		AddItem("Texture data", _tex->name, (UInt16)_tex->size);
-		delete tex;
 	}
+
+
+	AddAttributeListToTable<short>(API_PenID, i_attributeUsage.penUsageTable, "Pen data", false);
+	AddAttributeListToTable<API_AttributeIndex>(API_LinetypeID, i_attributeUsage.ltUsageTable, "Linetype data");
+	AddAttributeListToTable<API_AttributeIndex>(API_FilltypeID, i_attributeUsage.fillUsageTable, "Fill data");
+	AddAttributeListToTable<API_AttributeIndex>(API_MaterialID, i_attributeUsage.surfUsageTable, "Surface data");
+	AddAttributeListToTable<API_AttributeIndex>(API_BuildingMaterialID, i_attributeUsage.buildMatUsageTable, "Building material data");
+	AddAttributeListToTable<API_AttributeIndex>(API_CompWallID, i_attributeUsage.compositeUsageTable, "Composite data");
+	AddAttributeListToTable<API_AttributeIndex>(API_ProfileID, i_attributeUsage.profileUsageTable, "Profile data");
+	AddAttributeListToTable<API_AttributeIndex>(API_ZoneCatID, i_attributeUsage.zoneUsageTable, "Zone data");
+
+	AddItem("Material data", "Number of Materials", CountAttributes(API_MaterialID));
+	AddItem("Material data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture));
 }
 
 UInt32 CountAttributes(

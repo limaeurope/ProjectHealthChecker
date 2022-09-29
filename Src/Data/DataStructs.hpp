@@ -61,4 +61,21 @@ struct LayerReportObject: AbstractData
 };
 
 
+struct AttributeReportObject: AbstractData
+{
+	GS::UniString name;
+	short id;
+	int nInstances;
+};
+
+
+template<typename T>
+struct StructDefObject: AbstractData
+{
+	GS::HashTable<T, int>  table;
+	StructDefObject(GS::HashTable<T, int> t) : table(t) {};
+};
+
+
 #endif	//_DATASTRUCTS_HPP
+
