@@ -1,11 +1,12 @@
 #include	"Table.hpp"
 #include	"SettingsSingleton.hpp"
 
-//void SetHeader(const GS::UniString& i_sTable, const ReportDataHeader& reportDataHeader, CntlDlgData& io_cntlDlgData)
-//{
-//	if (io_cntlDlgData.reportHeaders.ContainsKey(i_sTable)
-//		for()
-//}
+void SetHeader(const GS::UniString& i_sTable, const ReportDataHeader& i_reportDataHeader)
+{
+	if (!SETTINGS().ReportHeaderS.ContainsKey(i_sTable))
+		SETTINGS().ReportHeaderS.Add(i_sTable, i_reportDataHeader);
+	SETTINGS().ReportHeaderS[i_sTable] = i_reportDataHeader;
+}
 
 //void AddSum(const GS::UniString& i_sTable) {
 //	//TODO

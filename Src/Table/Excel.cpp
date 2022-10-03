@@ -77,8 +77,11 @@ void	Do_ExportReportToExcel()
 		libxl::Sheet* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(_k));
 		sheet->setCol(0, 1, 50.0);
 
-		GS::Array<GS::UniString> titles =
-		{ "Object", "Number" };
+		GS::Array<GS::UniString> titles;
+		if (SETTINGS().ReportHeaderS.ContainsKey(*item.key))
+			titles = SETTINGS().ReportHeaderS[*item.key];
+		else
+			titles = { "Object", "Number" };
 
 		for (UIndex ii = 0; ii < titles.GetSize(); ++ii) {
 			sheet->writeStr(0, ii, UNISTR_TO_LIBXLSTR(titles[ii]));

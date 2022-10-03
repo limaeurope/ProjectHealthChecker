@@ -9,11 +9,14 @@ void ProcessNavigatorItems()
 	short iNavItems = 0;
 
 	for (UInt16 iMT = 1; iMT < ac_mapTypes.GetSize(); iMT++)
+	{
+		SetHeader(ac_mapTypes[iMT], ReportDataHeader{ "Navigator location name", "Number of subelements" });
+
 		for (UInt16 iNIT = 1; iNIT < ac_navItemTypes.GetSize(); iNIT++)
 		{
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
 
-			if (iNavItems > 0 || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
+			if (iNavItems || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
 				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
 			}
@@ -22,11 +25,12 @@ void ProcessNavigatorItems()
 
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
 
-			if (iNavItems > 0 || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
+			if (iNavItems || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
-				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + "Story", iNavItems);
+				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + " Story", iNavItems);
 			}
 		}
+	}
 }
 
 

@@ -15,9 +15,12 @@ struct CntlDlgData {
 	Int32 iAddZeroValues;
 	GS::Array<Int32>	CheckBoxData{};
 	GS::HashTable<GS::UniString, ReportData> ReportData;
-	GS::HashTable<GS::UniString, ReportDataHeader> reportHeaders;
+	GS::HashTable<GS::UniString, ReportDataHeader> ReportHeaderS;
 	GS::HashSet<GS::UniString> filterStrings;
 };
+
+
+//----------------------------------------------------------------
 
 
 struct AbstractData {};

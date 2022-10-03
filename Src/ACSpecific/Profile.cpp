@@ -43,6 +43,8 @@ void ProcessProfiles()
 
 	GS::Array<AbstractData*> profileS = ListAttributes(API_ProfileID, GetArcNumber);
 
+	SetHeader("Profile data", ReportDataHeader{ "Profile name", "Number of arcs" });
+
 	for (AbstractData* prof : profileS)
 	{
 		PolygonReportObject* _prof = (PolygonReportObject*)prof;

@@ -139,6 +139,8 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 		AddItem("Layer data", _lay ->name, (UInt16)_lay->nInstances);
 	}
 
+	SetHeader("Layer data", ReportDataHeader{ "Layer name", "Number of objects on layer" });
+
 
 	GS::Array<AbstractData*> lTextures;
 
@@ -150,15 +152,32 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 		AddItem("Texture data", _tex->name, (UInt16)_tex->size);
 	}
 
+	SetHeader("Texture data", ReportDataHeader{ "Texture name", "Size in Bytes" });
+
 
 	AddAttributeListToTable<short>(API_PenID, i_attributeUsage.penUsageTable, "Pen data", false);
+	SetHeader("Pen data", ReportDataHeader{ "Pen number", "Number of user objects and attributes" });
+
 	AddAttributeListToTable<API_AttributeIndex>(API_LinetypeID, i_attributeUsage.ltUsageTable, "Linetype data");
+	SetHeader("Linetype data", ReportDataHeader{ "Linetype name", "Number of user objects and attributes" });
+
 	AddAttributeListToTable<API_AttributeIndex>(API_FilltypeID, i_attributeUsage.fillUsageTable, "Fill data");
+	SetHeader("Pen data", ReportDataHeader{ "Fill name", "Number of user objects and attributes" });
+
 	AddAttributeListToTable<API_AttributeIndex>(API_MaterialID, i_attributeUsage.surfUsageTable, "Surface data");
+	SetHeader("Pen data", ReportDataHeader{ "Surface name", "Number of user objects and attributes" });
+
 	AddAttributeListToTable<API_AttributeIndex>(API_BuildingMaterialID, i_attributeUsage.buildMatUsageTable, "Building material data");
+	SetHeader("Pen data", ReportDataHeader{ "Building material name", "Number of user objects and attributes" });
+
 	AddAttributeListToTable<API_AttributeIndex>(API_CompWallID, i_attributeUsage.compositeUsageTable, "Composite data");
+	SetHeader("Pen data", ReportDataHeader{ "Composite name", "Number of user objects and attributes" });
+
 	AddAttributeListToTable<API_AttributeIndex>(API_ProfileID, i_attributeUsage.profileUsageTable, "Profile data");
+	SetHeader("Pen data", ReportDataHeader{ "Profile name", "Number of user objects and attributes" });
+
 	AddAttributeListToTable<API_AttributeIndex>(API_ZoneCatID, i_attributeUsage.zoneUsageTable, "Zone data");
+	SetHeader("Pen data", ReportDataHeader{ "Zone name", "Number of user objects and attributes" });
 
 	AddItem("Material data", "Number of Materials", CountAttributes(API_MaterialID));
 	AddItem("Material data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture));

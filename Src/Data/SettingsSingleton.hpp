@@ -27,7 +27,7 @@ public:
 	static const APITypeDict ApiTypeDict;
 	GS::HashTable<int, Int32> CheckBoxData;
 	GS::HashTable<GS::UniString, ReportData> ReportData;
-	//GS::HashTable<GS::UniString, ReportDataHeader> ReportHeaders;
+	GS::HashTable<GS::UniString, ReportDataHeader> ReportHeaderS;
 	GS::HashSet<GS::UniString> FilterStrings;
 
 	ResultTable	ResultTable;

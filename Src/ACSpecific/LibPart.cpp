@@ -18,6 +18,8 @@ void ProcessLibParts(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS)
 			AddItem("Library Part Instances", *libPart.key, *libPart.value);
 	}
 
+	SetHeader("Library Part Instances", ReportDataHeader{ "Library Part Path", "Number of instances" });
+
 	GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
 
 	for (AbstractData* lp : lLibParts)

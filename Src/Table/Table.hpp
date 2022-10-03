@@ -7,6 +7,7 @@
 #include	"../Data/DataStructs.hpp"
 #include	"DGFileDialog.hpp"
 
+void SetHeader(const GS::UniString& i_sTable, const ReportDataHeader& reportDataHeader);
 
 void AddItem(const GS::UniString& i_sTable, 
 	const GS::UniString& i_sItem, 
