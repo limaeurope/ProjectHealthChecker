@@ -18,7 +18,7 @@ void AddItem(const GS::UniString& i_sTable,
 {
 	if (!i_iItemNumber && !SETTINGS().CheckBoxData[ZERO_CHECKBOX]) return;
 
-	char sItem[256], _sNumberOfWalls[256], sInt[256];
+	char sInt[256];
 
 	itoa(i_iItemNumber, sInt, 10);
 
@@ -30,9 +30,10 @@ void AddItem(const GS::UniString& i_sTable,
 
 	SETTINGS().ReportData[i_sTable].Add(i_sItem, i_iItemNumber);
 
-	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
-	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
-	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
+	GS::UniString us = GS::UniString(i_sItem) + ": " + GS::UniString(sInt);
+	auto _ul = us.GetLength();
+	DGListInsertItem(32400, 2, DG_LIST_BOTTOM); 
+	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, us);
 }
 
 //void AddList(const GS::UniString& i_sTable, 

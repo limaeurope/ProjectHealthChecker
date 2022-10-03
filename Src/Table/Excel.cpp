@@ -60,7 +60,7 @@ void	Do_ImportNamesFromExcel()
 			for (int row = sheet->firstRow(); row < sheet->lastRow(); ++row)
 			{
 				if (const wchar_t* sFilter = sheet->readStr(row, 0))
-					SettingsSingleton::GetInstance().FilterStrings.Add(GS::UniString(sFilter));
+					SETTINGS().FilterStrings.Add(GS::UniString(sFilter));
 			}
 		}
 
@@ -72,7 +72,7 @@ void	Do_ExportReportToExcel()
 {
 	libxl::Book* book = xlCreateXMLBook();
 
-	for (auto item : SettingsSingleton::GetInstance().ReportData) {
+	for (auto item : SETTINGS().ReportData) {
 		const GS::UniString _k = *item.key;
 		libxl::Sheet* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(_k));
 		sheet->setCol(0, 1, 50.0);
@@ -88,7 +88,7 @@ void	Do_ExportReportToExcel()
 
 		for (auto iitem : *item.value)
 		{
-			if (iitem.value > 0 || SettingsSingleton::GetInstance().CheckBoxData[ZERO_CHECKBOX])
+			if (iitem.value || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
 				sheet->writeStr(ii, 0, iitem.key->ToUStr());
 				sheet->writeNum(ii++, 1, *iitem.value);

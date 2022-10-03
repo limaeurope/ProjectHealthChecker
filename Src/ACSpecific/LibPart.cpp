@@ -10,7 +10,7 @@ void ProcessLibParts(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS)
 
 	lLibParts = ListLibParts();
 
-	CountLibPartInstances(io_iLibPartInstanceS);
+	CountLibPartInstances(&io_iLibPartInstanceS);
 
 	for (auto libPart : io_iLibPartInstanceS)
 	{
@@ -127,7 +127,7 @@ inline GS::UniString GetLibPartName(const API_LibPart& i_libPart)
 	return sResult;
 }
 
-void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS)
+void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* io_iLibPartInstanceS)
 {
 	GS::Array<API_Guid> libPartGuidS;
 	API_LibPart			libPart;
@@ -152,7 +152,7 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInst
 		libPart.index = i;
 		err = ACAPI_LibPart_Get(&libPart);
 		if (!err && libPart.isPlaceable) {
-			io_iLibPartInstanceS.Add(GetLibPartName(libPart), 0);
+			io_iLibPartInstanceS->Add(GetLibPartName(libPart), 0);
 		}
 		if (libPart.location != nullptr)
 			delete libPart.location;
@@ -168,7 +168,7 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInst
 			if (err) throw err;
 
 			BNZeroMemory(&libPart, sizeof(API_LibPart));
-			if (element.header.typeID == API_ObjectID
+			if	(element.header.typeID == API_ObjectID
 				|| element.header.typeID == API_LampID)
 			{
 				libPart.index = element.object.libInd;
@@ -185,13 +185,13 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInst
 
 			auto sLibPart = GetLibPartName(libPart);
 
-			if (io_iLibPartInstanceS.ContainsKey(sLibPart))
+			if (io_iLibPartInstanceS->ContainsKey(sLibPart))
 			{
-				io_iLibPartInstanceS[sLibPart]++;
+				(*io_iLibPartInstanceS)[sLibPart]++;
 			}
 			else
 			{
-				io_iLibPartInstanceS.Add(sLibPart, 1);
+				io_iLibPartInstanceS->Add(sLibPart, 1);
 			}
 		}
 		catch (...)

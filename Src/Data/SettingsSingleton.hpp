@@ -16,7 +16,7 @@
 #define ZERO_CHECKBOX		8
 #define COUNT_INSTANCES		9
 #define CHECKBOX_MAX		COUNT_INSTANCES		
-#define IMPORT_BUTTON		10
+#define IMPORT_BUTTON		CHECKBOX_MAX + 1
 
 class SettingsSingleton {
 	SettingsSingleton();
