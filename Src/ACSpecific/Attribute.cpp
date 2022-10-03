@@ -5,6 +5,10 @@
 #include	"APIdefs_Attributes.h"
 
 
+// -----------------------------------------------------------------------------
+//  As parameter called functions
+// -----------------------------------------------------------------------------
+
 bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
 	UNUSED_PARAMETER(i_attrs);
@@ -82,6 +86,8 @@ AbstractData* CountAttributeContents(const API_Attribute& i_apiAttrib, AbstractD
 
 	return result;
 }
+
+// -----------------------------------------------------------------------------
 
 template<typename T>
 void AddAttributeListToTable(API_AttrTypeID i_attrID, GS::HashTable<T, int> i_table, GS::UniString i_sTable, bool i_hasName = true)
