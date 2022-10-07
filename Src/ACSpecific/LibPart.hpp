@@ -8,7 +8,7 @@
 #include	"../Data/DataStructs.hpp"
 
 
-void ProcessLibParts(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS);
+void ProcessLibParts();
 
 inline GS::Array<AbstractData*> ListLibParts();
 

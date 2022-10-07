@@ -63,7 +63,7 @@ AbstractData* CountLayerContents(const API_Attribute& i_apiAttrib, AbstractData*
 
 	if (lct.ContainsKey(idx))
 	{
-		result->nInstances = lct[idx];
+		result->nInstances = lct[idx][0];
 		result->name = GS::UniString(i_apiAttrib.layer.head.name);
 	}
 
@@ -75,14 +75,16 @@ AbstractData* CountAttributeContents(const API_Attribute& i_apiAttrib, AbstractD
 {
 	AttributeReportObject* result = new AttributeReportObject;
 
-	GS::HashTable<T, int>  t = ((StructDefObject<T>*)i_attrs)->table;
+	GS::HashTable<T, ReportRow>  t = ((StructDefObject<T>*)i_attrs)->table;
 	T i = (T)i_apiAttrib.header.index;
 	result->id = i;
 	result->name = GS::UniString(i_apiAttrib.header.name);
 	if (t.ContainsKey(i))
-		result->nInstances = t[i];
+	{
+		result->reportRow = t[i];
+	}
 	else
-		result->nInstances = 0;
+		result->reportRow = ReportRow{ 0 };
 
 	return result;
 }
@@ -90,23 +92,23 @@ AbstractData* CountAttributeContents(const API_Attribute& i_apiAttrib, AbstractD
 // -----------------------------------------------------------------------------
 
 template<typename T>
-void AddAttributeListToTable(API_AttrTypeID i_attrID, GS::HashTable<T, int> i_table, GS::UniString i_sTable, bool i_hasName = true)
+void AddAttributeListToTable(API_AttrTypeID i_attrID, GS::HashTable<T, ReportRow> i_table, GS::UniString i_sTable, bool i_hasName = true)
 {
 	GS::Array<AbstractData*> resultArray;
 
-	resultArray = ListAttributes(i_attrID, CountAttributeContents<T>, &StructDefObject<T> {i_table});
+	resultArray = ListAttributes(i_attrID, CountAttributeContents<T>, &StructDefObject<T> (i_table));
 
 	for (AbstractData* attrib: resultArray)
 	{
 		AttributeReportObject* _attrib = (AttributeReportObject*)attrib;
 
 		if (i_hasName)
-			AddItem(i_sTable, GS::UniString(_attrib->name), (UInt16)_attrib->nInstances);
+			SETTINGS().ResultTable.sheetDict[i_sTable].AddItem(i_sTable, GS::UniString(_attrib->name), _attrib->reportRow.ToArray());
 		else
 		{
 			char sAttrib[4];
 			itoa(_attrib->id, sAttrib, 10);
-			AddItem(i_sTable, GS::UniString(sAttrib), (UInt16)_attrib->nInstances);
+			SETTINGS().ResultTable.sheetDict[i_sTable].AddItem(i_sTable, GS::UniString(sAttrib), _attrib->reportRow.ToArray());
 		}
 	}
 }
@@ -154,30 +156,31 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 
 	SetHeader("Texture data", ReportDataHeader{ "Texture name", "Size in Bytes" });
 
+	#define REPORT_ROWS "Number of user objects", "Number of user attributes", "Number of user library elements"
 
 	AddAttributeListToTable<short>(API_PenID, i_attributeUsage.penUsageTable, "Pen data", false);
-	SetHeader("Pen data", ReportDataHeader{ "Pen number", "Number of user objects and attributes" });
+	SetHeader("Pen data", ReportDataHeader{ "Pen number", REPORT_ROWS});
 
 	AddAttributeListToTable<API_AttributeIndex>(API_LinetypeID, i_attributeUsage.ltUsageTable, "Linetype data");
-	SetHeader("Linetype data", ReportDataHeader{ "Linetype name", "Number of user objects and attributes" });
+	SetHeader("Linetype data", ReportDataHeader{ "Linetype name", REPORT_ROWS});
 
 	AddAttributeListToTable<API_AttributeIndex>(API_FilltypeID, i_attributeUsage.fillUsageTable, "Fill data");
-	SetHeader("Pen data", ReportDataHeader{ "Fill name", "Number of user objects and attributes" });
+	SetHeader("Fill data", ReportDataHeader{ "Fill name", REPORT_ROWS});
 
 	AddAttributeListToTable<API_AttributeIndex>(API_MaterialID, i_attributeUsage.surfUsageTable, "Surface data");
-	SetHeader("Pen data", ReportDataHeader{ "Surface name", "Number of user objects and attributes" });
+	SetHeader("Surface data", ReportDataHeader{ "Surface name", REPORT_ROWS});
 
 	AddAttributeListToTable<API_AttributeIndex>(API_BuildingMaterialID, i_attributeUsage.buildMatUsageTable, "Building material data");
-	SetHeader("Pen data", ReportDataHeader{ "Building material name", "Number of user objects and attributes" });
+	SetHeader("Building data", ReportDataHeader{ "Building material name", REPORT_ROWS});
 
 	AddAttributeListToTable<API_AttributeIndex>(API_CompWallID, i_attributeUsage.compositeUsageTable, "Composite data");
-	SetHeader("Pen data", ReportDataHeader{ "Composite name", "Number of user objects and attributes" });
+	SetHeader("Composite data", ReportDataHeader{ "Composite name", REPORT_ROWS});
 
 	AddAttributeListToTable<API_AttributeIndex>(API_ProfileID, i_attributeUsage.profileUsageTable, "Profile data");
-	SetHeader("Pen data", ReportDataHeader{ "Profile name", "Number of user objects and attributes" });
+	SetHeader("Profile data", ReportDataHeader{ "Profile name", REPORT_ROWS});
 
 	AddAttributeListToTable<API_AttributeIndex>(API_ZoneCatID, i_attributeUsage.zoneUsageTable, "Zone data");
-	SetHeader("Pen data", ReportDataHeader{ "Zone name", "Number of user objects and attributes" });
+	SetHeader("Zone data", ReportDataHeader{ "Zone name", REPORT_ROWS});
 
 	AddItem("Material data", "Number of Materials", CountAttributes(API_MaterialID));
 	AddItem("Material data", "Number of Materials with Texture", CountAttributes(API_MaterialID, HasTexture));

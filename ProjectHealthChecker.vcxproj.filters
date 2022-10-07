@@ -49,6 +49,15 @@
     <ClCompile Include="Src\Utils\Utils.cpp">
       <Filter>Sources\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Data\DataStructs.cpp">
+      <Filter>Sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Table\LibXLExtended.cpp">
+      <Filter>Sources\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ReportRow.cpp">
+      <Filter>Sources\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="$(ACDevKitModules)\GSRoot\Win\GSRootImp.lib">
@@ -69,9 +78,6 @@
     <Library Include="$(ACDevKitModules)\ObjectDatabase\Win\ObjectDatabaseImp.LIB">
       <Filter>Libs</Filter>
     </Library>
-    <Library Include="$(ACDevKitSupport)\Lib\Win\ACAP_STATD.lib">
-      <Filter>Libs</Filter>
-    </Library>
     <Library Include="$(ACDevKitModules)\RS\Win\RSImp.lib">
       <Filter>Libs</Filter>
     </Library>
@@ -82,6 +88,9 @@
       <Filter>Libs</Filter>
     </Library>
     <Library Include="$(ACDevKitModules)\VectorImage\Win\VectorImageImp.LIB">
+      <Filter>Libs</Filter>
+    </Library>
+    <Library Include="$(ACDevKitSupport)\Lib\Win\ACAP_STATD.lib">
       <Filter>Libs</Filter>
     </Library>
   </ItemGroup>
@@ -179,6 +188,12 @@
     </ClInclude>
     <ClInclude Include="Src\Utils\Utils.hpp">
       <Filter>Sources\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Table\LibXLExtended.hpp">
+      <Filter>Sources\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ReportRow.hpp">
+      <Filter>Sources\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"../APICommon.h"
 #include	"LibXL/libxl.h"
+#include	"ReportRow.hpp"
 
 struct Row {
 	GS::UniString	textField;
@@ -19,20 +20,24 @@ public:
 	GS::Array<GS::UniString>	header;
 	GS::Array<Row>				rowS;
 	GS::UniString				sName;
-	//GS::Array<Int32>			sumS;
-	//bool						isSumAtTheTop;
-
-	//void AddHeader(GS::Array<GS::UniString> i_headerS);
-	//void AddSum(const GS::UniString& i_sTable);
+	
 	void AddItem(const GS::UniString& i_sTable,
 		const GS::UniString& i_sItem,
-		const UInt32 i_iItemNumber);
+		const GS::Array<UInt32> i_iItemNumber,
+		const UInt16 i_pos = 0);
+	void ResultSheet::AddItem(const GS::UniString& i_sTable,
+		const GS::UniString& i_sItem,
+		const UInt32 i_iItemNumber,
+		const UInt16 i_pos = 0);
+	void ResultSheet::AddItem(const GS::UniString& i_sTable,
+		const GS::UniString& i_sItem,
+		ReportRow i_reportRow,
+		const UInt16 i_pos);
 };
 
 class ResultTable {
 public:
 	GS::HashTable<GS::UniString, ResultSheet>	sheetDict;
-	//void AddSheet(GS::UniString name, ResultSheet sheet) { sheetDict.Add(name, sheet); }
 	void ExportReportToExcel();
 };
 

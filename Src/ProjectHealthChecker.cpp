@@ -29,9 +29,9 @@
 
 // ---------------------------------- Variables --------------------------------
 
-DGMessageData								cntlDlgData;	//Dummy
-static GS::HashTable<GS::UniString,	UInt32> iLibPartInstanceS{};
-static ResultTable							resultTable;
+DGMessageData								cntlDlgData;	//Dummy, unused
+//static GS::HashTable<GS::UniString,	UInt32> iLibPartInstanceS{};
+//static ResultTable							resultTable;
 
 //static AttributeUsage						attributeUsage;
 // ----------------------------------  -------------------------------
@@ -68,7 +68,7 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 
 		AttributeUsage attributeUsage{};
 
-		if (SETTINGS().CheckBoxData[LIBPART_CHECKBOX]) ProcessLibParts(iLibPartInstanceS);
+		if (SETTINGS().CheckBoxData[LIBPART_CHECKBOX]) ProcessLibParts(/*iLibPartInstanceS*/);
 		if (SETTINGS().CheckBoxData[ELEMENT_CHECKBOX]) ProcessElements();
 		if (SETTINGS().CheckBoxData[SEO_CHECKBOX]) ProcessSEO();
 		if (SETTINGS().CheckBoxData[NAVIGATOR_CHECKBOX]) ProcessNavigatorItems();
@@ -130,7 +130,6 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		case PROFILE_CHECKBOX:
 		case ZERO_CHECKBOX:
 		case COUNT_INSTANCES:
-			//TODO Refresh the dialog
 			for (UInt16 i = LIBPART_CHECKBOX; i <= CHECKBOX_MAX; i++)
 				SETTINGS().CheckBoxData[i] = DGGetItemValLong(dialID, i);
 			break;

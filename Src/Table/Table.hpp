@@ -11,11 +11,7 @@ void SetHeader(const GS::UniString& i_sTable, const ReportDataHeader& reportData
 
 void AddItem(const GS::UniString& i_sTable, 
 	const GS::UniString& i_sItem, 
-	const UInt32 i_iItemNumber);
-
-//void AddList(const GS::UniString& i_sTable, 
-//	const GS::UniString& i_sItem, 
-//	const UInt32 i_iItemNumber, 
-//	CntlDlgData& i_cntlDlgData);
+	const UInt32 i_iItemNumber,
+	const UInt16 i_col = 0);
 #endif //_TABLE_HPP
 

@@ -4,6 +4,7 @@
 #include	"APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
+#include	"ReportRow.hpp"
 
 class AttributeUsageSet
 {
@@ -21,9 +22,9 @@ public:
 	inline void operator+=(AttributeUsageSet& i_other) {Append(i_other);};
 	GS::USize GetSize();
 	AttributeUsageSet(AttributeUsage* i_attributeUsage);
-	//AttributeUsageSet(AttributeUsageSet& i_attributeUsageSet);
 	AttributeUsageSet() {};
 };
+
 
 class AttributeUsage
 {
@@ -35,19 +36,20 @@ class AttributeUsage
 	void GeneralAttributeUsageController();
 	template<typename T>
 	void ProcessAttributeSet(const GS::HashSet<T>& i_set, API_AttrTypeID i_type, AttributeUsageSet& io_todoSet);
-	void AttributeUsage::ProcessParameters(API_Element i_element, AttributeUsageSet* io_attributeUsageSet);
+	void ProcessParameters(API_Element i_element, AttributeUsageSet* io_attributeUsageSet);
 public:
-	GS::HashTable<API_AttributeIndex, int> layerContentTable;
-	GS::HashTable<short, int> penUsageTable;
-	GS::HashTable<API_AttributeIndex, int> ltUsageTable;
-	GS::HashTable<API_AttributeIndex, int> fillUsageTable;
-	GS::HashTable<API_AttributeIndex, int> surfUsageTable;
-	GS::HashTable<API_AttributeIndex, int> buildMatUsageTable;
-	GS::HashTable<API_AttributeIndex, int> compositeUsageTable;
-	GS::HashTable<API_AttributeIndex, int> profileUsageTable;
-	GS::HashTable<API_AttributeIndex, int> zoneUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> layerContentTable;
+	GS::HashTable<short, ReportRow> penUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> ltUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> fillUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> surfUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> buildMatUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> compositeUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> profileUsageTable;
+	GS::HashTable<API_AttributeIndex, ReportRow> zoneUsageTable;
 	AttributeUsage();
 };
+
 
 
 #endif // !ATTRIBUTE_USAGE_HPP

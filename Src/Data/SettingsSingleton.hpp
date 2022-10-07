@@ -18,6 +18,8 @@
 #define CHECKBOX_MAX		COUNT_INSTANCES		
 #define IMPORT_BUTTON		CHECKBOX_MAX + 1
 
+const double COLUMN_WIDTH = 32.0;
+
 class SettingsSingleton {
 	SettingsSingleton();
 	~SettingsSingleton();

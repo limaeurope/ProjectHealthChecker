@@ -1,7 +1,9 @@
 #include	"Excel.hpp"
 #include	"LibXL/libxl.h"
+#include	"LibXLExtended.hpp"
 #include	"SettingsSingleton.hpp"
 #define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
+
 
 // -----------------------------------------------------------------------------
 // Open the selected XLSX file into a library part
@@ -70,31 +72,31 @@ void	Do_ImportNamesFromExcel()
 
 void	Do_ExportReportToExcel()
 {
-	libxl::Book* book = xlCreateXMLBook();
+	BookExtended* book = (BookExtended*)xlCreateXMLBook();
 
-	for (auto item : SETTINGS().ReportData) {
-		const GS::UniString _k = *item.key;
-		libxl::Sheet* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(_k));
-		sheet->setCol(0, 1, 50.0);
+	for (auto itemSheet : SETTINGS().ReportData) {
+		const GS::UniString _k = *itemSheet.key;
+		SheetExtended* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(_k));
+		sheet->setCol(0, 3, COLUMN_WIDTH);
 
 		GS::Array<GS::UniString> titles;
-		if (SETTINGS().ReportHeaderS.ContainsKey(*item.key))
-			titles = SETTINGS().ReportHeaderS[*item.key];
+		if (SETTINGS().ReportHeaderS.ContainsKey(*itemSheet.key))
+			titles = SETTINGS().ReportHeaderS[*itemSheet.key];
 		else
 			titles = { "Object", "Number" };
 
-		for (UIndex ii = 0; ii < titles.GetSize(); ++ii) {
-			sheet->writeStr(0, ii, UNISTR_TO_LIBXLSTR(titles[ii]));
+		for (UIndex itemTitle = 0; itemTitle < titles.GetSize(); ++itemTitle) {
+			sheet->writeStr(0, itemTitle, UNISTR_TO_LIBXLSTR(titles[itemTitle]));
 		}
 
 		UIndex ii = 1;
 
-		for (auto iitem : *item.value)
+		for (auto itemRow : *itemSheet.value)
 		{
-			if (iitem.value || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
+			if (itemRow.value || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
-				sheet->writeStr(ii, 0, iitem.key->ToUStr());
-				sheet->writeNum(ii++, 1, *iitem.value);
+				sheet->writeStr(ii, 0, itemRow.key->ToUStr());
+				sheet->writeNum(ii++, 1, *itemRow.value);
 			}
 		}
 	}

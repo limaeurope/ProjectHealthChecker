@@ -3,31 +3,47 @@
 #include	"APIdefs_LibraryParts.h"
 
 template <typename T>
-void AddAttribute(GS::HashTable<T, int>* io_table,
+void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
 	T i_idx,
 	GS::HashSet <T>* io_set = nullptr,
-	GS::HashSet <T>* io_todoSet = nullptr)
+	GS::HashSet <T>* io_todoSet = nullptr,
+	UInt16 i_col = 0
+	)
 {
 	if (!i_idx) return;
-	if (io_set && io_set->Contains(i_idx))
+	if (io_set != nullptr && io_set->Contains(i_idx))
 		return;
 
 	if (!io_table->ContainsKey(i_idx))
 	{
-		io_table->Put(i_idx, 1);
-		if (io_set)
-			io_set->Add(i_idx);
-		if(io_todoSet)
-			io_todoSet->Add(i_idx);
+		io_table->Put(i_idx, ReportRow{ i_col, 1 });
 	}
 	else
-		(*io_table)[i_idx]++;
+	{
+		(*io_table)[i_idx].Inc(i_col);
+	}
+
+	if (io_set)
+		io_set->Add(i_idx);
+	if (io_todoSet)
+		io_todoSet->Add(i_idx);
 }
 
-void AddAttribute(GS::HashTable<short, int>* io_table,
+template <typename T>
+void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
+	T i_idx,
+	GS::HashSet <T>* io_set,
+	UInt16 i_col
+	)
+{
+	AddAttribute <T>(io_table, i_idx, io_set, nullptr, i_col);
+}
+
+void AddAttribute(GS::HashTable<short, ReportRow>* io_table,
 	API_PenOverrideType i_idx,
 	GS::HashSet <short>* io_set = nullptr,
-	GS::HashSet <short>* io_todoSet = nullptr
+	GS::HashSet <short>* io_todoSet = nullptr,
+	UInt16 i_col = 0
 	)
 {
 	AddAttribute <short> (io_table, i_idx.cutFillBackgroundPen, io_set, io_todoSet);
@@ -54,27 +70,27 @@ void AttributeUsage::ProcessParameters(API_Element i_element, AttributeUsageSet*
 			switch (par.typeID)
 			{
 			case APIParT_LineTyp:
-				AddAttribute<API_AttributeIndex>(&ltUsageTable, (API_AttributeIndex)par.index, &io_attributeUsageSet->ltSet);
+				AddAttribute<API_AttributeIndex>(&ltUsageTable, (API_AttributeIndex)par.value.real, &io_attributeUsageSet->ltSet, 2);
 
 				break;
 			case APIParT_Mater:
-				AddAttribute<API_AttributeIndex>(&surfUsageTable, (API_AttributeIndex)par.index, &io_attributeUsageSet->surfSet);
+				AddAttribute<API_AttributeIndex>(&surfUsageTable, (API_AttributeIndex)par.value.real, &io_attributeUsageSet->surfSet, 2);
 
 				break;
 			case APIParT_FillPat:
-				AddAttribute<API_AttributeIndex>(&fillUsageTable, (API_AttributeIndex)par.index, &io_attributeUsageSet->fillSet);
+				AddAttribute<API_AttributeIndex>(&fillUsageTable, (API_AttributeIndex)par.value.real, &io_attributeUsageSet->fillSet, 2);
 
 				break;
 			case APIParT_PenCol:
-				AddAttribute<short>(&penUsageTable, (short)par.value.real, &io_attributeUsageSet->penSet);
+				AddAttribute<short>(&penUsageTable, (short)par.value.real, &io_attributeUsageSet->penSet, 2);
 
 				break;
 			case APIParT_BuildingMaterial:
-				AddAttribute<API_AttributeIndex>(&buildMatUsageTable, (API_AttributeIndex)par.index, &io_attributeUsageSet->buildMatSet);
+				AddAttribute<API_AttributeIndex>(&buildMatUsageTable, (API_AttributeIndex)par.value.real, &io_attributeUsageSet->buildMatSet, 2);
 
 				break;
 			case APIParT_Profile:
-				AddAttribute<API_AttributeIndex>(&profileUsageTable, (API_AttributeIndex)par.index, &io_attributeUsageSet->profSet);
+				AddAttribute<API_AttributeIndex>(&profileUsageTable, (API_AttributeIndex)par.value.real, &io_attributeUsageSet->profSet, 2);
 
 				break;
 			}
@@ -473,28 +489,28 @@ AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(API_Attribute
 	case API_FilltypeID:
 		break;
 	case API_MaterialID:
-		AddAttribute<API_AttributeIndex>(&fillUsageTable, i_attribute.material.ifill, &newSet.fillSet, &todoSet.fillSet);
+		AddAttribute<API_AttributeIndex>(&fillUsageTable, i_attribute.material.ifill, &newSet.fillSet, &todoSet.fillSet, 1);
 
 		break;
 	case API_BuildingMaterialID:
-		AddAttribute<API_AttributeIndex>(&fillUsageTable, i_attribute.buildingMaterial.cutFill, &newSet.fillSet, &todoSet.fillSet);
-		AddAttribute<short>(&penUsageTable, i_attribute.buildingMaterial.cutFillPen, &newSet.penSet);
-		AddAttribute<short>(&penUsageTable, i_attribute.buildingMaterial.cutFillBackgroundPen, &newSet.penSet);
-		AddAttribute<API_AttributeIndex>(&surfUsageTable, i_attribute.buildingMaterial.cutMaterial, &newSet.surfSet, &todoSet.surfSet);
+		AddAttribute<API_AttributeIndex>(&fillUsageTable, i_attribute.buildingMaterial.cutFill, &newSet.fillSet, &todoSet.fillSet, 1);
+		AddAttribute<short>(&penUsageTable, i_attribute.buildingMaterial.cutFillPen, &newSet.penSet, 1);
+		AddAttribute<short>(&penUsageTable, i_attribute.buildingMaterial.cutFillBackgroundPen, &newSet.penSet, 1);
+		AddAttribute<API_AttributeIndex>(&surfUsageTable, i_attribute.buildingMaterial.cutMaterial, &newSet.surfSet, &todoSet.surfSet, 1);
 
 		break;
 	case API_CompWallID:
 		for (short j = 0; j < i_attribute.compWall.nComps; j++)
 		{
-			AddAttribute<API_AttributeIndex>(&buildMatUsageTable, (*i_defs.cwall_compItems)[j].buildingMaterial, &newSet.buildMatSet, &todoSet.buildMatSet);
-			AddAttribute<short>(&penUsageTable, (*i_defs.cwall_compItems)[j].framePen, &newSet.penSet, &todoSet.penSet);
+			AddAttribute<API_AttributeIndex>(&buildMatUsageTable, (*i_defs.cwall_compItems)[j].buildingMaterial, &newSet.buildMatSet, &todoSet.buildMatSet, 1);
+			AddAttribute<short>(&penUsageTable, (*i_defs.cwall_compItems)[j].framePen, &newSet.penSet, &todoSet.penSet, 1);
 		}
 
 		if (i_attribute.compWall.nComps)
 			for (short j = 0; j < i_attribute.compWall.nComps + 1; j++)
 			{
-				AddAttribute<short>(&penUsageTable, (*i_defs.cwall_compLItems)[j].linePen, &newSet.penSet, &todoSet.penSet);
-				AddAttribute<API_AttributeIndex>(&ltUsageTable, (*i_defs.cwall_compLItems)[j].ltypeInd, &newSet.ltSet, &todoSet.ltSet);
+				AddAttribute<short>(&penUsageTable, (*i_defs.cwall_compLItems)[j].linePen, &newSet.penSet, &todoSet.penSet, 1);
+				AddAttribute<API_AttributeIndex>(&ltUsageTable, (*i_defs.cwall_compLItems)[j].ltypeInd, &newSet.ltSet, &todoSet.ltSet, 1);
 			}
 
 		break;
@@ -508,7 +524,7 @@ AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(API_Attribute
 			if (sht)
 			{
 				HatchObject ho = vi.GetHatchObject(*sht);
-				AddAttribute<short>(&penUsageTable, ho.fillBkgPen, &newSet.penSet, &todoSet.penSet);
+				AddAttribute<short>(&penUsageTable, ho.fillBkgPen, &newSet.penSet, &todoSet.penSet, 1);
 				//TODO
 			}
 
@@ -571,10 +587,14 @@ void AttributeUsage::LayerUsage(API_Element i_element)
 {
 	if (!layerContentTable.ContainsKey(i_element.header.layer))
 	{
-		layerContentTable.Put(i_element.header.layer, 1);
+		layerContentTable.Put(i_element.header.layer, ReportRow{ 1 });
 	}
 	else
-		layerContentTable[i_element.header.layer]++;
+	{
+		auto _ui = layerContentTable[i_element.header.layer][0];
+		_ui++;
+	}
+		
 }
 
 AttributeUsage::AttributeUsage()

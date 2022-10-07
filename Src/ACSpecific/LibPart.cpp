@@ -4,15 +4,17 @@
 #include	"SettingsSingleton.hpp"
 
 
-void ProcessLibParts(GS::HashTable<GS::UniString, UInt32>& io_iLibPartInstanceS)
+void ProcessLibParts()
 {
+	GS::HashTable<GS::UniString, UInt32> iLibPartInstanceS{};
+
 	GS::Array<AbstractData*> lLibParts;
 
 	lLibParts = ListLibParts();
 
-	CountLibPartInstances(&io_iLibPartInstanceS);
+	CountLibPartInstances(&iLibPartInstanceS);
 
-	for (auto libPart : io_iLibPartInstanceS)
+	for (auto libPart : iLibPartInstanceS)
 	{
 		if (!(*libPart.value) || !SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			AddItem("Library Part Instances", *libPart.key, *libPart.value);

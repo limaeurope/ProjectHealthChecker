@@ -4,16 +4,20 @@
 #include	"Excel.hpp"
 #define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
 
+
 void ResultSheet::AddItem(const GS::UniString& i_sTable,
 	const GS::UniString& i_sItem,
-	const UInt32 i_iItemNumber)
+	const GS::Array<UInt32> i_iItemNumberS,
+	const UInt16 i_pos)
 	// Adds an item to both the UI report and the .xlsx output
 {
-	if (!i_iItemNumber && !SETTINGS().CheckBoxData[ZERO_CHECKBOX]) return;
+	bool isEmpty = false;
+	for (auto _i : i_iItemNumberS)
+		isEmpty |= (bool)_i;
+
+	if (!isEmpty && !SETTINGS().CheckBoxData[ZERO_CHECKBOX]) return;
 
 	char sItem[256], _sNumberOfWalls[256], sInt[256];
-
-	itoa(i_iItemNumber, sInt, 10);
 
 	if (!SETTINGS().ReportData.ContainsKey(i_sTable))
 	{
@@ -21,11 +25,50 @@ void ResultSheet::AddItem(const GS::UniString& i_sTable,
 		SETTINGS().ReportData.Add(i_sTable, _rd);
 	}
 
-	SETTINGS().ReportData[i_sTable].Add(i_sItem, i_iItemNumber);
+	SETTINGS().ReportData[i_sTable].Add(i_sItem, ReportRow{i_iItemNumberS});
+
+	itoa(i_iItemNumberS[0], sInt, 10);
 
 	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
 	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
 	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
+}
+
+void ResultSheet::AddItem(const GS::UniString& i_sTable,
+	const GS::UniString& i_sItem,
+	ReportRow i_reportRow,
+	const UInt16 i_pos)
+	// Adds an item to both the UI report and the .xlsx output
+{
+	bool isEmpty = false;
+	for (auto _i : i_reportRow.ToArray())
+		isEmpty |= (bool)_i;
+
+	if (!isEmpty && !SETTINGS().CheckBoxData[ZERO_CHECKBOX]) return;
+
+	char sItem[256], _sNumberOfWalls[256], sInt[256];
+
+	if (!SETTINGS().ReportData.ContainsKey(i_sTable))
+	{
+		ReportData _rd{};
+		SETTINGS().ReportData.Add(i_sTable, _rd);
+	}
+
+	SETTINGS().ReportData[i_sTable].Add(i_sItem, i_reportRow);
+
+	itoa(i_reportRow[2], sInt, 10);
+
+	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
+	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
+	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
+}
+
+void ResultSheet::AddItem(const GS::UniString& i_sTable,
+	const GS::UniString& i_sItem,
+	const UInt32 i_iItemNumber,
+	const UInt16 i_pos)
+{
+	return AddItem(i_sTable, i_sItem, GS::Array<UInt32>{i_iItemNumber}, i_pos);
 }
 
 void ResultTable::ExportReportToExcel()
@@ -35,7 +78,7 @@ void ResultTable::ExportReportToExcel()
 	for (auto item : SETTINGS().ReportData) {
 		const GS::UniString _k = *item.key;
 		libxl::Sheet* sheet = book->addSheet(UNISTR_TO_LIBXLSTR(_k));
-		sheet->setCol(0, 1, 50.0);
+		sheet->setCol(0, 3, COLUMN_WIDTH);
 
 		GS::Array<GS::UniString> titles =
 		{ "Object", "Number" };
@@ -51,7 +94,7 @@ void ResultTable::ExportReportToExcel()
 			if (iitem.value > 0 || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
 				sheet->writeStr(ii, 0, iitem.key->ToUStr());
-				sheet->writeNum(ii++, 1, *iitem.value);
+				sheet->writeNum(ii++, 1, iitem.value->Get());
 			}
 		}
 	}
