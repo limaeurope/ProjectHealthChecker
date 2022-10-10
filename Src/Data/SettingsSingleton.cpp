@@ -8,9 +8,7 @@ SettingsSingleton& (*SETTINGS)() = SettingsSingleton::GetInstance;
 
 SettingsSingleton::SettingsSingleton()
 {
-	//CheckBoxData = {};
 	ReportData = {};
-	//ReportHeaders = {};
 	FilterStrings = {};
 
 	CheckBoxData.Put(LIBPART_CHECKBOX,	GetRegInt("LibraryPartData"));

@@ -17,26 +17,26 @@ class AttributeUsageSet
 	GS::HashSet <API_AttributeIndex> surfSet{};
 	GS::HashSet <API_AttributeIndex> profSet{};
 public:
-	void Append(AttributeUsageSet& i_other);
+	void Append(const AttributeUsageSet& i_other);
 	inline void operator+(AttributeUsageSet& i_other) {Append(i_other);};
 	inline void operator+=(AttributeUsageSet& i_other) {Append(i_other);};
-	GS::USize GetSize();
-	AttributeUsageSet(AttributeUsage* i_attributeUsage);
+	GS::USize GetSize() const;
+	AttributeUsageSet(const AttributeUsage* const i_attributeUsage);
 	AttributeUsageSet() {};
 };
 
 
 class AttributeUsage
 {
-	void LayerUsage(API_Element i_element);
-	AttributeUsageSet GeneralAttributeUsageByElement(API_Element i_element);
-	AttributeUsageSet GeneralAttributeUsageByAttribute(API_Attribute i_attribute, API_AttributeDefExt i_defs, API_AttrTypeID i_type);
+	void LayerUsage(const API_Element i_element);
+	AttributeUsageSet GeneralAttributeUsageByElement(const API_Element i_element);
+	AttributeUsageSet GeneralAttributeUsageByAttribute(const API_Attribute i_attribute, const API_AttributeDefExt i_defs, const API_AttrTypeID i_type);
 	template <typename T>
 	void ProcessAttributeUsage(const GS::HashSet <T>& i_attributeSet, GS::HashTable<T, int>& io_attributeUsageTable);
 	void GeneralAttributeUsageController();
 	template<typename T>
-	void ProcessAttributeSet(const GS::HashSet<T>& i_set, API_AttrTypeID i_type, AttributeUsageSet& io_todoSet);
-	void ProcessParameters(API_Element i_element, AttributeUsageSet* io_attributeUsageSet);
+	void ProcessAttributeSet(const GS::HashSet<T>& i_set, const API_AttrTypeID i_type, AttributeUsageSet& io_todoSet);
+	void ProcessParameters(const API_Element i_element, AttributeUsageSet* const io_attributeUsageSet);
 public:
 	GS::HashTable<API_AttributeIndex, ReportRow> layerContentTable;
 	GS::HashTable<short, ReportRow> penUsageTable;

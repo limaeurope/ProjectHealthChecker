@@ -4,10 +4,10 @@
 
 template <typename T>
 void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
-	T i_idx,
+	const T i_idx,
 	GS::HashSet <T>* io_set = nullptr,
 	GS::HashSet <T>* io_todoSet = nullptr,
-	UInt16 i_col = 0
+	const UInt16 i_col = 0
 	)
 {
 	if (!i_idx) return;
@@ -31,19 +31,19 @@ void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
 
 template <typename T>
 void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
-	T i_idx,
+	const T i_idx,
 	GS::HashSet <T>* io_set,
-	UInt16 i_col
+	const UInt16 i_col
 	)
 {
 	AddAttribute <T>(io_table, i_idx, io_set, nullptr, i_col);
 }
 
 void AddAttribute(GS::HashTable<short, ReportRow>* io_table,
-	API_PenOverrideType i_idx,
+	const API_PenOverrideType i_idx,
 	GS::HashSet <short>* io_set = nullptr,
 	GS::HashSet <short>* io_todoSet = nullptr,
-	UInt16 i_col = 0
+	const UInt16 i_col = 0
 	)
 {
 	AddAttribute <short> (io_table, i_idx.cutFillBackgroundPen, io_set, io_todoSet);
@@ -52,7 +52,7 @@ void AddAttribute(GS::HashTable<short, ReportRow>* io_table,
 	AddAttribute <short> (io_table, i_idx.overrideCutFillPen, io_set, io_todoSet);
 }
 
-void AttributeUsage::ProcessParameters(API_Element i_element, AttributeUsageSet* io_attributeUsageSet)
+void AttributeUsage::ProcessParameters(const API_Element i_element, AttributeUsageSet * const io_attributeUsageSet)
 {
 	Int32 addParNum;
 	API_AddParType** addPars;
@@ -100,7 +100,7 @@ void AttributeUsage::ProcessParameters(API_Element i_element, AttributeUsageSet*
 	}
 }
 
-AttributeUsageSet AttributeUsage::GeneralAttributeUsageByElement(API_Element i_element)
+AttributeUsageSet AttributeUsage::GeneralAttributeUsageByElement(const API_Element i_element)
 {
 	AttributeUsageSet aus;
 	Int32* libInd, * addParNum;
@@ -476,9 +476,9 @@ AttributeUsageSet AttributeUsage::GeneralAttributeUsageByElement(API_Element i_e
 	return aus;
 }
 
-AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(API_Attribute i_attribute, 
-		API_AttributeDefExt i_defs, 
-		API_AttrTypeID i_type)
+AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(const API_Attribute i_attribute, 
+		const API_AttributeDefExt i_defs, 
+		const API_AttrTypeID i_type)
 {
 	AttributeUsageSet newSet, todoSet;
 	VectorImage vi;
@@ -541,7 +541,7 @@ AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(API_Attribute
 
 template <typename T>
 void AttributeUsage::ProcessAttributeSet(const GS::HashSet<T>& i_set, 
-		API_AttrTypeID i_type, 
+		const API_AttrTypeID i_type, 
 		AttributeUsageSet& io_todoSet)
 {
 	GSErrCode			err;
@@ -583,7 +583,7 @@ void AttributeUsage::GeneralAttributeUsageController()
 	} while (todoSet.GetSize());
 }
 
-void AttributeUsage::LayerUsage(API_Element i_element)
+void AttributeUsage::LayerUsage(const API_Element i_element)
 {
 	if (!layerContentTable.ContainsKey(i_element.header.layer))
 	{
@@ -619,7 +619,7 @@ AttributeUsage::AttributeUsage()
 	GeneralAttributeUsageController();
 }
 
-void AttributeUsageSet::Append(AttributeUsageSet& i_other)
+void AttributeUsageSet::Append(const AttributeUsageSet& i_other)
 {
 	for(auto i:i_other.penSet)
 		penSet.Add(i);
@@ -635,7 +635,7 @@ void AttributeUsageSet::Append(AttributeUsageSet& i_other)
 		surfSet.Add(i);
 }
 
-GS::USize AttributeUsageSet::GetSize()
+GS::USize AttributeUsageSet::GetSize() const
 {
 	GS::USize resultSize{};
 
@@ -649,7 +649,7 @@ GS::USize AttributeUsageSet::GetSize()
 	return resultSize;
 }
 
-AttributeUsageSet::AttributeUsageSet(AttributeUsage* i_attributeUsage)
+AttributeUsageSet::AttributeUsageSet(const AttributeUsage* const i_attributeUsage)
 {
 	for (auto k: i_attributeUsage->penUsageTable.Keys())
 		penSet.Add(k);
