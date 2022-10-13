@@ -192,7 +192,7 @@
     <ClCompile Include="Src\Data\DataStructs.cpp" />
     <ClCompile Include="Src\Data\SettingsSingleton.cpp" />
     <ClCompile Include="Src\Data\WinReg.cpp" />
-    <ClCompile Include="Src\ReportRow.cpp" />
+    <ClCompile Include="Src\ResultRow.cpp" />
     <ClCompile Include="Src\Table\Excel.cpp" />
     <ClCompile Include="Src\ACSpecific\LibPart.cpp" />
     <ClCompile Include="Src\ACSpecific\Navigator.cpp" />
@@ -200,7 +200,6 @@
     <ClCompile Include="Src\Table\LibXLExtended.cpp" />
     <ClCompile Include="Src\Table\ResultTable.cpp" />
     <ClCompile Include="Src\ACSpecific\SEO.cpp" />
-    <ClCompile Include="Src\Table\Table.cpp" />
     <ClCompile Include="Src\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -286,7 +285,8 @@
     <ClInclude Include="Src\Data\DataStructs.hpp" />
     <ClInclude Include="Src\Data\SettingsSingleton.hpp" />
     <ClInclude Include="Src\Data\WinReg.hpp" />
-    <ClInclude Include="Src\ReportRow.hpp" />
+    <ClInclude Include="Src\Enums\CheckboxEnum.hpp" />
+    <ClInclude Include="Src\ResultRow.hpp" />
     <ClInclude Include="Src\Table\Excel.hpp" />
     <ClInclude Include="Src\ACSpecific\LibPart.hpp" />
     <ClInclude Include="Src\ACSpecific\Navigator.hpp" />
@@ -295,7 +295,6 @@
     <ClInclude Include="Src\Table\LibXLExtended.hpp" />
     <ClInclude Include="Src\Table\ResultTable.hpp" />
     <ClInclude Include="Src\ACSpecific\SEO.hpp" />
-    <ClInclude Include="Src\Table\Table.hpp" />
     <ClInclude Include="Src\Utils\Utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

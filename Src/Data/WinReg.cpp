@@ -1,6 +1,6 @@
 #include	"WinReg.hpp"
 
-GS::UniString GetRegString(GS::UniString i_key, GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
+GS::UniString GetRegString(const GS::UniString& i_key, const GS::UniString& i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
 {
 	char sBuffer[255];
 	DWORD iBuffer = 255;
@@ -18,7 +18,7 @@ GS::UniString GetRegString(GS::UniString i_key, GS::UniString i_path, HKEY i_hKe
 	return GS::UniString(ws);
 }
 
-UInt32 GetRegInt(GS::UniString i_key, GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
+UInt32 GetRegInt(const GS::UniString& i_key, const GS::UniString& i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
 {
 	DWORD iBuffer = 0;
 	DWORD iBufferSize = 255;
@@ -34,7 +34,7 @@ UInt32 GetRegInt(GS::UniString i_key, GS::UniString i_path, HKEY i_hKey/* = HKEY
 	return UInt16(iBuffer);
 }
 
-HKEY GetOrCreateRegPath(GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
+HKEY GetOrCreateRegPath(const GS::UniString& i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
 {
 	HKEY hKey;
 	LSTATUS status = RegCreateKeyExW(i_hKey,
@@ -51,7 +51,7 @@ HKEY GetOrCreateRegPath(GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*
 	return hKey;
 }
 
-void SetRegString(GS::UniString i_val, GS::UniString i_key, GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
+void SetRegString(const GS::UniString& i_val, const GS::UniString& i_key, const GS::UniString& i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
 {
 	HKEY hKey = GetOrCreateRegPath(i_path, i_hKey);
 
@@ -72,7 +72,7 @@ void SetRegString(GS::UniString i_val, GS::UniString i_key, GS::UniString i_path
 	status = RegCloseKey(hKey);
 }
 
-void SetRegInt(UInt32 i_val, GS::UniString i_key, GS::UniString i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
+void SetRegInt(const UInt32 i_val, const GS::UniString& i_key, const GS::UniString& i_path, HKEY i_hKey/* = HKEY_CURRENT_USER*/)
 {
 	HKEY hKey = GetOrCreateRegPath(i_path, i_hKey);
 

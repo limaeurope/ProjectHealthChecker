@@ -8,9 +8,8 @@ SettingsSingleton& (*SETTINGS)() = SettingsSingleton::GetInstance;
 
 SettingsSingleton::SettingsSingleton()
 {
-	ReportData = {};
 	FilterStrings = {};
-
+	
 	CheckBoxData.Put(LIBPART_CHECKBOX,	GetRegInt("LibraryPartData"));
 	CheckBoxData.Put(ELEMENT_CHECKBOX,	GetRegInt("IncludeElementData"));
 	CheckBoxData.Put(SEO_CHECKBOX,		GetRegInt("IncludeSEOData"));
@@ -40,5 +39,13 @@ SettingsSingleton& SettingsSingleton::GetInstance()
 	static SettingsSingleton singleton;
 
 	return singleton;
+}
+
+ResultSheet& SettingsSingleton::GetSheet(const GS::UniString& i_sName)
+{
+	if (!resultTable.sheetDict.ContainsKey(i_sName))
+		resultTable.sheetDict.Add(i_sName, ResultSheet{});
+
+	return resultTable.sheetDict[i_sName];
 }
 

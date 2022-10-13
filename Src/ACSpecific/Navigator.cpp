@@ -10,7 +10,7 @@ void ProcessNavigatorItems()
 
 	for (UInt16 iMT = 1; iMT < ac_mapTypes.GetSize(); iMT++)
 	{
-		SetHeader(ac_mapTypes[iMT], ReportDataHeader{ "Navigator location name", "Number of subelements" });
+		SETTINGS().GetSheet(ac_mapTypes[iMT]).SetHeader(GS::Array<GS::UniString>{ "Navigator location name", "Number of subelements" });
 
 		for (UInt16 iNIT = 1; iNIT < ac_navItemTypes.GetSize(); iNIT++)
 		{
@@ -18,7 +18,7 @@ void ProcessNavigatorItems()
 
 			if (iNavItems || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
-				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT], iNavItems);
+				SETTINGS().GetSheet(ac_mapTypes[iMT]).AddItem(ac_navItemTypes[iNIT], iNavItems);
 			}
 
 			// -------------------------------------
@@ -27,14 +27,14 @@ void ProcessNavigatorItems()
 
 			if (iNavItems || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
 			{
-				AddItem(ac_mapTypes[iMT], ac_navItemTypes[iNIT] + " Story", iNavItems);
+				SETTINGS().GetSheet(ac_mapTypes[iMT]).AddItem(ac_navItemTypes[iNIT]/* + " Story"*/, iNavItems);
 			}
 		}
 	}
 }
 
 
-short GetChildrenNumber(API_NavigatorItem i_item,
+short GetChildrenNumber(API_NavigatorItem * const i_item,
 	const API_NavigatorItemTypeID& i_navID,
 	const GS::UniString& i_sInExclude /*= ""*/,
 	const bool i_isInclude /*= true*/)
@@ -43,20 +43,20 @@ short GetChildrenNumber(API_NavigatorItem i_item,
 	short result = 0;
 	GS::Array<API_NavigatorItem> childItems;
 
-	auto _name = GS::UniString(i_item.uName).ToCStr().Get();
+	auto _name = GS::UniString(i_item->uName).ToCStr().Get();
 
-	err = ACAPI_Navigator(APINavigator_GetNavigatorChildrenItemsID, &i_item, nullptr, &childItems);
+	err = ACAPI_Navigator(APINavigator_GetNavigatorChildrenItemsID, i_item, nullptr, &childItems);
 
-	if (i_item.itemType == i_navID)
+	if (i_item->itemType == i_navID)
 		if (i_sInExclude.GetLength())
-			if (i_isInclude == (GS::UniString(i_item.uName).FindFirst(i_sInExclude) < MaxUSize))
+			if (i_isInclude == (GS::UniString(i_item->uName).FindFirst(i_sInExclude) < MaxUIndex))
 				result += 1;
-			else
-				result += 1;
+			//else
+			//	result += 1;
 
-	for (const API_NavigatorItem& childItem : childItems)
+	for (API_NavigatorItem& childItem : childItems)
 	{
-		result += GetChildrenNumber(childItem, i_navID, i_sInExclude, i_isInclude);
+		result += GetChildrenNumber(&childItem, i_navID, i_sInExclude, i_isInclude);
 	}
 
 	return result;
@@ -98,7 +98,7 @@ short GetNavigatorItems(const API_NavigatorMapID& i_mapID,
 	for (const auto& _set : sets)
 	{
 		item.guid = set.rootGuid;
-		result += GetChildrenNumber(item, i_navID, i_inExcludeString, i_isInclude);
+		result += GetChildrenNumber(&item, i_navID, i_inExcludeString, i_isInclude);
 	}
 
 	return result;

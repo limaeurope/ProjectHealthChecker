@@ -5,18 +5,14 @@
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
 #include	"AttributeUsage.hpp"
-#include	"ReportRow.hpp"
+#include	"ResultRow.hpp"
 
 
-typedef GS::HashTable<GS::UniString, ReportRow> ReportData;
-typedef GS::Array<GS::UniString> ReportDataHeader;
+//typedef GS::HashTable<GS::UniString, ResultRow> ReportSheet;
+typedef GS::Array<GS::UniString> ReportSheetHeader;
 
 
 struct CntlDlgData {
-	Int32 iAddZeroValues;
-	GS::Array<Int32>	CheckBoxData{};
-	GS::HashTable<GS::UniString, ReportRow> ReportData;
-	GS::HashTable<GS::UniString, ReportDataHeader> ReportHeaderS;
 	GS::HashSet<GS::UniString> filterStrings;
 };
 
@@ -47,6 +43,7 @@ struct FileSizeReportObject : AbstractData
 	bool isEmbedded;
 	API_LibraryTypeID libType;
 	UInt32 nInstances = 0;
+	API_AttributeIndex index;
 };
 
 
@@ -69,15 +66,15 @@ struct AttributeReportObject: AbstractData
 {
 	GS::UniString name;
 	short id;
-	ReportRow reportRow;
+	ResultRow resultRow;
 };
 
 
 template<typename T>
 struct StructDefObject: AbstractData
 {
-	GS::HashTable<T, ReportRow>  table;
-	StructDefObject(GS::HashTable<T, ReportRow> t) : table(t) {};
+	GS::HashTable<T, ResultRow>  table;
+	StructDefObject(GS::HashTable<T, ResultRow> t) : table(t) {};
 };
 
 

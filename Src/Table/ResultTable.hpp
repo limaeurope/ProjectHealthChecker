@@ -5,34 +5,28 @@
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"../APICommon.h"
 #include	"LibXL/libxl.h"
-#include	"ReportRow.hpp"
+#include	"ResultRow.hpp"
 
-struct Row {
-	GS::UniString	textField;
-	GS::Array<Int32>	numberS;
-};
 
 class ResultSheet
 {
 public:
 	ResultSheet() {};
-	ResultSheet(GS::UniString name) :sName(name){};
-	GS::Array<GS::UniString>	header;
-	GS::Array<Row>				rowS;
-	GS::UniString				sName;
-	
-	void AddItem(const GS::UniString& i_sTable,
-		const GS::UniString& i_sItem,
-		const GS::Array<UInt32> i_iItemNumber,
+	ResultSheet(GS::UniString name): sName(name){};
+	GS::UniString								sName;
+	GS::Array<GS::UniString>					header;
+	GS::HashTable<GS::UniString, ResultRow>		rowS;
+
+	void AddItem(const GS::UniString& i_sItem,
+		ResultRow& i_reportRow,
 		const UInt16 i_pos = 0);
-	void ResultSheet::AddItem(const GS::UniString& i_sTable,
-		const GS::UniString& i_sItem,
+	inline void AddItem(const GS::UniString& i_sItem,
+		const GS::Array<UInt32> i_iItemNumberS,
+		const UInt16 i_pos = 0) { return AddItem(i_sItem, ResultRow{ i_iItemNumberS }, i_pos); };
+	inline void AddItem(const GS::UniString& i_sItem,
 		const UInt32 i_iItemNumber,
-		const UInt16 i_pos = 0);
-	void ResultSheet::AddItem(const GS::UniString& i_sTable,
-		const GS::UniString& i_sItem,
-		ReportRow i_reportRow,
-		const UInt16 i_pos);
+		const UInt16 i_pos = 0) { return AddItem(i_sItem, ResultRow{ i_iItemNumber }, i_pos); };
+	inline void SetHeader(const GS::Array<GS::UniString>& i_reportDataHeader) { header = i_reportDataHeader; };
 };
 
 class ResultTable {
@@ -42,3 +36,4 @@ public:
 };
 
 #endif //_RESULTTABLE_HPP
+

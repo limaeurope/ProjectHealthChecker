@@ -17,6 +17,10 @@
 }
 
 /* Localizable string resource(s) */
+'STR#' 32602 "Sheet names" {
+/* [  1] */			"Input was canceled."
+/* [  2] */			"Error occurred during input."
+}
 
 /* Localizable dialog resource(s) with the accompanying help resource(s) */
 

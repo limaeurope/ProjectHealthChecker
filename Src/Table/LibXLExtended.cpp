@@ -4,7 +4,7 @@
 
 using namespace libxl;
 
-bool XLAPIENTRY SheetExtended::writeNum(int row, int col, GS::Array<UInt32> valueS, IFormatT<wchar_t>* format)
+bool XLAPIENTRY SheetExtended::writeNum(const int row, const int col, const GS::Array<UInt32> &valueS, IFormatT<wchar_t>* format)
 {
 	bool bSuccess = true;
 	for (UInt16 i = 0; i < valueS.GetSize(); i ++)
@@ -12,7 +12,7 @@ bool XLAPIENTRY SheetExtended::writeNum(int row, int col, GS::Array<UInt32> valu
 	return bSuccess;
 }
 
-bool XLAPIENTRY SheetExtended::writeNum(int row, int col, ReportRow valueS, IFormatT<wchar_t>* format)
+bool XLAPIENTRY SheetExtended::writeNum(const int row, const int col, ResultRow&valueS, IFormatT<wchar_t>* format)
 {
 	bool bSuccess = true;
 

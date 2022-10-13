@@ -24,6 +24,4 @@ bool	GetOpenFile(IO::Location* const dloc,
 
 void	Do_ImportNamesFromExcel();
 
-void	Do_ExportReportToExcel();
-
 #endif //_EXCEL_HPP

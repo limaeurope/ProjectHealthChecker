@@ -1,5 +1,4 @@
 #include	"Profile.hpp"
-#include	"Table.hpp"
 #include	"VectorImageIterator.hpp"
 #include	"SettingsSingleton.hpp"
 
@@ -38,17 +37,17 @@ AbstractData* GetArcNumber(const API_Attribute& i_apiAttrib, AbstractData* i_att
 void ProcessProfiles()
 {
 	ResultSheet rs{ "Profile data" };
-	SETTINGS().ResultTable.sheetDict.Add(rs.sName, rs);
+	SETTINGS().resultTable.sheetDict.Add(rs.sName, rs);
 	rs.header = GS::Array<GS::UniString>{ "Profile data", "Number of Profiles" };
 
 	GS::Array<AbstractData*> profileS = ListAttributes(API_ProfileID, GetArcNumber);
 
-	SetHeader("Profile data", ReportDataHeader{ "Profile name", "Number of arcs" });
+	SETTINGS().GetSheet("Profile data").SetHeader(GS::Array<GS::UniString>{ "Profile name", "Number of arcs" });
 
 	for (AbstractData* prof : profileS)
 	{
 		PolygonReportObject* _prof = (PolygonReportObject*)prof;
-		rs.AddItem("Profile data", _prof->name, (UInt16)_prof->nArcs);
+		rs.AddItem(_prof->name, (UInt16)_prof->nArcs);
 
 		delete prof;
 	}

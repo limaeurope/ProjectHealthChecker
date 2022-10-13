@@ -1,6 +1,5 @@
 #include	"LibPart.hpp"
 #include	"File.hpp"
-#include	"Table.hpp"
 #include	"SettingsSingleton.hpp"
 
 
@@ -17,10 +16,10 @@ void ProcessLibParts()
 	for (auto libPart : iLibPartInstanceS)
 	{
 		if (!(*libPart.value) || !SETTINGS().CheckBoxData[ZERO_CHECKBOX])
-			AddItem("Library Part Instances", *libPart.key, *libPart.value);
+			SETTINGS().GetSheet("Library Part Instances").AddItem(*libPart.key, *libPart.value);
 	}
 
-	SetHeader("Library Part Instances", ReportDataHeader{ "Library Part Path", "Number of instances" });
+	SETTINGS().GetSheet("Library Part Instances").SetHeader(GS::Array<GS::UniString>{ "Library Part Path", "Number of instances" });
 
 	GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
 
@@ -41,10 +40,10 @@ void ProcessLibParts()
 	}
 
 	for (auto item : aNormal)
-		AddItem("LibPart data", item.name, (UInt32)item.size);
+		SETTINGS().GetSheet("LibPart data").AddItem(item.name, (UInt32)item.size);
 
 	for (auto item : aEmbedded)
-		AddItem("Embedded LibPart data", item.name, (UInt32)item.size);
+		SETTINGS().GetSheet("Embedded LibPart data").AddItem(item.name, (UInt32)item.size);
 }
 
 // -----------------------------------------------------------------------------
@@ -131,7 +130,7 @@ inline GS::UniString GetLibPartName(const API_LibPart& i_libPart)
 	return sResult;
 }
 
-void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* io_iLibPartInstanceS)
+void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* const io_iLibPartInstanceS)
 {
 	GS::Array<API_Guid> libPartGuidS;
 	API_LibPart			libPart;
@@ -139,7 +138,7 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* io_iLibPartInst
 	GSErrCode err;
 	GS::UniString sLibPart;
 
-	for (auto _id : GS::Array<API_ElemTypeID>{
+	for (API_ElemTypeID _id : GS::Array<API_ElemTypeID>{
 		API_ObjectID,
 		API_LampID,
 		API_DoorID,
@@ -162,7 +161,7 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* io_iLibPartInst
 			delete libPart.location;
 	}
 
-	for (auto libPartGuid : libPartGuidS)
+	for (API_Guid& libPartGuid : libPartGuidS)
 	{
 		try
 		{

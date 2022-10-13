@@ -4,11 +4,10 @@
 #include	"../APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"../APICommon.h"
-#include	"../Table/Table.hpp"
 
 void ProcessNavigatorItems();
 
-short GetChildrenNumber(API_NavigatorItem i_item,
+short GetChildrenNumber(API_NavigatorItem* const i_item,
 	const API_NavigatorItemTypeID& i_navID,
 	const GS::UniString& i_sInExclude = "",
 	const bool i_isInclude = true);

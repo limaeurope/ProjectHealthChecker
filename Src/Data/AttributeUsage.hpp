@@ -4,7 +4,7 @@
 #include	"APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
-#include	"ReportRow.hpp"
+#include	"ResultRow.hpp"
 
 class AttributeUsageSet
 {
@@ -28,25 +28,29 @@ public:
 
 class AttributeUsage
 {
-	void LayerUsage(const API_Element i_element);
-	AttributeUsageSet GeneralAttributeUsageByElement(const API_Element i_element);
-	AttributeUsageSet GeneralAttributeUsageByAttribute(const API_Attribute i_attribute, const API_AttributeDefExt i_defs, const API_AttrTypeID i_type);
+	void LayerUsage(const API_Element& i_element);
+	AttributeUsageSet GeneralAttributeUsageByElement(const API_Element& i_element);
+	AttributeUsageSet GeneralAttributeUsageByAttribute(const API_Attribute& i_attribute, const API_AttributeDefExt& i_defs, const API_AttrTypeID i_type);
 	template <typename T>
 	void ProcessAttributeUsage(const GS::HashSet <T>& i_attributeSet, GS::HashTable<T, int>& io_attributeUsageTable);
 	void GeneralAttributeUsageController();
 	template<typename T>
 	void ProcessAttributeSet(const GS::HashSet<T>& i_set, const API_AttrTypeID i_type, AttributeUsageSet& io_todoSet);
-	void ProcessParameters(const API_Element i_element, AttributeUsageSet* const io_attributeUsageSet);
+	void ProcessParameters(const API_Element& i_element, AttributeUsageSet* const io_attributeUsageSet);
+	void ProcessVectorImage(const API_AttributeDefExt& i_defs,
+		AttributeUsageSet* const i_newSet,
+		AttributeUsageSet* const i_todoSet);
 public:
-	GS::HashTable<API_AttributeIndex, ReportRow> layerContentTable;
-	GS::HashTable<short, ReportRow> penUsageTable;
-	GS::HashTable<API_AttributeIndex, ReportRow> ltUsageTable;
-	GS::HashTable<API_AttributeIndex, ReportRow> fillUsageTable;
-	GS::HashTable<API_AttributeIndex, ReportRow> surfUsageTable;
-	GS::HashTable<API_AttributeIndex, ReportRow> buildMatUsageTable;
-	GS::HashTable<API_AttributeIndex, ReportRow> compositeUsageTable;
-	GS::HashTable<API_AttributeIndex, ReportRow> profileUsageTable;
-	GS::HashTable<API_AttributeIndex, ReportRow> zoneUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> layerContentTable;
+	GS::HashTable<short, ResultRow> penUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> ltUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> fillUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> surfUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> buildMatUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> compositeUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> profileUsageTable;
+	GS::HashTable<API_AttributeIndex, ResultRow> zoneUsageTable;
+
 	AttributeUsage();
 };
 

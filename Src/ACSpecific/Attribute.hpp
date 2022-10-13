@@ -7,11 +7,11 @@
 #include	"DataStructs.hpp"
 #include	"AttributeUsage.hpp"
 
-bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* i_attr);
+bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* const i_attr);
 
-bool NameContains(const API_Attribute& i_apiAttrib, AbstractData* i_attrs);
+bool NameContains(const API_Attribute& i_apiAttrib, AbstractData* const i_attrs);
 
-AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* i_attr);
+AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* const i_attr);
 
 // -----------------------------------------------------------------------------
 //  List attributes
@@ -21,12 +21,12 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage);
 
 UInt32 CountAttributes(
 	const API_AttrTypeID i_attrType,
-	bool(*i_func)(const API_Attribute&, AbstractData*) = nullptr,
+	bool(*const i_func)(const API_Attribute&, AbstractData*) = nullptr,
 	AbstractData* i_attrs = nullptr);
 
 GS::Array<AbstractData*> ListAttributes(
 	const API_AttrTypeID i_attrType,
-	AbstractData* (*i_func)(const API_Attribute&, AbstractData*) = nullptr,
+	AbstractData* (*const i_func)(const API_Attribute&, AbstractData*) = nullptr,
 	AbstractData* i_attrs = nullptr);
 
 #endif	//_ATTRIBUTE_HPP

@@ -3,7 +3,7 @@
 #include	"APIdefs_LibraryParts.h"
 
 template <typename T>
-void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
+void AddAttribute(GS::HashTable<T, ResultRow>* io_table,
 	const T i_idx,
 	GS::HashSet <T>* io_set = nullptr,
 	GS::HashSet <T>* io_todoSet = nullptr,
@@ -16,7 +16,7 @@ void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
 
 	if (!io_table->ContainsKey(i_idx))
 	{
-		io_table->Put(i_idx, ReportRow{ i_col, 1 });
+		io_table->Put(i_idx, ResultRow{ i_col, 1 });
 	}
 	else
 	{
@@ -30,7 +30,7 @@ void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
 }
 
 template <typename T>
-void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
+void AddAttribute(GS::HashTable<T, ResultRow>* io_table,
 	const T i_idx,
 	GS::HashSet <T>* io_set,
 	const UInt16 i_col
@@ -39,7 +39,7 @@ void AddAttribute(GS::HashTable<T, ReportRow>* io_table,
 	AddAttribute <T>(io_table, i_idx, io_set, nullptr, i_col);
 }
 
-void AddAttribute(GS::HashTable<short, ReportRow>* io_table,
+void AddAttribute(GS::HashTable<short, ResultRow>* io_table,
 	const API_PenOverrideType i_idx,
 	GS::HashSet <short>* io_set = nullptr,
 	GS::HashSet <short>* io_todoSet = nullptr,
@@ -52,7 +52,7 @@ void AddAttribute(GS::HashTable<short, ReportRow>* io_table,
 	AddAttribute <short> (io_table, i_idx.overrideCutFillPen, io_set, io_todoSet);
 }
 
-void AttributeUsage::ProcessParameters(const API_Element i_element, AttributeUsageSet * const io_attributeUsageSet)
+void AttributeUsage::ProcessParameters(const API_Element& i_element, AttributeUsageSet * const io_attributeUsageSet)
 {
 	Int32 addParNum;
 	API_AddParType** addPars;
@@ -100,7 +100,7 @@ void AttributeUsage::ProcessParameters(const API_Element i_element, AttributeUsa
 	}
 }
 
-AttributeUsageSet AttributeUsage::GeneralAttributeUsageByElement(const API_Element i_element)
+AttributeUsageSet AttributeUsage::GeneralAttributeUsageByElement(const API_Element& i_element)
 {
 	AttributeUsageSet aus;
 	Int32* libInd, * addParNum;
@@ -476,13 +476,86 @@ AttributeUsageSet AttributeUsage::GeneralAttributeUsageByElement(const API_Eleme
 	return aus;
 }
 
-AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(const API_Attribute i_attribute, 
-		const API_AttributeDefExt i_defs, 
+void AttributeUsage::ProcessVectorImage(const API_AttributeDefExt& i_defs,
+	AttributeUsageSet* const i_newSet, 
+	AttributeUsageSet* const i_todoSet
+)
+{
+	VectorImage vi = i_defs.profile_vectorImageItems->GetVectorImage();
+	
+	ConstVectorImageIterator cvii{ vi };
+
+	while (!cvii.IsEOI())
+	{
+		const Sy_HotType* shot = cvii;
+
+		if (shot)
+		{
+			AddAttribute<short>(&penUsageTable, shot->sy_pen, &i_newSet->penSet, &i_todoSet->penSet, 1);
+		}
+	
+		const Sy_LinType* slit = cvii;
+
+		if (slit)
+		{
+			AddAttribute<short>(&penUsageTable, slit->GetExtendedPen().GetColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+			AddAttribute<short>(&penUsageTable, slit->GetExtendedPen().GetEffectiveColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+		}
+
+		const Sy_PolyLinType* split = cvii;
+
+		if (split)
+		{
+			AddAttribute<short>(&penUsageTable, split->GetExtendedPen().GetColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+			AddAttribute<short>(&penUsageTable, split->GetExtendedPen().GetEffectiveColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+		}
+
+		const Sy_ArcType* sat = cvii;
+
+		if (sat)
+		{
+			AddAttribute<short>(&penUsageTable, sat->GetExtendedPen().GetColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+			AddAttribute<short>(&penUsageTable, sat->GetExtendedPen().GetEffectiveColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+		}
+
+		const Sy_TextType* stt = cvii;
+
+		if (stt)
+		{
+			AddAttribute<short>(&penUsageTable, stt->sy_pen, &i_newSet->penSet, &i_todoSet->penSet, 1);
+		}
+
+		const Sy_HatchType* sht = cvii;
+
+		if (sht)
+		{
+			HatchObject ho = vi.GetHatchObject(*sht);
+			AddAttribute<short>(&penUsageTable, ho.fillBkgPen, &i_newSet->penSet, &i_todoSet->penSet, 1);
+			AddAttribute<short>(&penUsageTable, ho.GetContPen().GetColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+			AddAttribute<short>(&penUsageTable, ho.GetContPen().GetEffectiveColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+			AddAttribute<API_AttributeIndex>(&ltUsageTable, ho.GetContLType(), &i_newSet->ltSet, &i_todoSet->ltSet, 1);
+			AddAttribute<API_AttributeIndex>(&fillUsageTable, ho.GetFillIdx(), &i_newSet->fillSet, &i_todoSet->fillSet, 1);
+			AddAttribute<API_AttributeIndex>(&buildMatUsageTable, ho.GetBuildMatIdx(), &i_newSet->buildMatSet, &i_todoSet->buildMatSet, 1);
+			AddAttribute<API_AttributeIndex>(&surfUsageTable, ho.GetSurfaceIdx(), &i_newSet->surfSet, &i_todoSet->surfSet, 1);
+		}
+
+		const Sy_SplineType* sslit = cvii;
+
+		if (sslit)
+		{
+			AddAttribute<short>(&penUsageTable, sslit->GetExtendedPen().GetColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+			AddAttribute<short>(&penUsageTable, sslit->GetExtendedPen().GetEffectiveColorIndex(), &i_newSet->penSet, &i_todoSet->penSet, 1);
+		}
+
+		cvii++;
+	}
+}
+
+AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(const API_Attribute& i_attribute, 
+		const API_AttributeDefExt& i_defs, 
 		const API_AttrTypeID i_type)
 {
 	AttributeUsageSet newSet, todoSet;
-	VectorImage vi;
-	ConstVectorImageIterator cvii{ vi };
 
 	switch (i_type)
 	{
@@ -515,21 +588,7 @@ AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(const API_Att
 
 		break;
 	case API_ProfileID:
-		vi = i_defs.profile_vectorImageItems->GetVectorImage();
-
-		while (!cvii.IsEOI())
-		{
-			const Sy_HatchType* sht = cvii;
-
-			if (sht)
-			{
-				HatchObject ho = vi.GetHatchObject(*sht);
-				AddAttribute<short>(&penUsageTable, ho.fillBkgPen, &newSet.penSet, &todoSet.penSet, 1);
-				//TODO
-			}
-
-			cvii++;
-		}
+		ProcessVectorImage(i_defs, &newSet, &todoSet);
 
 		break;
 	case API_ZoneCatID:
@@ -583,16 +642,15 @@ void AttributeUsage::GeneralAttributeUsageController()
 	} while (todoSet.GetSize());
 }
 
-void AttributeUsage::LayerUsage(const API_Element i_element)
+void AttributeUsage::LayerUsage(const API_Element& i_element)
 {
 	if (!layerContentTable.ContainsKey(i_element.header.layer))
 	{
-		layerContentTable.Put(i_element.header.layer, ReportRow{ 1 });
+		layerContentTable.Put(i_element.header.layer, ResultRow{ 1 });
 	}
 	else
 	{
-		auto _ui = layerContentTable[i_element.header.layer][0];
-		_ui++;
+		layerContentTable[i_element.header.layer].Inc(0);
 	}
 		
 }

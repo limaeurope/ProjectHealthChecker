@@ -12,6 +12,6 @@ void ProcessLibParts();
 
 inline GS::Array<AbstractData*> ListLibParts();
 
-void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* iLibPartInstanceS);
+void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* const iLibPartInstanceS);
 
 #endif //_LIBPART_HPP

@@ -7,9 +7,6 @@
     <ClCompile Include="Src\$(ProjectName).cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Table\Table.cpp">
-      <Filter>Sources\Table</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Table\Excel.cpp">
       <Filter>Sources\Table</Filter>
     </ClCompile>
@@ -55,7 +52,7 @@
     <ClCompile Include="Src\Table\LibXLExtended.cpp">
       <Filter>Sources\Table</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ReportRow.cpp">
+    <ClCompile Include="Src\ResultRow.cpp">
       <Filter>Sources\Data</Filter>
     </ClCompile>
   </ItemGroup>
@@ -130,6 +127,9 @@
     <Filter Include="Sources\Utils">
       <UniqueIdentifier>{2053e04e-b1c7-42e7-b062-d04bd6676ccf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Enums">
+      <UniqueIdentifier>{523bf36b-77d0-494a-b0ab-f10599ebd337}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\acTypes.hpp">
@@ -140,9 +140,6 @@
     </ClInclude>
     <ClInclude Include="Src\ProjectHealthChecker.hpp">
       <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Table\Table.hpp">
-      <Filter>Sources\Table</Filter>
     </ClInclude>
     <ClInclude Include="Src\Table\Excel.hpp">
       <Filter>Sources\Table</Filter>
@@ -192,8 +189,11 @@
     <ClInclude Include="Src\Table\LibXLExtended.hpp">
       <Filter>Sources\Table</Filter>
     </ClInclude>
-    <ClInclude Include="Src\ReportRow.hpp">
+    <ClInclude Include="Src\ResultRow.hpp">
       <Filter>Sources\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Enums\CheckboxEnum.hpp">
+      <Filter>Sources\Enums</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

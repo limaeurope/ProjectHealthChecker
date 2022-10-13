@@ -1,6 +1,6 @@
-#include	"ReportRow.hpp"
+#include	"ResultRow.hpp"
 
-GS::Array<UInt32> ReportRow::GetRow(const UInt16 i_maxPos)
+GS::Array<UInt32> ResultRow::GetRow(const UInt16 i_maxPos)
 {
 	UInt16 maxVal = 0;
 	GS::Array<UInt32> resultArray;
@@ -19,7 +19,7 @@ GS::Array<UInt32> ReportRow::GetRow(const UInt16 i_maxPos)
 	return resultArray;
 }
 
-const char* ReportRow::ToStr() const
+const char* ResultRow::ToStr() const
 {
 	char _p[256];
 	GS::UniString _us("");
@@ -32,7 +32,7 @@ const char* ReportRow::ToStr() const
 	return static_cast <const char*>(_us.ToCStr());
 }
 
-const GS::Array<UInt32> ReportRow::ToArray() const
+const GS::Array<UInt32> ResultRow::ToArray() const
 {
 	GS::Array<UInt32> result;
 
@@ -46,7 +46,7 @@ const GS::Array<UInt32> ReportRow::ToArray() const
 	return result;
 }
 
-void ReportRow::Inc(UInt16 i_idx)
+void ResultRow::Inc(UInt16 i_idx)
 {
 	if (fields.ContainsKey(i_idx))
 		fields[i_idx]++;
@@ -54,20 +54,26 @@ void ReportRow::Inc(UInt16 i_idx)
 		fields.Add(i_idx, 1);
 }
 
-UInt32 ReportRow::operator[](const UInt16 i_index)
+ResultRow::ResultRow(GS::Array<UInt32> i_valueS)
+{
+	for (UInt16 i = 0; i < i_valueS.GetSize(); i++)
+		fields.Add(i, i_valueS[i]);
+}
+
+UInt32 ResultRow::operator[](const UInt16 i_index)
 {
 	if (!fields.ContainsKey(i_index))
 		fields.Add(i_index, 0);
 	return fields[i_index];
 }
 
-void ReportRow::Add(GS::Array<UInt32> i_valueS)
+void ResultRow::Add(GS::Array<UInt32> i_valueS)
 {
 	for (UInt16 i = 0; i < i_valueS.GetSize(); i++)
 		fields.Add(i, i_valueS[i]);
 }
 
-UInt16 ReportRow::Get(UInt16 i_col) const
+UInt16 ResultRow::Get(UInt16 i_col) const
 {
 	if (fields.ContainsKey(i_col))
 	{
@@ -76,3 +82,17 @@ UInt16 ReportRow::Get(UInt16 i_col) const
 	else
 		throw 1;
 }
+
+ResultRow ResultRow::operator+ (const ResultRow& i_other)
+{
+	ResultRow result = ResultRow(*this);
+	result.fields = fields;
+
+	UInt32 l = fields.GetSize();
+
+	for (auto k : i_other.fields.Keys())
+		result.fields.Add(k + l, i_other.fields[k]);
+
+	return result;
+}
+

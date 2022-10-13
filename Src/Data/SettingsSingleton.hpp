@@ -5,6 +5,7 @@
 #include	"APITypeDict.hpp"
 #include	"Data/DataStructs.hpp"
 #include	"Table/ResultTable.hpp"
+#include	"Enums/CheckboxEnum.hpp"
 
 
 #define LIBPART_CHECKBOX	2
@@ -24,18 +25,19 @@ class SettingsSingleton {
 	SettingsSingleton();
 	~SettingsSingleton();
 	SettingsSingleton(const SettingsSingleton&);
-	bool operator=(const SettingsSingleton&) {};
+	void operator=(const SettingsSingleton&) {};
 public:
 	static const APITypeDict ApiTypeDict;
 	GS::HashTable<int, Int32> CheckBoxData;
-	GS::HashTable<GS::UniString, ReportData> ReportData;
-	GS::HashTable<GS::UniString, ReportDataHeader> ReportHeaderS;
 	GS::HashSet<GS::UniString> FilterStrings;
 
-	ResultTable	ResultTable;
+	ResultTable	resultTable;
+	AttributeUsage AttributeUsage;
+	int iTest;
 
 	inline static API_LibraryTypeID GetLibPartType(const API_LibPart& i_libPart) { return ApiTypeDict.GetLibPartType(i_libPart); };
 	static SettingsSingleton& GetInstance();
+	ResultSheet& GetSheet(const GS::UniString& i_sName);
 };
 
 static std::mutex _mutex;
