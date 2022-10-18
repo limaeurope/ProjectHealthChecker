@@ -2,6 +2,7 @@
 #include	"DGFileDialog.hpp"
 #include	"../Data/SettingsSingleton.hpp"
 #include	"LibXLExtended.hpp"
+#include	"../Utils/Utils.hpp"
 #define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
 
 // -----------------------------------------------------------------------------
@@ -40,14 +41,14 @@ void ResultSheet::AddItem(const GS::UniString& i_sItem,
 	for (auto _i : i_reportRow.ToArray())
 		isEmpty |= (bool)_i;
 
-	if (!isEmpty && !SETTINGS().CheckBoxData[ZERO_CHECKBOX]) return;
+	if (!isEmpty && !SETTINGS().CheckBoxData[Zero_checkbox]) return;
 
 	char sItem[256], _sNumberOfWalls[256], sInt[256];
 
 	rowS.Add(i_sItem, i_reportRow);
 
 	itoa(i_reportRow[0], sInt, 10);
-
+	//FIXME
 	sprintf(_sNumberOfWalls, "%s: %s", i_sItem.ToCStr().Get(), sInt);
 	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
 	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
@@ -72,7 +73,7 @@ void ResultTable::ExportReportToExcel()
 
 		for (auto &rowItem : _v->rowS.Keys())
 		{
-			if (sheetItem.value->rowS[rowItem].GetSize() || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
+			if (sheetItem.value->rowS[rowItem].GetSize() || SETTINGS().CheckBoxData[Zero_checkbox])
 			{
 				sheet->writeStr(ii, 0, rowItem.ToUStr());
 				sheet->writeNum(ii++, 1, sheetItem.value->rowS[rowItem]);
@@ -90,3 +91,10 @@ void ResultTable::ExportReportToExcel()
 	DBVERIFY(book->save(UNISTR_TO_LIBXLSTR(filepath)));
 	book->release();
 }
+
+void ResultSheet::SetHeader(const GS::Array<IntStr>& i_reportDataHeader)
+{
+	for (auto& _header : i_reportDataHeader)
+		header.Push(GSFR(_header));
+}
+

@@ -15,11 +15,11 @@ void ProcessLibParts()
 
 	for (auto libPart : iLibPartInstanceS)
 	{
-		if (!(*libPart.value) || !SETTINGS().CheckBoxData[ZERO_CHECKBOX])
-			SETTINGS().GetSheet("Library Part Instances").AddItem(*libPart.key, *libPart.value);
+		if (!(*libPart.value) || !SETTINGS().CheckBoxData[Zero_checkbox])
+			SETTINGS().GetSheet(LibPartInst).AddItem(*libPart.key, *libPart.value);
 	}
 
-	SETTINGS().GetSheet("Library Part Instances").SetHeader(GS::Array<GS::UniString>{ "Library Part Path", "Number of instances" });
+	SETTINGS().GetSheet(LibPartInst).SetHeader(GS::Array<GS::UniString>{ "Library Part Path", "Number of instances" });
 
 	GS::Array<FileSizeReportObject> aEmbedded, aSpecial, aNormal;
 
@@ -40,10 +40,10 @@ void ProcessLibParts()
 	}
 
 	for (auto item : aNormal)
-		SETTINGS().GetSheet("LibPart data").AddItem(item.name, (UInt32)item.size);
+		SETTINGS().GetSheet(LibPartData).AddItem(item.name, (UInt32)item.size);
 
 	for (auto item : aEmbedded)
-		SETTINGS().GetSheet("Embedded LibPart data").AddItem(item.name, (UInt32)item.size);
+		SETTINGS().GetSheet(LibPartDataEmb).AddItem(item.name, (UInt32)item.size);
 }
 
 // -----------------------------------------------------------------------------
@@ -171,6 +171,7 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* const io_iLibPa
 			if (err) throw err;
 
 			BNZeroMemory(&libPart, sizeof(API_LibPart));
+#if ACVER < 26
 			if	(element.header.typeID == API_ObjectID
 				|| element.header.typeID == API_LampID)
 			{
@@ -180,6 +181,17 @@ void CountLibPartInstances(GS::HashTable<GS::UniString, UInt32>* const io_iLibPa
 			else if (element.header.typeID == API_DoorID
 				|| element.header.typeID == API_WindowID
 				|| element.header.typeID == API_SkylightID)
+#else
+			if (element.header.type.typeID == API_ObjectID
+				|| element.header.type.typeID == API_LampID)
+			{
+				libPart.index = element.object.libInd;
+				err = ACAPI_LibPart_Get(&libPart);
+			}
+			else if (element.header.type.typeID == API_DoorID
+				|| element.header.type.typeID == API_WindowID
+				|| element.header.type.typeID == API_SkylightID)
+#endif
 			{
 				err = ACAPI_Goodies(APIAny_GetElemLibPartUnIdID, &element.header, libPart.ownUnID);
 				err = ACAPI_LibPart_Search(&libPart, false);

@@ -21,13 +21,13 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage);
 
 UInt32 CountAttributes(
 	const API_AttrTypeID i_attrType,
-	bool(*const i_func)(const API_Attribute&, AbstractData*) = nullptr,
-	AbstractData* i_attrs = nullptr);
+	bool(*const i_func)(const API_Attribute&, AbstractData* const) = nullptr,
+	AbstractData* const i_attrs = nullptr);
 
 GS::Array<AbstractData*> ListAttributes(
 	const API_AttrTypeID i_attrType,
-	AbstractData* (*const i_func)(const API_Attribute&, AbstractData*) = nullptr,
-	AbstractData* i_attrs = nullptr);
+	AbstractData* (*const i_func)(const API_Attribute&, AbstractData* const) = nullptr,
+	AbstractData* const i_attrs = nullptr);
 
 #endif	//_ATTRIBUTE_HPP
 

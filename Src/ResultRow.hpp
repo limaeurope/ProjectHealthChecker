@@ -13,7 +13,6 @@ public:
 	ResultRow(UInt16 i_col, UInt32 i_value) { Add(i_col, i_value); };
 	ResultRow(UInt32 i_value) { Add(0, i_value); };
 	ResultRow(GS::Array<UInt32> i_valueS);
-	//ResultRow(ResultRow&) {};
 	ResultRow() {};
 
 	inline void Add(UInt16 i_col, UInt32 i_value) { fields.Add(i_col, i_value); };

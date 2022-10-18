@@ -16,7 +16,7 @@ void ProcessNavigatorItems()
 		{
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT));
 
-			if (iNavItems || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
+			if (iNavItems || SETTINGS().CheckBoxData[Zero_checkbox])
 			{
 				SETTINGS().GetSheet(ac_mapTypes[iMT]).AddItem(ac_navItemTypes[iNIT], iNavItems);
 			}
@@ -25,7 +25,7 @@ void ProcessNavigatorItems()
 
 			iNavItems = GetNavigatorItems(static_cast<API_NavigatorMapID>(iMT), static_cast<API_NavigatorItemTypeID>(iNIT), "Story");
 
-			if (iNavItems || SETTINGS().CheckBoxData[ZERO_CHECKBOX])
+			if (iNavItems || SETTINGS().CheckBoxData[Zero_checkbox])
 			{
 				SETTINGS().GetSheet(ac_mapTypes[iMT]).AddItem(ac_navItemTypes[iNIT]/* + " Story"*/, iNavItems);
 			}
@@ -51,8 +51,8 @@ short GetChildrenNumber(API_NavigatorItem * const i_item,
 		if (i_sInExclude.GetLength())
 			if (i_isInclude == (GS::UniString(i_item->uName).FindFirst(i_sInExclude) < MaxUIndex))
 				result += 1;
-			//else
-			//	result += 1;
+		else
+			result += 1;
 
 	for (API_NavigatorItem& childItem : childItems)
 	{
@@ -97,7 +97,7 @@ short GetNavigatorItems(const API_NavigatorMapID& i_mapID,
 
 	for (const auto& _set : sets)
 	{
-		item.guid = set.rootGuid;
+		item.guid = _set.rootGuid;
 		result += GetChildrenNumber(&item, i_navID, i_inExcludeString, i_isInclude);
 	}
 

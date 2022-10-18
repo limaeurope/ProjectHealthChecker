@@ -55,6 +55,5 @@ public:
 };
 
 
-
 #endif // !ATTRIBUTE_USAGE_HPP
 

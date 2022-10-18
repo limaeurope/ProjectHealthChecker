@@ -184,11 +184,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\$(ProjectName).cpp" />
+    <ClCompile Include="Src\ACSpecific\AttributeUsage.cpp" />
     <ClCompile Include="Src\APICommon.c" />
     <ClCompile Include="Src\ACSpecific\Attribute.cpp" />
     <ClCompile Include="Src\ACSpecific\Element.cpp" />
     <ClCompile Include="Src\Data\APITypeDict.cpp" />
-    <ClCompile Include="Src\Data\AttributeUsage.cpp" />
     <ClCompile Include="Src\Data\DataStructs.cpp" />
     <ClCompile Include="Src\Data\SettingsSingleton.cpp" />
     <ClCompile Include="Src\Data\WinReg.cpp" />
@@ -275,17 +275,18 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\ACSpecific\AttributeUsage.hpp" />
     <ClInclude Include="Src\acTypes.hpp" />
     <ClInclude Include="Src\APICommon.h" />
     <ClInclude Include="Src\APIEnvir.h" />
     <ClInclude Include="Src\ACSpecific\Attribute.hpp" />
     <ClInclude Include="Src\ACSpecific\Element.hpp" />
     <ClInclude Include="Src\Data\APITypeDict.hpp" />
-    <ClInclude Include="Src\Data\AttributeUsage.hpp" />
     <ClInclude Include="Src\Data\DataStructs.hpp" />
     <ClInclude Include="Src\Data\SettingsSingleton.hpp" />
     <ClInclude Include="Src\Data\WinReg.hpp" />
     <ClInclude Include="Src\Enums\CheckboxEnum.hpp" />
+    <ClInclude Include="Src\Enums\StringsEnum.hpp" />
     <ClInclude Include="Src\ResultRow.hpp" />
     <ClInclude Include="Src\Table\Excel.hpp" />
     <ClInclude Include="Src\ACSpecific\LibPart.hpp" />

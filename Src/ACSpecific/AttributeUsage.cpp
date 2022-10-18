@@ -3,10 +3,10 @@
 #include	"APIdefs_LibraryParts.h"
 
 template <typename T>
-void AddAttribute(GS::HashTable<T, ResultRow>* io_table,
+void AddAttribute(GS::HashTable<T, ResultRow>* const io_table,
 	const T i_idx,
-	GS::HashSet <T>* io_set = nullptr,
-	GS::HashSet <T>* io_todoSet = nullptr,
+	GS::HashSet <T>* const io_set = nullptr,
+	GS::HashSet <T>* const io_todoSet = nullptr,
 	const UInt16 i_col = 0
 	)
 {
@@ -30,19 +30,19 @@ void AddAttribute(GS::HashTable<T, ResultRow>* io_table,
 }
 
 template <typename T>
-void AddAttribute(GS::HashTable<T, ResultRow>* io_table,
+void AddAttribute(GS::HashTable<T, ResultRow>* const io_table,
 	const T i_idx,
-	GS::HashSet <T>* io_set,
+	GS::HashSet <T>* const io_set,
 	const UInt16 i_col
 	)
 {
 	AddAttribute <T>(io_table, i_idx, io_set, nullptr, i_col);
 }
 
-void AddAttribute(GS::HashTable<short, ResultRow>* io_table,
+void AddAttribute(GS::HashTable<short, ResultRow>* const io_table,
 	const API_PenOverrideType i_idx,
-	GS::HashSet <short>* io_set = nullptr,
-	GS::HashSet <short>* io_todoSet = nullptr,
+	GS::HashSet <short>* const io_set = nullptr,
+	GS::HashSet <short>* const io_todoSet = nullptr,
 	const UInt16 i_col = 0
 	)
 {
@@ -108,7 +108,11 @@ AttributeUsageSet AttributeUsage::GeneralAttributeUsageByElement(const API_Eleme
 	API_AddParType*** addPars;
 	GSErrCode err;
 
+#if ACVER < 26
 	switch (i_element.header.typeID)
+#else
+	switch (i_element.header.type.typeID)
+#endif
 	{
 	case API_WallID:
 		AddAttribute<short> (&penUsageTable, i_element.wall.contPen, &aus.penSet);

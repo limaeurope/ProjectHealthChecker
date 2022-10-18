@@ -31,9 +31,6 @@
     <ClCompile Include="Src\ACSpecific\Navigator.cpp">
       <Filter>Sources\ACSpecific</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Data\AttributeUsage.cpp">
-      <Filter>Sources\Data</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Data\SettingsSingleton.cpp">
       <Filter>Sources\Data</Filter>
     </ClCompile>
@@ -54,6 +51,9 @@
     </ClCompile>
     <ClCompile Include="Src\ResultRow.cpp">
       <Filter>Sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ACSpecific\AttributeUsage.cpp">
+      <Filter>Sources\ACSpecific</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -168,9 +168,6 @@
     <ClInclude Include="Src\APIEnvir.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Data\AttributeUsage.hpp">
-      <Filter>Sources\Data</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Data\SettingsSingleton.hpp">
       <Filter>Sources\Data</Filter>
     </ClInclude>
@@ -193,6 +190,12 @@
       <Filter>Sources\Data</Filter>
     </ClInclude>
     <ClInclude Include="Src\Enums\CheckboxEnum.hpp">
+      <Filter>Sources\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ACSpecific\AttributeUsage.hpp">
+      <Filter>Sources\ACSpecific</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Enums\StringsEnum.hpp">
       <Filter>Sources\Enums</Filter>
     </ClInclude>
   </ItemGroup>

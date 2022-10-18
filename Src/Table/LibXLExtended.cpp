@@ -20,17 +20,29 @@ bool XLAPIENTRY SheetExtended::writeNum(const int row, const int col, ResultRow&
 	{
 		auto _k = *(*i).key;
 		auto _v = *(*i).value;
-		if (SETTINGS().CheckBoxData[ZERO_CHECKBOX] || _v)
+		if (SETTINGS().CheckBoxData[Zero_checkbox] || _v)
 			bSuccess &= writeNum(row, col + _k, _v, format);
 	}
 
 	return bSuccess;
 }
 
-template <class T>
-SheetExtended* XLAPIENTRY _BookExtended<T>::addSheet(const wchar_t* name, Sheet* initSheet)
+SheetExtended* XLAPIENTRY _BookExtended<wchar_t>::_getSheet(const GS::UniString& i_sSheet) const
 {
-	auto _s = (Sheet*)initSheet;
-	auto _r = Book::addSheet(name, _s);
-	return (SheetExtended*)_r;
+	for (int i = 0; i < sheetCount(); i++)
+	{
+		if (i_sSheet == GS::UniString(getSheetName(i)))
+		{
+			auto _i = getSheet(i);
+			return (SheetExtended*) _i;
+		}
+	}
+
+	return nullptr;
 }
+
+SheetExtended* XLAPIENTRY _BookExtended<wchar_t>::_getSheet(const wchar_t * const i_sSheet) const
+{
+	return _getSheet(GS::UniString(i_sSheet));
+};
+

@@ -99,7 +99,8 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 			result = item;
 			break;
 		case Import_button:
-			Do_ImportNamesFromExcel();
+			//Do_ImportNamesFromExcel();
+			SETTINGS().ImportNamesFromExcel();
 
 			result = item;
 			break;

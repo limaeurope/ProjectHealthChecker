@@ -22,6 +22,50 @@
 /* [  2] */			"Error occurred during input."
 }
 
+/* Table data */
+'STR#' 32603 "Element Test API Function" {
+/* [  1] */			"Number of user objects"
+/* [  2] */			"Number of user attributes"
+/* [  3] */			"Number of user library elements"
+/* [  4] */			"Layer data"
+/* [  5] */			"Layer name"
+/* [  6] */			"Number of objects on layer"
+/* [  7] */			"Number of Layers"
+/* [  8] */			"Number of Layers containing the string \""
+/* [  9] */			"Pen data"
+/* [ 10] */			"Pen number"
+/* [ 11] */			"Linetype data"
+/* [ 12] */			"Linetype name"
+/* [ 13] */			"Fill data"
+/* [ 14] */			"Fill name"
+/* [ 15] */			"Surface data"
+/* [ 16] */			"Surface name"
+/* [ 17] */			"Building material name"
+/* [ 18] */			"Building material data"
+/* [ 19] */			"Composite name"
+/* [ 20] */			"Composite data"
+/* [ 21] */			"Profile name"
+/* [ 22] */			"Profile data"
+/* [ 23] */			"Zone name"
+/* [ 24] */			"Zone data"
+/* [ 25] */			"Material name"
+/* [ 26] */			"Material data"
+/* [ 27] */			"Number of Materials"
+/* [ 28] */			"Number of Materials with Texture"
+/* [ 29] */			"Texture name"
+/* [ 30] */			"Texture data"
+/* [ 31] */			"Size in Bytes"
+
+/* [ 32] */			"LibPart data"
+/* [ 33] */			"Embedded LibPart data"
+/* [ 34] */			"Library Part Instances"
+/* [ 35] */			"Library Part Path"
+/* [ 36] */			"Number of instances"
+/* [ 37] */			"Embedded LibPart data"
+
+/* [ 38] */			"Elements"
+}
+
 /* Localizable dialog resource(s) with the accompanying help resource(s) */
 
 'GDLG'	32400	Modal			 40   40   490 366 	"Project Status Report" {
