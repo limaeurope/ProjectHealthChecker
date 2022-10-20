@@ -4,8 +4,8 @@
 
 
 'STR#' 32000 "Add-on Name and Description" {
-/* [  1] */		"Project Health Check"
-/* [  2] */		"Add-on; Copies a Property's Option Set to another Property"
+/* [  1] */		"ProjectHealthChecker"
+/* [  2] */		"Writes out project statistics to an .xlsx file"
 }
 
 
@@ -23,7 +23,7 @@
 }
 
 /* Table data */
-'STR#' 32603 "Element Test API Function" {
+'STR#' 32603 "ProjectHealthChecker" {
 /* [  1] */			"Number of user objects"
 /* [  2] */			"Number of user attributes"
 /* [  3] */			"Number of user library elements"
@@ -64,6 +64,16 @@
 /* [ 37] */			"Embedded LibPart data"
 
 /* [ 38] */			"Elements"
+
+/* [ 39] */			"Object type"
+/* [ 40] */			"Number of "
+/* [ 41] */			"Number of placed instances" 
+
+/* [ 42] */			"Navigator location name"
+/* [ 43] */			"Number of subelements"
+
+/* [ 44] */			"Number of arcs"
+/* [ 45] */			"Number of Profiles"
 }
 
 /* Localizable dialog resource(s) with the accompanying help resource(s) */
@@ -82,7 +92,7 @@
 
 'GDLG'	32401	Modal			 40   40   490 366 	"Settings" {
 /* [  1] */ Button				380  332   100  24  LargePlain "Close"
-/* [  2] */ CheckBox			 10  10   260  24  LargePlain "Library Part data"
+/* [  2] */ CheckBox			 10   10   260  24  LargePlain "Library Part data"
 /* [  3] */ CheckBox			 10   34   260  24  LargePlain "Include Element data"
 /* [  4] */ CheckBox			 10   58   260  24  LargePlain "Include SEO data"
 /* [  5] */ CheckBox			 10   82   260  24  LargePlain "Include Navigator data"

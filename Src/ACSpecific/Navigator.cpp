@@ -10,7 +10,7 @@ void ProcessNavigatorItems()
 
 	for (UInt16 iMT = 1; iMT < ac_mapTypes.GetSize(); iMT++)
 	{
-		SETTINGS().GetSheet(ac_mapTypes[iMT]).SetHeader(GS::Array<GS::UniString>{ "Navigator location name", "Number of subelements" });
+		SETTINGS().GetSheet(ac_mapTypes[iMT]).SetHeader(GS::Array<int>{ NaviLocName, NumOfSubelems });
 
 		for (UInt16 iNIT = 1; iNIT < ac_navItemTypes.GetSize(); iNIT++)
 		{

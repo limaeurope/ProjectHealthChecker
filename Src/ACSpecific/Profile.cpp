@@ -2,6 +2,7 @@
 #include	"VectorImageIterator.hpp"
 #include	"SettingsSingleton.hpp"
 
+
 AbstractData* GetArcNumber(const API_Attribute& i_apiAttrib, AbstractData* i_attrs)
 {
 	API_AttributeDefExt defs;
@@ -36,13 +37,13 @@ AbstractData* GetArcNumber(const API_Attribute& i_apiAttrib, AbstractData* i_att
 
 void ProcessProfiles()
 {
-	ResultSheet rs{ "Profile data" };
+	ResultSheet rs{ ProfData };
 	SETTINGS().resultTable.sheetDict.Add(rs.sName, rs);
-	rs.header = GS::Array<GS::UniString>{ "Profile data", "Number of Profiles" };
+	rs.header = GS::Array<GS::UniString>{ GSFR(ProfData), GSFR(NumbOfProfs) };
 
 	GS::Array<AbstractData*> profileS = ListAttributes(API_ProfileID, GetArcNumber);
 
-	SETTINGS().GetSheet("Profile data").SetHeader(GS::Array<GS::UniString>{ "Profile name", "Number of arcs" });
+	SETTINGS().GetSheet(ProfData).SetHeader(GS::Array<GS::UniString>{ GSFR(ProfName), GSFR(NumbOfArcs) });
 
 	for (AbstractData* prof : profileS)
 	{

@@ -5,15 +5,15 @@ GS::UniString GetRegString(const GS::UniString& i_key, const GS::UniString& i_pa
 	char sBuffer[255];
 	DWORD iBuffer = 255;
 
-	LSTATUS _ = RegGetValueW(i_hKey,
+	LSTATUS _stat = RegGetValueW(i_hKey,
 		i_path.ToUStr().Get(),		/*L"SOFTWARE\\GRAPHISOFT\\ARCHICAD\\Archicad 26.0.0 INT R1\\Add-On Manager",*/
 		i_key.ToUStr().Get(),		/*L"Default Location",*/
-		RRF_RT_REG_SZ,
+		RRF_RT_REG_SZ + RRF_ZEROONFAILURE,
 		NULL,
 		&sBuffer,
 		&iBuffer);
 
-	wchar_t* ws = (wchar_t*)sBuffer;
+	wchar_t* ws = (wchar_t*)sBuffer; 
 
 	return GS::UniString(ws);
 }

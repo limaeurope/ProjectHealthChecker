@@ -8,11 +8,16 @@
 #include	"Table/LibXLExtended.hpp"
 #include	"Utils/Utils.hpp"
 
+#include	<ctime>
+
 const APITypeDict SettingsSingleton::ApiTypeDict = APITypeDict();
 SettingsSingleton& (*SETTINGS)() = SettingsSingleton::GetInstance;
 
 SettingsSingleton::SettingsSingleton()
 {
+	m_companyName = GetStringFromResource_(32506, 1);
+	m_appName = GetStringFromResource_(32000, 1);
+
 	FilterStrings = {};
 	
 	CheckBoxData.Put(Libpart_checkbox,	GetRegInt("LibraryPartData"));
@@ -23,6 +28,36 @@ SettingsSingleton::SettingsSingleton()
 	CheckBoxData.Put(Profile_checkbox,	GetRegInt("IncludeProfileData"));
 	CheckBoxData.Put(Count_instances,	GetRegInt("CountInstances"));
 	CheckBoxData.Put(Zero_checkbox,		GetRegInt(GS::UniString("IncludeZeroValuedData")));
+
+	GS::UniString logFileFolder = GetRegString("LogFileFolder");
+
+	if (logFileFolder.GetLength() > 0)
+	{
+		auto _m = logFileFolder.ToCStr();
+
+		m_logger.SetLogFileFolder(logFileFolder);
+	}
+	else
+	{
+		time_t now = time(0);
+		tm* ltm = localtime(&now);
+
+		char buffer[256];
+
+		strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", ltm);
+
+		IO::Location loc;
+
+		//GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::TemporaryFolder, &loc);
+		GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::Desktop, &loc);
+	
+		loc.AppendToLocal(IO::Name(m_companyName));
+		loc.AppendToLocal(IO::Name(m_appName));
+
+		loc.AppendToLocal(IO::Name(GS::UniString("ProjectHealtChecker") + GS::UniString(buffer) + GS::UniString(".log")));
+
+		m_logger.SetLogFileFolder(loc);
+	}
 }
 
 SettingsSingleton::~SettingsSingleton()
@@ -35,6 +70,8 @@ SettingsSingleton::~SettingsSingleton()
 	SetRegInt(CheckBoxData[Profile_checkbox],	"IncludeProfileData");
 	SetRegInt(CheckBoxData[Count_instances],	"CountInstances");
 	SetRegInt(CheckBoxData[Zero_checkbox], GS::UniString("IncludeZeroValuedData"));
+
+	SetRegString(m_logger.GetLogFileFolderStr(), "LogFileFolder");
 }
 
 SettingsSingleton& SettingsSingleton::GetInstance()

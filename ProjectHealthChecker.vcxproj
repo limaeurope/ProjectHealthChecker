@@ -200,6 +200,7 @@
     <ClCompile Include="Src\Table\LibXLExtended.cpp" />
     <ClCompile Include="Src\Table\ResultTable.cpp" />
     <ClCompile Include="Src\ACSpecific\SEO.cpp" />
+    <ClCompile Include="Src\Utils\Logger.cpp" />
     <ClCompile Include="Src\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -296,6 +297,8 @@
     <ClInclude Include="Src\Table\LibXLExtended.hpp" />
     <ClInclude Include="Src\Table\ResultTable.hpp" />
     <ClInclude Include="Src\ACSpecific\SEO.hpp" />
+    <ClInclude Include="Src\Utils\Logger.hpp" />
+    <ClInclude Include="Src\Utils\Loglevels.hpp" />
     <ClInclude Include="Src\Utils\Utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

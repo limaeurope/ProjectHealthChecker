@@ -14,6 +14,7 @@ class ResultSheet
 public:
 	ResultSheet() {};
 	ResultSheet(GS::UniString name): sName(name){};
+	ResultSheet(IntStr name): sName(GSFR(name)){};
 	GS::UniString								sName;
 	GS::Array<GS::UniString>					header;
 	GS::HashTable<GS::UniString, ResultRow>		rowS;
@@ -31,7 +32,7 @@ public:
 		const UInt32 i_iItemNumber,
 		const UInt16 i_pos = 0) { return AddItem(GSFR(i_sItem) , ResultRow{ i_iItemNumber }, i_pos); };
 	inline void SetHeader(const GS::Array<GS::UniString>& i_reportDataHeader) { header = i_reportDataHeader; };
-	void SetHeader(const GS::Array<IntStr>& i_reportDataHeader);
+	void SetHeader(const GS::Array<int>& i_reportDataHeader);
 };
 
 class ResultTable {

@@ -92,9 +92,9 @@ void ResultTable::ExportReportToExcel()
 	book->release();
 }
 
-void ResultSheet::SetHeader(const GS::Array<IntStr>& i_reportDataHeader)
+void ResultSheet::SetHeader(const GS::Array<int>& i_reportDataHeader)
 {
 	for (auto& _header : i_reportDataHeader)
-		header.Push(GSFR(_header));
+		header.Push(GSFR((IntStr)_header));
 }
 

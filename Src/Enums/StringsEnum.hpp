@@ -47,6 +47,15 @@ typedef enum {
 
 	Elements,
 
+	ObjType,
+	NumOf,
+	NumOfPlacedInstances,
+
+	NaviLocName,
+	NumOfSubelems,
+
+	NumbOfArcs,
+	NumbOfProfs
 } IntStr;
 
 #endif // !_STRINGS_ENUM_HPP

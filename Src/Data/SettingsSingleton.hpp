@@ -7,6 +7,7 @@
 #include	"Table/ResultTable.hpp"
 #include	"Enums/CheckboxEnum.hpp"
 #include	"Enums/StringsEnum.hpp"
+#include	"Utils/Logger.hpp"
 
 
 const double COLUMN_WIDTH = 32.0;
@@ -16,7 +17,11 @@ class SettingsSingleton {
 	~SettingsSingleton();
 	SettingsSingleton(const SettingsSingleton&);
 	void operator=(const SettingsSingleton&) {};
+
+	GS::UniString	m_companyName;
+	GS::UniString	m_appName;
 public:
+	Logger			m_logger;
 	static const APITypeDict ApiTypeDict;
 	GS::HashTable<int, Int32> CheckBoxData;
 	GS::HashSet<GS::UniString> FilterStrings;

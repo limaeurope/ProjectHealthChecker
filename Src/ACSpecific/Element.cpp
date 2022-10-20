@@ -2,11 +2,12 @@
 #include	"Element.hpp"
 #include	"ACTypes.hpp"
 #include	"../Data/SettingsSingleton.hpp"
+#include	"../Enums/StringsEnum.hpp"
 
 
 void ProcessElements()
 {
-	SETTINGS().GetSheet(Elements).SetHeader(GS::Array<GS::UniString>{ "Object type", "Number of placed instances" });
+	SETTINGS().GetSheet(Elements).SetHeader(GS::Array<int>{ ObjType, NumOfPlacedInstances});
 
 	for (UINT16 i = 1; i <= ac_types.GetSize(); i++)
 	{
