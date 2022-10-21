@@ -136,7 +136,7 @@ void AddAttributeListToTable(const API_AttrTypeID i_attrID, const GS::HashTable<
 //  List attributes
 // -----------------------------------------------------------------------------
 
-void ProcessAttributes(AttributeUsage& i_attributeUsage)
+void ProcessAttributes()
 {
 	SETTINGS().GetSheet(LayerData).SetHeader(ReportSheetHeader{ GSFR(LayerName), GSFR(NumObjOnLayer) });
 	SETTINGS().GetSheet(LayerData).AddItem(GSFR(NumLay), CountAttributes(API_LayerID));
@@ -149,31 +149,31 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 
 	#define REPORT_ROWS GSFR(NumObj), GSFR(NumAttr), GSFR(NumLib)
 
-	AddAttributeListToTable<API_AttributeIndex>(API_LayerID, i_attributeUsage.layerContentTable, LayerData);
+	AddAttributeListToTable<API_AttributeIndex>(API_LayerID, SETTINGS().attributeUsage.layerContentTable, LayerData);
 	SETTINGS().GetSheet(LayerData).SetHeader(ReportSheetHeader{ GSFR(LayerName), REPORT_ROWS });
 
-	AddAttributeListToTable<short>(API_PenID, i_attributeUsage.penUsageTable, PenData, false);
+	AddAttributeListToTable<short>(API_PenID, SETTINGS().attributeUsage.penUsageTable, PenData, false);
 	SETTINGS().GetSheet(PenData).SetHeader(ReportSheetHeader{ GSFR(PenNumber), REPORT_ROWS});
 
-	AddAttributeListToTable<API_AttributeIndex>(API_LinetypeID, i_attributeUsage.ltUsageTable, LTData);
+	AddAttributeListToTable<API_AttributeIndex>(API_LinetypeID, SETTINGS().attributeUsage.ltUsageTable, LTData);
 	SETTINGS().GetSheet(LTData).SetHeader(ReportSheetHeader{ GSFR(LTName), REPORT_ROWS});
 
-	AddAttributeListToTable<API_AttributeIndex>(API_FilltypeID, i_attributeUsage.fillUsageTable, FillData);
+	AddAttributeListToTable<API_AttributeIndex>(API_FilltypeID, SETTINGS().attributeUsage.fillUsageTable, FillData);
 	SETTINGS().GetSheet(FillData).SetHeader(ReportSheetHeader{ GSFR(FillName), REPORT_ROWS});
 
-	AddAttributeListToTable<API_AttributeIndex>(API_MaterialID, i_attributeUsage.surfUsageTable, SurfData);
+	AddAttributeListToTable<API_AttributeIndex>(API_MaterialID, SETTINGS().attributeUsage.surfUsageTable, SurfData);
 	SETTINGS().GetSheet(SurfData).SetHeader(ReportSheetHeader{ GSFR(SurfName), REPORT_ROWS});
 
-	AddAttributeListToTable<API_AttributeIndex>(API_BuildingMaterialID, i_attributeUsage.buildMatUsageTable, BuildMatData);
+	AddAttributeListToTable<API_AttributeIndex>(API_BuildingMaterialID, SETTINGS().attributeUsage.buildMatUsageTable, BuildMatData);
 	SETTINGS().GetSheet(BuildMatData).SetHeader(ReportSheetHeader{ GSFR(BuildMatName), REPORT_ROWS});
 
-	AddAttributeListToTable<API_AttributeIndex>(API_CompWallID, i_attributeUsage.compositeUsageTable, CompData);
+	AddAttributeListToTable<API_AttributeIndex>(API_CompWallID, SETTINGS().attributeUsage.compositeUsageTable, CompData);
 	SETTINGS().GetSheet(CompData).SetHeader(ReportSheetHeader{ GSFR(CompName), REPORT_ROWS});
 
-	AddAttributeListToTable<API_AttributeIndex>(API_ProfileID, i_attributeUsage.profileUsageTable, ProfData);
+	AddAttributeListToTable<API_AttributeIndex>(API_ProfileID, SETTINGS().attributeUsage.profileUsageTable, ProfData);
 	SETTINGS().GetSheet(ProfData).SetHeader(ReportSheetHeader{ GSFR(ProfName), REPORT_ROWS});
 
-	AddAttributeListToTable<API_AttributeIndex>(API_ZoneCatID, i_attributeUsage.zoneUsageTable, ZoneData);
+	AddAttributeListToTable<API_AttributeIndex>(API_ZoneCatID, SETTINGS().attributeUsage.zoneUsageTable, ZoneData);
 	SETTINGS().GetSheet(ZoneData).SetHeader(ReportSheetHeader{ GSFR(ZoneName), REPORT_ROWS});
 
 	SETTINGS().GetSheet(MatData).AddItem(MatNum, CountAttributes(API_MaterialID));
@@ -189,8 +189,8 @@ void ProcessAttributes(AttributeUsage& i_attributeUsage)
 		FileSizeReportObject* _tex = (FileSizeReportObject*)tex;
 		ResultRow _row;
 
-		if (i_attributeUsage.surfUsageTable.ContainsKey(_tex->index))
-			_row = i_attributeUsage.surfUsageTable[_tex->index];
+		if (SETTINGS().attributeUsage.surfUsageTable.ContainsKey(_tex->index))
+			_row = SETTINGS().attributeUsage.surfUsageTable[_tex->index];
 		else
 			_row = ResultRow{ 0 };
 

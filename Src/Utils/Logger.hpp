@@ -4,19 +4,25 @@
 #include	"../APIEnvir.h"
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"../APICommon.h"
-#include	"../Utils/Loglevels.hpp"
+#include	"../Enums/Loglevels.hpp"
+#include	"../Utils/DateTime.hpp"
 #include	"FileSystem.hpp"
 #include	"File.hpp"
+#include	<mutex>
 
 
 class Logevent 
 {
 	Loglevel		m_loglevel;
 	GS::UniString	m_sLogText;
+	GS::UniString	m_sDate;
 public:
 	Logevent(GS::UniString i_sLogText, Loglevel i_loglevel) :
 		m_sLogText	(i_sLogText),
-		m_loglevel	(i_loglevel) {};
+		m_loglevel	(i_loglevel),
+		m_sDate		(GetTimeStr()) {};
+	const GS::UniString ToUniString() const;
+	Loglevel GetLogLevel() const { return m_loglevel; }
 };
 
 
@@ -28,9 +34,10 @@ public:
 		WithNewLine
 	};
 private:
-	IO::Location*	m_logFileLocation;
-	IO::File*		m_logFile;
-	Loglevel		m_loglevel;
+	IO::Location*		m_pLogFileFolder;
+	GS::UniString		m_logFileName;
+	mutable IO::File*	m_pLogFile;
+	Loglevel			m_loglevel;
 
 	GSErrCode OpenLogFileForWriting();
 	GSErrCode CloseLogFile();
@@ -43,14 +50,18 @@ private:
 	GSErrCode WriteStr(const GS::UniString& val, NewLineFlag newLine /* = NoNewLine*/);
 public:
 	~Logger();
-	void Log(Logevent i_logevent);
+	Logger();
+	void Log(const Logevent& i_logevent);
+	void Log(const GSErrCode i_errCode, const GS::UniString& i_sLogText, const Loglevel i_logLevel = LogLev_DEBUG);
 	void SetLoglevel(Loglevel i_loglevel) { m_loglevel = i_loglevel; };
 	void SetLoglevel(short i_loglevel) { m_loglevel = (Loglevel)i_loglevel; };
 	GS::UniString GetLogFileFolderStr();
-	void SetLogFileFolder(IO::Location& i_loc);
 	void SetLogFileFolder(IO::Location& i_loc, GS::UniString& i_fileName);
-	void Logger::SetLogFileFolder(GS::UniString i_loc);
+	static Logger& GetLogger();
 };
+
+static std::mutex _loggerMutex;
+extern Logger& (*LOGGER)();
 
 #endif //_LOGGER_HPP
 

@@ -7,11 +7,21 @@
 #include	"Excel.hpp"
 #include	"Table/LibXLExtended.hpp"
 #include	"Utils/Utils.hpp"
+#include	"Utils/DateTime.hpp"
 
-#include	<ctime>
 
 const APITypeDict SettingsSingleton::ApiTypeDict = APITypeDict();
 SettingsSingleton& (*SETTINGS)() = SettingsSingleton::GetInstance;
+
+Loglevel SettingsSingleton::GetLoglevel() const 
+{ 
+	return m_loglevel; 
+}
+
+void SettingsSingleton::SetLoglevel(const Loglevel i_loglevel) 
+{ 
+	m_loglevel = i_loglevel; 
+}
 
 SettingsSingleton::SettingsSingleton()
 {
@@ -28,36 +38,6 @@ SettingsSingleton::SettingsSingleton()
 	CheckBoxData.Put(Profile_checkbox,	GetRegInt("IncludeProfileData"));
 	CheckBoxData.Put(Count_instances,	GetRegInt("CountInstances"));
 	CheckBoxData.Put(Zero_checkbox,		GetRegInt(GS::UniString("IncludeZeroValuedData")));
-
-	GS::UniString logFileFolder = GetRegString("LogFileFolder");
-
-	if (logFileFolder.GetLength() > 0)
-	{
-		auto _m = logFileFolder.ToCStr();
-
-		m_logger.SetLogFileFolder(logFileFolder);
-	}
-	else
-	{
-		time_t now = time(0);
-		tm* ltm = localtime(&now);
-
-		char buffer[256];
-
-		strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", ltm);
-
-		IO::Location loc;
-
-		//GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::TemporaryFolder, &loc);
-		GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::Desktop, &loc);
-	
-		loc.AppendToLocal(IO::Name(m_companyName));
-		loc.AppendToLocal(IO::Name(m_appName));
-
-		loc.AppendToLocal(IO::Name(GS::UniString("ProjectHealtChecker") + GS::UniString(buffer) + GS::UniString(".log")));
-
-		m_logger.SetLogFileFolder(loc);
-	}
 }
 
 SettingsSingleton::~SettingsSingleton()
@@ -71,7 +51,6 @@ SettingsSingleton::~SettingsSingleton()
 	SetRegInt(CheckBoxData[Count_instances],	"CountInstances");
 	SetRegInt(CheckBoxData[Zero_checkbox], GS::UniString("IncludeZeroValuedData"));
 
-	SetRegString(m_logger.GetLogFileFolderStr(), "LogFileFolder");
 }
 
 SettingsSingleton& SettingsSingleton::GetInstance()

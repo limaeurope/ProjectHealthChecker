@@ -48,15 +48,17 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	switch (message) {
 	case DG_MSG_INIT:
 	{
-		GSErrCode err;
+		//GSErrCode err;
+
+		SETTINGS().CheckBoxData[Libpart_checkbox] = 0;
 
 		AttributeUsage attributeUsage{};
 
-		if (SETTINGS().CheckBoxData[Libpart_checkbox]) ProcessLibParts(/*iLibPartInstanceS*/);
+		if (SETTINGS().CheckBoxData[Libpart_checkbox]) ProcessLibParts();
 		if (SETTINGS().CheckBoxData[Element_checkbox]) ProcessElements();
 		if (SETTINGS().CheckBoxData[SEO_checkbox]) ProcessSEO();
 		if (SETTINGS().CheckBoxData[Navigator_checkbox]) ProcessNavigatorItems();
-		if (SETTINGS().CheckBoxData[Layer_checkbox]) ProcessAttributes(attributeUsage);
+		if (SETTINGS().CheckBoxData[Layer_checkbox]) ProcessAttributes();
 		if (SETTINGS().CheckBoxData[Profile_checkbox]) ProcessProfiles();
 
 		break;

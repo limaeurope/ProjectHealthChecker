@@ -7,7 +7,8 @@
 #include	"Table/ResultTable.hpp"
 #include	"Enums/CheckboxEnum.hpp"
 #include	"Enums/StringsEnum.hpp"
-#include	"Utils/Logger.hpp"
+#include	"Enums/Loglevels.hpp"
+//#include	"Utils/Logger.hpp"
 
 
 const double COLUMN_WIDTH = 32.0;
@@ -18,24 +19,24 @@ class SettingsSingleton {
 	SettingsSingleton(const SettingsSingleton&);
 	void operator=(const SettingsSingleton&) {};
 
-	GS::UniString	m_companyName;
-	GS::UniString	m_appName;
+	Loglevel		m_loglevel;
 public:
-	Logger			m_logger;
+	GS::UniString	m_appName;
+	GS::UniString	m_companyName;
 	static const APITypeDict ApiTypeDict;
 	GS::HashTable<int, Int32> CheckBoxData;
 	GS::HashSet<GS::UniString> FilterStrings;
-	//GS::HashSet<GS::UniString> ListStrings;
 
 	ResultTable	resultTable;
-	AttributeUsage AttributeUsage;
-	int iTest;
+	AttributeUsage attributeUsage;
 
 	inline static API_LibraryTypeID GetLibPartType(const API_LibPart& i_libPart) { return ApiTypeDict.GetLibPartType(i_libPart); };
 	static SettingsSingleton& GetInstance();
 	ResultSheet& GetSheet(const GS::UniString& i_sName);
 	ResultSheet& GetSheet(const IntStr i_sName);
 	void ImportNamesFromExcel(const GS::UniString& i_sSheet = "");
+	Loglevel GetLoglevel() const;
+	void SetLoglevel(const Loglevel i_loglevel);
 };
 
 static std::mutex _mutex;

@@ -1,55 +1,101 @@
-#include "Logger.hpp"
+#include	"Logger.hpp"
+#include	"../Data/SettingsSingleton.hpp"
+#include	"WinReg.hpp"
 
 #define		EOLInFile		"\xD\xA"
 #define		EOLInFile_LEN	2
 
 
+Logger& (*LOGGER)() = Logger::GetLogger;
+
+Logger& Logger::GetLogger()
+{
+	std::lock_guard<std::mutex> lock(_loggerMutex);
+
+	static Logger singleton;
+
+	return singleton;
+}
+
+Logger::Logger()
+{
+	m_loglevel = LogLev_DEBUG;
+
+	GS::UniString logFileFolder = GetRegString("LogFileFolder");
+
+	GS::UniString fileName = GS::UniString("ProjectHealtChecker") + GetTimeStr() + GS::UniString(".log");
+
+	if (logFileFolder.GetLength() > 0)
+	{
+		LOGGER().SetLogFileFolder(IO::Location(logFileFolder), fileName);
+	}
+	else
+	{
+		IO::Location loc;
+
+		GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::TemporaryFolder, &loc);
+		//GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::Desktop, &loc);
+
+		loc.AppendToLocal(IO::Name(SETTINGS().m_companyName));
+		loc.AppendToLocal(IO::Name(SETTINGS().m_appName));
+
+		LOGGER().SetLogFileFolder(loc, fileName);
+	}
+
+	LOGGER().SetLoglevel(LogLev_DEBUG);
+}
+
 Logger::~Logger()
 {
-	CloseLogFile(); 
-	delete m_logFileLocation;
-}
-
-void Logger::SetLogFileFolder(IO::Location& i_loc)
-{ 
-	m_logFileLocation = new IO::Location(i_loc);
-
-	OpenLogFileForWriting();
-
-	Write("Teszt2");
-
-	Write("Teszt3");
-}
-
-void Logger::SetLogFileFolder(GS::UniString i_loc)
-{ 
-	return SetLogFileFolder(IO::Location(i_loc));
+	SetRegString(GetLogFileFolderStr(), "LogFileFolder");
+	
+	delete m_pLogFileFolder;
 }
 
 void Logger::SetLogFileFolder(IO::Location& i_loc, GS::UniString& i_fileName)
 { 
-	//GSErrCode errCode = IO::fileSystem.CreateFolderTree(*m_logFileLocation);
-	GSErrCode errCode = i_loc->GetStatus();
+	m_pLogFileFolder = new IO::Location(i_loc);
+	m_logFileName = i_fileName;
 
-	if (errCode != NoError) {
-		errCode = IO::fileSystem.CreateFolderTree(*m_logFileLocation);
-	}
+	OpenLogFileForWriting();
 
-	return SetLogFileFolder(IO::Location(i_loc));
+	Write("Logging started: " + GetTimeStr("%Y.%m.%d %H:%M:%S"));
+
+	CloseLogFile();
 }
 
 GS::UniString Logger::GetLogFileFolderStr()
 {
 	GS::UniString n;
-	m_logFileLocation->ToPath(&n);
-	auto _m = n.ToCStr();
+	m_pLogFileFolder->ToPath(&n);
 
 	return (n);
 }
 
-void Logger::Log(Logevent i_logevent)
+void Logger::Log(const GSErrCode i_errCode, const GS::UniString& i_sLogText, const Loglevel i_logLevel /*= LogLev_DEBUG*/)
 {
+	if (i_logLevel >= SETTINGS().GetLoglevel())
+	{
+		OpenLogFileForWriting();
 
+		const GS::UniString _s = GetTimeStr() + ": " + i_sLogText;
+		
+		Write(_s);
+		
+		CloseLogFile();
+	}
+}
+
+void Logger::Log(const Logevent& i_logevent)
+{
+	if (i_logevent.GetLogLevel() > m_loglevel)
+	{
+		OpenLogFileForWriting();
+		
+		Write(i_logevent.ToUniString());
+	
+		CloseLogFile();
+	}
 }
 
 // =====================================================================================================================
@@ -75,7 +121,7 @@ GSErrCode Logger::Write(const GS::UniString& val)
 		cBuffer = new char[length + 1];	// buffer_overrun_reviewed_0
 		if (cBuffer != nullptr) {
 			CHCopyC(val.ToCStr(0, MaxUSize, CC_UTF8).Get(), cBuffer);
-			lastErr = m_logFile->WriteBin(cBuffer, length);
+			lastErr = m_pLogFile->WriteBin(cBuffer, length);
 		}
 		else {
 			lastErr = ErrMemoryFull;
@@ -94,18 +140,17 @@ GSErrCode Logger::Write(const GS::UniString& val)
 //	Write into the open file
 // -----------------------------------------------------------------------------
 
-GSErrCode Logger::Write(Int32 nBytes, GSPtr data)
+GSErrCode Logger::Write(Int32 nBytes, GSPtr data) 
 {
 	GSErrCode lastErr = NoError;
 
 	if (lastErr != NoError)
 		return lastErr;
 
-	lastErr = m_logFile->WriteBin(data, nBytes);
+	lastErr = m_pLogFile->WriteBin(data, nBytes);
 
 	return lastErr;
 }		// Write
-
 
 // -----------------------------------------------------------------------------
 //	Write a unicode string into the open file
@@ -124,7 +169,7 @@ GSErrCode Logger::AddToLogFile(const GS::UniString& i_logRow)
 		cBuffer = new char[length + 1];	// buffer_overrun_reviewed_0
 		if (cBuffer != nullptr) {
 			CHCopyC(i_logRow.ToCStr(0, MaxUSize, CC_UTF8).Get(), cBuffer);
-			lastErr = m_logFile->WriteBin(cBuffer, length);
+			lastErr = m_pLogFile->WriteBin(cBuffer, length);
 		}
 		else {
 			lastErr = ErrMemoryFull;
@@ -139,59 +184,57 @@ GSErrCode Logger::AddToLogFile(const GS::UniString& i_logRow)
 	return lastErr;
 }		// Write
 
-
 // -----------------------------------------------------------------------------
 //	Open the file
 // -----------------------------------------------------------------------------
-
 
 GSErrCode Logger::OpenLogFileForWriting()
 {
 	GSErrCode	errCode = NoError;
 
-	if (m_logFile != nullptr)
+	if (m_pLogFile != nullptr)
 		return Error;
 
-	IO::Location* fileLoc = m_logFileLocation;
-	if (fileLoc == nullptr)
-		return Error;
+	//errCode = m_pLogFileFolder->GetStatus();
 
-	//errCode = fileLoc->GetStatus();
+	errCode = IO::fileSystem.CreateFolderTree(*m_pLogFileFolder);
 
-	//if (errCode != NoError) {
-	//	errCode = IO::fileSystem.CreateFolderTree(*m_logFileLocation);
-	//}
+	if (errCode == IO::fileSystem.TargetExists)
+		errCode = NoError;
 
 	try {
-		m_logFile = new IO::File(*fileLoc, IO::File::Create);
-		if (m_logFile == nullptr)
+		auto pFullPath = *m_pLogFileFolder;
+		pFullPath.AppendToLocal(IO::Name(m_logFileName));
+
+		m_pLogFile = new IO::File(pFullPath, IO::File::Create);
+		if (m_pLogFile == nullptr)
 			throw GS::GeneralException();
 	}
 	catch (...) {
-		if (m_logFile != nullptr) {
-			delete m_logFile;
-			m_logFile = nullptr;
+		if (m_pLogFile != nullptr) {
+			delete m_pLogFile;
+			m_pLogFile = nullptr;
 		}
 
 		throw GS::GeneralException();
 	}
 
-	errCode = m_logFile->GetStatus();
+	errCode = m_pLogFile->GetStatus();
 	if (errCode == NoError)
-		errCode = m_logFile->Open(IO::File::WriteEmptyMode);
+		errCode = m_pLogFile->Open(IO::File::WriteEmptyMode);
 
 	if (errCode != NoError) {
-		m_logFile->Close();
+		m_pLogFile->Close();
 
-		delete m_logFile;
-		m_logFile = nullptr;
-		IO::fileSystem.Delete(*fileLoc);
+		delete m_pLogFile;
+		m_pLogFile = nullptr;
+		//IO::fileSystem.Delete(*fileLoc);
 
 		throw GS::GeneralException();
 	}
 
-	if (m_logFile != nullptr)
-		m_logFile->WriteBin("\xEF\xBB\xBF", 3);	// make it UTF-8
+	if (m_pLogFile != nullptr)
+		m_pLogFile->WriteBin("\xEF\xBB\xBF", 3);	// make it UTF-8
 
 	return NoError;
 }
@@ -200,13 +243,12 @@ GSErrCode Logger::OpenLogFileForWriting()
 //	Close the file
 // -----------------------------------------------------------------------------
 
-
 GSErrCode Logger::CloseLogFile(void)
 {
 	GSErrCode lastErr = NoError;
 
-	if (m_logFile != nullptr)
-		lastErr = m_logFile->Close();
+	if (m_pLogFile != nullptr)
+		lastErr = m_pLogFile->Close();
 
 	return lastErr;
 }		// Close
@@ -215,16 +257,14 @@ GSErrCode Logger::CloseLogFile(void)
 //	Write a newline into the file
 // -----------------------------------------------------------------------------
 
-
 GSErrCode Logger::WrNewLine(void)
 {
 	GSErrCode lastErr = NoError;
 
-	m_logFile->WriteBin(EOLInFile, EOLInFile_LEN);
+	m_pLogFile->WriteBin(EOLInFile, EOLInFile_LEN);
 
 	return lastErr;
 }		// WrNewLine
-
 
 GSErrCode	Logger::WriteStr(const char* val, NewLineFlag newLine /* = NoNewLine*/)
 {
@@ -241,7 +281,6 @@ GSErrCode	Logger::WriteStr(const char* val, NewLineFlag newLine /* = NoNewLine*/
 	return lastErr;
 }		// WriteStr
 
-
 // -----------------------------------------------------------------------------
 //	Write a unicode string value into the file
 // -----------------------------------------------------------------------------
@@ -257,4 +296,9 @@ GSErrCode	Logger::WriteStr(const GS::UniString& val, NewLineFlag newLine /* = No
 
 	return lastErr;
 }		// WriteStr
+
+const GS::UniString Logevent::ToUniString() const
+{
+	return m_sDate + ": " + m_sLogText;
+}
 

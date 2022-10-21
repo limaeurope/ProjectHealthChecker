@@ -200,6 +200,7 @@
     <ClCompile Include="Src\Table\LibXLExtended.cpp" />
     <ClCompile Include="Src\Table\ResultTable.cpp" />
     <ClCompile Include="Src\ACSpecific\SEO.cpp" />
+    <ClCompile Include="Src\Utils\DateTime.cpp" />
     <ClCompile Include="Src\Utils\Logger.cpp" />
     <ClCompile Include="Src\Utils\Utils.cpp" />
   </ItemGroup>
@@ -287,6 +288,7 @@
     <ClInclude Include="Src\Data\SettingsSingleton.hpp" />
     <ClInclude Include="Src\Data\WinReg.hpp" />
     <ClInclude Include="Src\Enums\CheckboxEnum.hpp" />
+    <ClInclude Include="Src\Enums\Loglevels.hpp" />
     <ClInclude Include="Src\Enums\StringsEnum.hpp" />
     <ClInclude Include="Src\ResultRow.hpp" />
     <ClInclude Include="Src\Table\Excel.hpp" />
@@ -297,8 +299,8 @@
     <ClInclude Include="Src\Table\LibXLExtended.hpp" />
     <ClInclude Include="Src\Table\ResultTable.hpp" />
     <ClInclude Include="Src\ACSpecific\SEO.hpp" />
+    <ClInclude Include="Src\Utils\DateTime.hpp" />
     <ClInclude Include="Src\Utils\Logger.hpp" />
-    <ClInclude Include="Src\Utils\Loglevels.hpp" />
     <ClInclude Include="Src\Utils\Utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

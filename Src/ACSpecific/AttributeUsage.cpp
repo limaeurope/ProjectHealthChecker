@@ -1,6 +1,8 @@
 #include	"AttributeUsage.hpp"
 #include	"VectorImageIterator.hpp"
 #include	"APIdefs_LibraryParts.h"
+#include	"SettingsSingleton.hpp"
+#include	"../Utils/Logger.hpp"
 
 template <typename T>
 void AddAttribute(GS::HashTable<T, ResultRow>* const io_table,
@@ -59,6 +61,8 @@ void AttributeUsage::ProcessParameters(const API_Element& i_element, AttributeUs
 	double a, b;
 
 	GSErrCode err = ACAPI_LibPart_GetParams(i_element.object.libInd, &a, &b, &addParNum, &addPars);
+
+	LOGGER().Log(err, "teszt");
 
 	if (err == NoError && i_element.header.hasMemo) {
 		API_ElementMemo memo;
