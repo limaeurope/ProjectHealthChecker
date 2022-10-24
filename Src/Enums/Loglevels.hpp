@@ -4,6 +4,7 @@
 
 	typedef enum
 	{
+		LogLev_TRACE=0,
 		LogLev_DEBUG=1,
 		LogLev_INFO=2,
 		LogLev_WARNING=3,

@@ -100,7 +100,9 @@
 /* [  7] */ CheckBox			 10  130   260  24  LargePlain "Include Profile data"
 /* [  8] */ CheckBox			 10  154   260  24  LargePlain "Include zero valued data"
 /* [  9] */ CheckBox			 10  178   260  24  LargePlain "Count instances"
-/* [ 10] */ Button				 10  332   250  24  LargePlain "Import filters from .xlsx..."
+/* [ 10] */ Button				 10  332   170  24  LargePlain "Import filters from .xlsx..."
+/* [ 11] */ Button				190  332   170  24  LargePlain "Logfile folder..."
+/* [ 12] */ PopupControl        190  298   170  24  24 5
 }
 
 'DLGH'  32401  DLG_32500_Settings {
@@ -114,4 +116,6 @@
 8	""							CheckBox_7
 9	""							CheckBox_8
 10	""							Button_1
+11	""							Button_2
+12	""							PopupControl_0
 }

@@ -138,9 +138,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\acTypes.hpp">
-      <Filter>Sources\Constants</Filter>
-    </ClInclude>
     <ClInclude Include="Src\APICommon.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -212,6 +209,12 @@
     </ClInclude>
     <ClInclude Include="Src\Enums\Loglevels.hpp">
       <Filter>Sources\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Constants\acTypes.hpp">
+      <Filter>Sources\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Constants\loglevelStrings.hpp">
+      <Filter>Sources\Constants</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

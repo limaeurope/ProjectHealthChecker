@@ -1,6 +1,8 @@
 #include	"Logger.hpp"
 #include	"../Data/SettingsSingleton.hpp"
 #include	"WinReg.hpp"
+#include	"../Constants/loglevelStrings.hpp"
+#include	"FastLogger.hpp"
 
 #define		EOLInFile		"\xD\xA"
 #define		EOLInFile_LEN	2
@@ -19,15 +21,11 @@ Logger& Logger::GetLogger()
 
 Logger::Logger()
 {
-	m_loglevel = LogLev_DEBUG;
+	GS::UniString fileName = GS::UniString(SETTINGS().GetAppName()) + GetTimeStr() + GS::UniString(".log");
 
-	GS::UniString logFileFolder = GetRegString("LogFileFolder");
-
-	GS::UniString fileName = GS::UniString("ProjectHealtChecker") + GetTimeStr() + GS::UniString(".log");
-
-	if (logFileFolder.GetLength() > 0)
+	if (SETTINGS().GetLogFolder().GetLength() > 0)
 	{
-		SetLogFileFolder(IO::Location(logFileFolder), fileName);
+		SetLogFileFolder(IO::Location(SETTINGS().GetLogFolder()), fileName);
 	}
 	else
 	{
@@ -36,19 +34,15 @@ Logger::Logger()
 		GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::TemporaryFolder, &loc);
 		//GSErrCode err = IO::fileSystem.GetSpecialLocation(IO::FileSystem::Desktop, &loc);
 
-		loc.AppendToLocal(IO::Name(SETTINGS().m_companyName));
-		loc.AppendToLocal(IO::Name(SETTINGS().m_appName));
+		loc.AppendToLocal(IO::Name(SETTINGS().GetCompanyName()));
+		loc.AppendToLocal(IO::Name(SETTINGS().GetAppName()));
 
 		SetLogFileFolder(loc, fileName);
 	}
-
-	SetLoglevel(LogLev_DEBUG);
 }
 
 Logger::~Logger()
 {
-	SetRegString(GetLogFileFolderStr(), "LogFileFolder");
-	
 	delete m_pLogFileFolder;
 }
 
@@ -78,15 +72,19 @@ GS::UniString Logger::GetLogFileFolderStr()
 //
 // =====================================================================================================================
 
-void Logger::Log(const GSErrCode i_errCode, const GS::UniString& i_sLogText, const Loglevel i_logLevel /*= LogLev_DEBUG*/)
+void Logger::Log(const GS::UniString& i_sLogText, const GSErrCode i_errCode, const Loglevel i_logLevel /*= LogLev_DEBUG*/)
 {
 	if (i_logLevel >= SETTINGS().GetLoglevel())
 	{
 		OpenLogFileForWriting();
 
-		const GS::UniString _s = GetTimeStr() + ": " + i_sLogText;
+		char sError [16];
+
+		itoa((short)i_logLevel, sError, 10);
+
+		const GS::UniString sLogEntry = GetTimeStr("%H:%M:%S") + " " + sLoglevels[(int)i_logLevel] + ": " + i_sLogText + " Error Code: " + sError;
 		
-		Write(_s);
+		Write(sLogEntry);
 
 		WrNewLine();
 		

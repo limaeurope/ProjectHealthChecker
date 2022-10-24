@@ -38,6 +38,9 @@ SettingsSingleton::SettingsSingleton()
 	CheckBoxData.Put(Profile_checkbox,	GetRegInt("IncludeProfileData"));
 	CheckBoxData.Put(Count_instances,	GetRegInt("CountInstances"));
 	CheckBoxData.Put(Zero_checkbox,		GetRegInt(GS::UniString("IncludeZeroValuedData")));
+
+	SetLoglevel((Loglevel)GetRegInt("Loglevel"));
+	SetLogFolder(GetRegString("LogFileFolder"));
 }
 
 SettingsSingleton::~SettingsSingleton()
@@ -51,6 +54,10 @@ SettingsSingleton::~SettingsSingleton()
 	SetRegInt(CheckBoxData[Count_instances],	"CountInstances");
 	SetRegInt(CheckBoxData[Zero_checkbox], GS::UniString("IncludeZeroValuedData"));
 
+	SetRegString(GetLogFolder(), "LogFileFolder");
+	SetRegInt((short)GetLoglevel(), "Loglevel");
+
+	GetLogFolder();
 }
 
 SettingsSingleton& SettingsSingleton::GetInstance()

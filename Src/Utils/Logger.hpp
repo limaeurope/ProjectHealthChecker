@@ -52,9 +52,10 @@ public:
 	~Logger();
 	Logger();
 	void Log(const Logevent& i_logevent);
-	void Log(const GSErrCode i_errCode, const GS::UniString& i_sLogText, const Loglevel i_logLevel = LogLev_DEBUG);
-	void SetLoglevel(Loglevel i_loglevel) { m_loglevel = i_loglevel; };
-	void SetLoglevel(short i_loglevel) { m_loglevel = (Loglevel)i_loglevel; };
+	void Log(const GS::UniString& i_sLogText, const GSErrCode i_errCode, const Loglevel i_logLevel = LogLev_DEBUG);
+	inline void SetLoglevel(Loglevel i_loglevel) { m_loglevel = i_loglevel; };
+	inline void SetLoglevel(short i_loglevel) { m_loglevel = (Loglevel)i_loglevel; };
+	inline short GetLoglevel() { return (short) m_loglevel ; };
 	GS::UniString GetLogFileFolderStr();
 	void SetLogFileFolder(IO::Location& i_loc, GS::UniString& i_fileName);
 	static Logger& GetLogger();

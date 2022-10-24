@@ -5,6 +5,7 @@
 #include	"DGFileDialog.hpp"
 #include	"../Enums/StringsEnum.hpp"
 #include	"../Utils/Utils.hpp"
+#include	"../Utils/Logger.hpp"
 
 
 // -----------------------------------------------------------------------------
@@ -212,7 +213,7 @@ UInt32 CountAttributes(
 
 	err = ACAPI_Attribute_GetNum(i_attrType, &count);
 	if (err != NoError) {
-		WriteReport_Err("ACAPI_Attribute_GetNum", err);
+		LOGGER().Log("ACAPI_Attribute_GetNum", err, LogLev_WARNING);
 		return 0;
 	}
 

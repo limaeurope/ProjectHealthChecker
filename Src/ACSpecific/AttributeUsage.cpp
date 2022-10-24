@@ -62,7 +62,7 @@ void AttributeUsage::ProcessParameters(const API_Element& i_element, AttributeUs
 
 	GSErrCode err = ACAPI_LibPart_GetParams(i_element.object.libInd, &a, &b, &addParNum, &addPars);
 
-	LOGGER().Log(err, "teszt");
+	LOGGER().Log("teszt", err, LogLev_TRACE);
 
 	if (err == NoError && i_element.header.hasMemo) {
 		API_ElementMemo memo;

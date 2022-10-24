@@ -20,9 +20,10 @@ class SettingsSingleton {
 	void operator=(const SettingsSingleton&) {};
 
 	Loglevel		m_loglevel;
-public:
 	GS::UniString	m_appName;
 	GS::UniString	m_companyName;
+	GS::UniString	m_sLogFolder;
+public:
 	static const APITypeDict ApiTypeDict;
 	GS::HashTable<int, Int32> CheckBoxData;
 	GS::HashSet<GS::UniString> FilterStrings;
@@ -35,8 +36,13 @@ public:
 	ResultSheet& GetSheet(const GS::UniString& i_sName);
 	ResultSheet& GetSheet(const IntStr i_sName);
 	void ImportNamesFromExcel(const GS::UniString& i_sSheet = "");
-	Loglevel GetLoglevel() const;
 	void SetLoglevel(const Loglevel i_loglevel);
+	Loglevel GetLoglevel() const;
+	inline GS::UniString GetAppName() const { return m_appName; } ;
+	inline GS::UniString GetCompanyName() const { return m_companyName; } ;
+	inline GS::UniString GetLogFolder() const { return m_sLogFolder; } ;
+	inline void SetLogFolder(const GS::UniString& i_sLogFolder) { m_sLogFolder = i_sLogFolder; };
+
 };
 
 static std::mutex _mutex;

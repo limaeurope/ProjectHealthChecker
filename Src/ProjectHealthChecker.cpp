@@ -23,7 +23,8 @@
 #include	"ACSpecific/Profile.hpp"
 #include	"Table/Excel.hpp"
 #include	"AttributeUsage.hpp"
-
+#include	"../Constants/loglevelStrings.hpp"
+#include	"Utils/Logger.hpp"
 
 // ---------------------------------- Types ------------------------------------
 
@@ -48,12 +49,7 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 	switch (message) {
 	case DG_MSG_INIT:
 	{
-		//GSErrCode err;
-
-		SETTINGS().CheckBoxData[Libpart_checkbox] = 0;
-
 		SETTINGS().attributeUsage.ProcessAttributeUsage();
-		//AttributeUsage attributeUsage{};
 
 		if (SETTINGS().CheckBoxData[Libpart_checkbox]) ProcessLibParts();
 		if (SETTINGS().CheckBoxData[Element_checkbox]) ProcessElements();
@@ -94,19 +90,41 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 
 		for (UInt16 i = Libpart_checkbox; i <= Checkbox_max; i++)
 			DGSetItemValLong(dialID, i, SETTINGS().CheckBoxData[i]);
+
+		for (auto _s: sLoglevels)
+		{
+			DGPopUpInsertItem(dialID, 12, DG_LIST_BOTTOM);
+			DGPopUpSetItemText(dialID, 12, DG_LIST_BOTTOM, _s);
+		}
+
+		DGPopUpSelectItem(dialID, 12, SETTINGS().GetLoglevel() + 1);
+
 		break;
 	}
 	case DG_MSG_CLICK:
 		switch (item) {
 		case OK_BUTTON:
-			result = item;
+		
 			break;
 		case Import_button:
 			SETTINGS().ImportNamesFromExcel();
 
-			result = item;
+			break;
+		case LogFolder_Button:
+			IO::Location logFileLoc;
+			if (GetOpenFile(&logFileLoc, "", "", DG::FileDialog::OpenFolder))
+			{
+				GS::UniString _path;
+				GSErrCode err = logFileLoc.ToPath(&_path);
+				SETTINGS().SetLogFolder(_path);
+			}
+
 			break;
 		}
+
+		result = item;
+
+		break;
 	case DG_MSG_CHANGE:
 		switch (item) {
 		case Libpart_checkbox:
@@ -120,7 +138,11 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 			for (UInt16 i = Libpart_checkbox; i <= Checkbox_max; i++)
 				SETTINGS().CheckBoxData[i] = DGGetItemValLong(dialID, i);
 			break;
+		case Loglevel_Popup:
+			SETTINGS().SetLoglevel((Loglevel)(DGPopUpGetSelected(dialID, Loglevel_Popup) - 1));
+			break;
 		}
+
 		break;
 	}
 

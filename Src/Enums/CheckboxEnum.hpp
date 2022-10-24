@@ -2,7 +2,7 @@
 #define	_CHECKBOX_ENUM_HPP
 
 typedef enum {
-	Libpart_checkbox	= 2,
+	Libpart_checkbox = 2,
 	Element_checkbox,
 	SEO_checkbox,
 	Navigator_checkbox,
@@ -10,8 +10,10 @@ typedef enum {
 	Profile_checkbox,
 	Zero_checkbox,
 	Count_instances,
-	Checkbox_max		= Count_instances,
-	Import_button
+	Checkbox_max = Count_instances,
+	Import_button,
+	LogFolder_Button = 11,
+	Loglevel_Popup = 12,
 } ChxBoxPos;
 
 
