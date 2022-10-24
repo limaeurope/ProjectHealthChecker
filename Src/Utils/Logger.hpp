@@ -10,7 +10,7 @@
 #include	"File.hpp"
 #include	<mutex>
 
-
+// TODO To be removed
 class Logevent 
 {
 	Loglevel		m_loglevel;

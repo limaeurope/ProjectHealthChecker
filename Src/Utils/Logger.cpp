@@ -27,7 +27,7 @@ Logger::Logger()
 
 	if (logFileFolder.GetLength() > 0)
 	{
-		LOGGER().SetLogFileFolder(IO::Location(logFileFolder), fileName);
+		SetLogFileFolder(IO::Location(logFileFolder), fileName);
 	}
 	else
 	{
@@ -39,10 +39,10 @@ Logger::Logger()
 		loc.AppendToLocal(IO::Name(SETTINGS().m_companyName));
 		loc.AppendToLocal(IO::Name(SETTINGS().m_appName));
 
-		LOGGER().SetLogFileFolder(loc, fileName);
+		SetLogFileFolder(loc, fileName);
 	}
 
-	LOGGER().SetLoglevel(LogLev_DEBUG);
+	SetLoglevel(LogLev_DEBUG);
 }
 
 Logger::~Logger()
@@ -72,6 +72,12 @@ GS::UniString Logger::GetLogFileFolderStr()
 	return (n);
 }
 
+// =====================================================================================================================
+//
+// Actual logger functions
+//
+// =====================================================================================================================
+
 void Logger::Log(const GSErrCode i_errCode, const GS::UniString& i_sLogText, const Loglevel i_logLevel /*= LogLev_DEBUG*/)
 {
 	if (i_logLevel >= SETTINGS().GetLoglevel())
@@ -81,6 +87,8 @@ void Logger::Log(const GSErrCode i_errCode, const GS::UniString& i_sLogText, con
 		const GS::UniString _s = GetTimeStr() + ": " + i_sLogText;
 		
 		Write(_s);
+
+		WrNewLine();
 		
 		CloseLogFile();
 	}
@@ -93,6 +101,8 @@ void Logger::Log(const Logevent& i_logevent)
 		OpenLogFileForWriting();
 		
 		Write(i_logevent.ToUniString());
+
+		WrNewLine();
 	
 		CloseLogFile();
 	}
@@ -195,8 +205,6 @@ GSErrCode Logger::OpenLogFileForWriting()
 	if (m_pLogFile != nullptr)
 		return Error;
 
-	//errCode = m_pLogFileFolder->GetStatus();
-
 	errCode = IO::fileSystem.CreateFolderTree(*m_pLogFileFolder);
 
 	if (errCode == IO::fileSystem.TargetExists)
@@ -221,14 +229,13 @@ GSErrCode Logger::OpenLogFileForWriting()
 
 	errCode = m_pLogFile->GetStatus();
 	if (errCode == NoError)
-		errCode = m_pLogFile->Open(IO::File::WriteEmptyMode);
+		errCode = m_pLogFile->Open(IO::File::AppendMode);
 
 	if (errCode != NoError) {
 		m_pLogFile->Close();
 
 		delete m_pLogFile;
 		m_pLogFile = nullptr;
-		//IO::fileSystem.Delete(*fileLoc);
 
 		throw GS::GeneralException();
 	}
@@ -248,7 +255,10 @@ GSErrCode Logger::CloseLogFile(void)
 	GSErrCode lastErr = NoError;
 
 	if (m_pLogFile != nullptr)
+	{
 		lastErr = m_pLogFile->Close();
+		m_pLogFile = nullptr;
+	}
 
 	return lastErr;
 }		// Close

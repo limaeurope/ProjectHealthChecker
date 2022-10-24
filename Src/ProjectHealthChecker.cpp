@@ -52,7 +52,8 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 
 		SETTINGS().CheckBoxData[Libpart_checkbox] = 0;
 
-		AttributeUsage attributeUsage{};
+		SETTINGS().attributeUsage.ProcessAttributeUsage();
+		//AttributeUsage attributeUsage{};
 
 		if (SETTINGS().CheckBoxData[Libpart_checkbox]) ProcessLibParts();
 		if (SETTINGS().CheckBoxData[Element_checkbox]) ProcessElements();
@@ -101,7 +102,6 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 			result = item;
 			break;
 		case Import_button:
-			//Do_ImportNamesFromExcel();
 			SETTINGS().ImportNamesFromExcel();
 
 			result = item;

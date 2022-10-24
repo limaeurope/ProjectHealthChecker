@@ -51,7 +51,8 @@ public:
 	GS::HashTable<API_AttributeIndex, ResultRow> profileUsageTable;
 	GS::HashTable<API_AttributeIndex, ResultRow> zoneUsageTable;
 
-	AttributeUsage();
+	//AttributeUsage();
+	void ProcessAttributeUsage();
 };
 
 

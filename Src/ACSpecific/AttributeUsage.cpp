@@ -663,7 +663,7 @@ void AttributeUsage::LayerUsage(const API_Element& i_element)
 		
 }
 
-AttributeUsage::AttributeUsage()
+void AttributeUsage::ProcessAttributeUsage()
 {
 	API_Element         element;
 	AttributeUsageSet	aus;
