@@ -1,6 +1,6 @@
 ﻿#include	"Navigator.hpp"
 #include	"DataStructs.hpp"
-#include	"acTypes.hpp"
+#include	"../Constants/acTypes.hpp"
 #include	"SettingsSingleton.hpp"
 
 

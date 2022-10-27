@@ -7,9 +7,6 @@
     <ClCompile Include="Src\$(ProjectName).cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Table\Excel.cpp">
-      <Filter>Sources\Table</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Table\ResultTable.cpp">
       <Filter>Sources\Table</Filter>
     </ClCompile>
@@ -143,9 +140,6 @@
     </ClInclude>
     <ClInclude Include="Src\ProjectHealthChecker.hpp">
       <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Table\Excel.hpp">
-      <Filter>Sources\Table</Filter>
     </ClInclude>
     <ClInclude Include="Src\Table\ResultTable.hpp">
       <Filter>Sources\Table</Filter>

@@ -5,7 +5,7 @@
 #include	"ACAPinc.h"					// also includes APIdefs.h
 #include	"APICommon.h"
 #include	"DataStructs.hpp"
-#include	"AttributeUsage.hpp"
+//#include	"AttributeUsage.hpp"
 
 bool HasTexture(const API_Attribute& i_apiAttrib, AbstractData* const i_attr);
 
@@ -18,6 +18,8 @@ AbstractData* GetTextureSize(const API_Attribute& i_apiAttrib, AbstractData* con
 // -----------------------------------------------------------------------------
 
 void ProcessAttributes();
+void CheckConsistency();
+API_AttributeIndex GetAttributeIndexByName(const API_AttrTypeID i_type, const GS::UniString& i_name);
 
 UInt32 CountAttributes(
 	const API_AttrTypeID i_attrType,

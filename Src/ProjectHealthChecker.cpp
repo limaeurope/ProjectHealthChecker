@@ -21,7 +21,6 @@
 #include	"ACSpecific/Attribute.hpp"
 #include	"ACSpecific/Navigator.hpp"
 #include	"ACSpecific/Profile.hpp"
-#include	"Table/Excel.hpp"
 #include	"AttributeUsage.hpp"
 #include	"../Constants/loglevelStrings.hpp"
 #include	"Utils/Logger.hpp"
@@ -40,6 +39,8 @@ void ProcessSEO()
 	SETTINGS().GetSheet("SEO Data").AddItem("Number of erroneous SEO Operators/Targets", GetSEOElements(true).GetSize());
 }
 
+
+
 static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item, DGUserData userData, DGMessageData msgData)
 {
 	short result = 0;
@@ -57,12 +58,16 @@ static short DGCALLBACK CntlDlgCallBack(short message, short dialID, short item,
 		if (SETTINGS().CheckBoxData[Navigator_checkbox]) ProcessNavigatorItems();
 		if (SETTINGS().CheckBoxData[Layer_checkbox]) ProcessAttributes();
 		if (SETTINGS().CheckBoxData[Profile_checkbox]) ProcessProfiles();
+		if (SETTINGS().CheckBoxData[Consistency_checkbox]) CheckConsistency();
 
 		break;
 	}
 	case DG_MSG_CLICK:
 		switch (item) {
 		case OK_BUTTON:
+			if (SETTINGS().CheckBoxData[AutoExport])
+				SETTINGS().resultTable.ExportReportToExcel();
+
 			result = item;
 			break;
 		case EXPORT_BUTTON:
@@ -82,6 +87,7 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 	short result = 0;
 	GS::UniString _text{};
 	API_PropertyDefinition _def;
+	IO::Location sFileLoc;
 
 	switch (message) {
 	case DG_MSG_INIT:
@@ -93,11 +99,14 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 
 		for (auto _s: sLoglevels)
 		{
-			DGPopUpInsertItem(dialID, 12, DG_LIST_BOTTOM);
-			DGPopUpSetItemText(dialID, 12, DG_LIST_BOTTOM, _s);
+			DGPopUpInsertItem(dialID, Loglevel_Popup, DG_LIST_BOTTOM);
+			DGPopUpSetItemText(dialID, Loglevel_Popup, DG_LIST_BOTTOM, _s);
 		}
 
-		DGPopUpSelectItem(dialID, 12, SETTINGS().GetLoglevel() + 1);
+		DGPopUpSelectItem(dialID, Loglevel_Popup, SETTINGS().GetLoglevel() + 1);
+
+		DGSetItemText(dialID, Import_Text, SETTINGS().GetImport());
+		DGSetItemText(dialID, Export_Text, SETTINGS().GetExport());
 
 		break;
 	}
@@ -107,15 +116,24 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		
 			break;
 		case Import_button:
+			SETTINGS().SetExcelFile();
 			SETTINGS().ImportNamesFromExcel();
 
 			break;
-		case LogFolder_Button:
-			IO::Location logFileLoc;
-			if (GetOpenFile(&logFileLoc, "", "", DG::FileDialog::OpenFolder))
+		case Export_button:
+			if (GetOpenFile(&sFileLoc, "xlsx", "*.xlsx", DG::FileDialog::Save))
 			{
 				GS::UniString _path;
-				GSErrCode err = logFileLoc.ToPath(&_path);
+				GSErrCode err = sFileLoc.ToPath(&_path);
+				SETTINGS().SetExport(_path);
+			}
+
+			break;
+		case LogFolder_Button:
+			if (GetOpenFile(&sFileLoc, DG::FileDialog::OpenFolder))
+			{
+				GS::UniString _path;
+				GSErrCode err = sFileLoc.ToPath(&_path);
 				SETTINGS().SetLogFolder(_path);
 			}
 
@@ -135,8 +153,75 @@ static short DGCALLBACK SettingsDlgCallBack(short message, short dialID, short i
 		case Profile_checkbox:
 		case Zero_checkbox:
 		case Count_instances:
+		case Consistency_checkbox:
 			for (UInt16 i = Libpart_checkbox; i <= Checkbox_max; i++)
 				SETTINGS().CheckBoxData[i] = DGGetItemValLong(dialID, i);
+
+			if (!SETTINGS().CheckBoxData[AutoExport])
+				SETTINGS().SetExport("");
+
+			break;
+		case AutoImport:
+			if (!DGGetItemValLong(dialID, AutoImport))
+			{
+				SETTINGS().CheckBoxData[AutoImport] = 0;
+				SETTINGS().SetImport("");
+			}
+			else
+				if (GetOpenFile(&sFileLoc, "xlsx", "*.xlsx", DG::FileDialog::OpenFile))
+				{
+					GS::UniString _path;
+					GSErrCode err = sFileLoc.ToPath(&_path);
+					SETTINGS().CheckBoxData[AutoImport] = 1;
+					SETTINGS().SetImport(_path);
+
+					if (!SETTINGS().ImportNamesFromExcel())
+					{
+						SETTINGS().CheckBoxData[AutoImport] = 0;
+						SETTINGS().SetImport("");
+					}
+				}
+				else
+				{
+					SETTINGS().CheckBoxData[AutoImport] = 0;
+					SETTINGS().SetImport("");
+				}
+
+				DGSetItemValLong(dialID, AutoImport, SETTINGS().CheckBoxData[AutoImport]);
+				DGSetItemText(dialID, Import_Text, SETTINGS().GetImport());
+			break;
+		case AutoExport:
+			if (!DGGetItemValLong(dialID, AutoExport))
+			{
+				SETTINGS().CheckBoxData[AutoExport] = 0;
+				SETTINGS().SetExport("");
+			}
+			else
+				if (GetOpenFile(&sFileLoc, "xlsx", "*.xlsx", DG::FileDialog::Save))
+				{
+					GS::UniString _path;
+					GSErrCode err = sFileLoc.ToPath(&_path);
+					SETTINGS().CheckBoxData[AutoExport] = 1;
+					SETTINGS().SetExport(_path);
+				}
+				else
+				{
+					SETTINGS().CheckBoxData[AutoExport] = 0;
+					SETTINGS().SetExport("");
+				}
+			
+				DGSetItemValLong(dialID, AutoExport, SETTINGS().CheckBoxData[AutoExport]);
+				DGSetItemText(dialID, Export_Text, SETTINGS().GetExport());
+			break;
+		case Export_Text:
+			//FIXME checks
+			SETTINGS().SetExport(DGGetItemText(dialID, Export_Text));
+
+			break;
+		case Import_Text:
+			//FIXME checks
+			SETTINGS().SetImport(DGGetItemText(dialID, Import_Text));
+
 			break;
 		case Loglevel_Popup:
 			SETTINGS().SetLoglevel((Loglevel)(DGPopUpGetSelected(dialID, Loglevel_Popup) - 1));

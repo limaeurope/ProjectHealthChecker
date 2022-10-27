@@ -29,6 +29,12 @@ struct AttributeData :AbstractData {
 };
 
 
+struct StringArrayData :AbstractData {
+	GS::Array<GS::UniString> stringArray;
+	StringArrayData(GS::Array<GS::UniString> sA) :stringArray(sA) {}
+};
+
+
 struct StringData :AbstractData {
 	GS::UniString string;
 	StringData(GS::UniString s) :string(s) {}

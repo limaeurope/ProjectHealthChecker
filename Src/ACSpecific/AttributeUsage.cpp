@@ -62,11 +62,12 @@ void AttributeUsage::ProcessParameters(const API_Element& i_element, AttributeUs
 
 	GSErrCode err = ACAPI_LibPart_GetParams(i_element.object.libInd, &a, &b, &addParNum, &addPars);
 
-	LOGGER().Log("teszt", err, LogLev_TRACE);
+	if (err) LOGGER().Log("ACAPI_LibPart_GetParams", err, LogLev_ERROR, &APIGuid2GSGuid(i_element.header.guid));
 
 	if (err == NoError && i_element.header.hasMemo) {
 		API_ElementMemo memo;
 		err = ACAPI_Element_GetMemo(i_element.header.guid, &memo, APIMemoMask_AddPars);
+		if (err) LOGGER().Log("ACAPI_Element_GetMemo", err, LogLev_ERROR, &APIGuid2GSGuid(i_element.header.guid));
 
 		for (Int32 i = 0; i < addParNum; i++)
 		{
@@ -559,6 +560,39 @@ void AttributeUsage::ProcessVectorImage(const API_AttributeDefExt& i_defs,
 	}
 }
 
+//API_AttributeIndex AttributeUsage::GetAttributeIndexByName(const API_AttrTypeID i_type, const GS::UniString& i_name) const
+//{
+//	API_AttributeIndex		count;
+//	API_Attribute			attrib;
+//
+//	GSErrCode err = ACAPI_Attribute_GetNum(i_type, &count);
+//	if (err != NoError) {
+//		WriteReport_Err("ACAPI_Attribute_GetNum", err);
+//	}
+//
+//	for (Int32 i = 1; i <= count; i++) {
+//		try
+//		{
+//			BNZeroMemory(&attrib, sizeof(API_Attribute));
+//			attrib.header.typeID = i_type;
+//			attrib.header.index = i;
+//
+//			err = ACAPI_Attribute_Get(&attrib);
+//
+//			if (err == NoError)
+//			{
+//				if (GS::UniString(attrib.header.name) == i_name)
+//					return (API_AttributeIndex)i;
+//			}
+//		}
+//		catch (...) {
+//			continue;
+//		}
+//	}
+//
+//	return API_AttributeIndex();
+//}
+
 AttributeUsageSet AttributeUsage::GeneralAttributeUsageByAttribute(const API_Attribute& i_attribute, 
 		const API_AttributeDefExt& i_defs, 
 		const API_AttrTypeID i_type)
@@ -627,6 +661,8 @@ void AttributeUsage::ProcessAttributeSet(const GS::HashSet<T>& i_set,
 		
 		if (err == NoError)
 			err = ACAPI_Attribute_GetDefExt(i_type, k, &defs);
+		else
+			if (err) LOGGER().Log("ACAPI_Attribute_GetDefExt", err, LogLev_ERROR);
 
 		io_todoSet.Append(GeneralAttributeUsageByAttribute(attrib, defs, i_type));
 
@@ -670,13 +706,15 @@ void AttributeUsage::ProcessAttributeUsage()
 
 	GS::Array<API_Guid> elemList;
 	GSErrCode err = ACAPI_Element_GetElemList(API_ZombieElemID, &elemList);
+	if (err) LOGGER().Log("ACAPI_Element_GetElemList", err, LogLev_ERROR);
 
 	for (auto e : elemList)
 	{
 		BNZeroMemory(&element, sizeof(API_Element));
 		element.header.guid = e;
 		err = ACAPI_Element_Get(&element);
-		if (err) throw err;
+		if (err) LOGGER().Log("ACAPI_Element_Get", err, LogLev_ERROR);
+		//if (err) throw err;
 
 		LayerUsage(element);
 		GeneralAttributeUsageByElement(element);

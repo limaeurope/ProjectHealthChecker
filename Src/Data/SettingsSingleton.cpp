@@ -4,14 +4,28 @@
 #include	"WinReg.hpp"
 #include	"Enums/CheckboxEnum.hpp"
 
-#include	"Excel.hpp"
 #include	"Table/LibXLExtended.hpp"
 #include	"Utils/Utils.hpp"
 #include	"Utils/DateTime.hpp"
 
-
 const APITypeDict SettingsSingleton::ApiTypeDict = APITypeDict();
 SettingsSingleton& (*SETTINGS)() = SettingsSingleton::GetInstance;
+
+GS::HashSet<GS::UniString> SetFromSheet(const GS::UniString& i_sSheet, const BookExtended* const i_book)
+{
+	GS::HashSet<GS::UniString> result;
+
+	if (SheetExtended* sheet = i_book->_getSheet(i_sSheet))
+	{
+		for (int row = sheet->firstRow(); row < sheet->lastRow(); ++row)
+		{
+			if (const wchar_t* sFilter = sheet->readStr(row, 0))
+				result.Add(GS::UniString(sFilter));
+		}
+	}
+
+	return result;
+}
 
 Loglevel SettingsSingleton::GetLoglevel() const 
 { 
@@ -25,39 +39,60 @@ void SettingsSingleton::SetLoglevel(const Loglevel i_loglevel)
 
 SettingsSingleton::SettingsSingleton()
 {
+	//Can't use LOGGER in constructor due to dependency TODO
+
 	m_companyName = GetStringFromResource_(32506, 1);
 	m_appName = GetStringFromResource_(32000, 1);
 
-	FilterStrings = {};
-	
-	CheckBoxData.Put(Libpart_checkbox,	GetRegInt("LibraryPartData"));
-	CheckBoxData.Put(Element_checkbox,	GetRegInt("IncludeElementData"));
-	CheckBoxData.Put(SEO_checkbox,		GetRegInt("IncludeSEOData"));
-	CheckBoxData.Put(Navigator_checkbox,GetRegInt("IncludeNavigatorData"));
-	CheckBoxData.Put(Layer_checkbox,	GetRegInt("IncludeLayerData"));
-	CheckBoxData.Put(Profile_checkbox,	GetRegInt("IncludeProfileData"));
-	CheckBoxData.Put(Count_instances,	GetRegInt("CountInstances"));
-	CheckBoxData.Put(Zero_checkbox,		GetRegInt(GS::UniString("IncludeZeroValuedData")));
+	CheckBoxData.Put(Libpart_checkbox,		GetRegInt("LibraryPartData"));
+	CheckBoxData.Put(Element_checkbox,		GetRegInt("IncludeElementData"));
+	CheckBoxData.Put(SEO_checkbox,			GetRegInt("IncludeSEOData"));
+	CheckBoxData.Put(Navigator_checkbox,	GetRegInt("IncludeNavigatorData"));
+	CheckBoxData.Put(Layer_checkbox,		GetRegInt("IncludeLayerData"));
+	CheckBoxData.Put(Profile_checkbox,		GetRegInt("IncludeProfileData"));
+	CheckBoxData.Put(Count_instances,		GetRegInt("CountInstances"));
+	CheckBoxData.Put(Zero_checkbox,			GetRegInt(GS::UniString("IncludeZeroValuedData")));
+	CheckBoxData.Put(Consistency_checkbox,	GetRegInt("IncludeConsistency"));
+	CheckBoxData.Put(AutoImport,				GetRegInt("AutoImport"));
+	CheckBoxData.Put(AutoExport,				GetRegInt("AutoExport"));
 
 	SetLoglevel((Loglevel)GetRegInt("Loglevel"));
 	SetLogFolder(GetRegString("LogFileFolder"));
+	SetImport(GetRegString("ImportExcel"));
+	SetExport(GetRegString("OutputExcel"));
+
+	if (CheckBoxData[AutoImport] && GetImport() != "")
+		ImportNamesFromExcel();
 }
 
 SettingsSingleton::~SettingsSingleton()
 {
-	SetRegInt(CheckBoxData[Libpart_checkbox],	"LibraryPartData");
-	SetRegInt(CheckBoxData[Element_checkbox],	"IncludeElementData");
-	SetRegInt(CheckBoxData[SEO_checkbox],		"IncludeSEOData");
-	SetRegInt(CheckBoxData[Navigator_checkbox],	"IncludeNavigatorData");
-	SetRegInt(CheckBoxData[Layer_checkbox],		"IncludeLayerData");
-	SetRegInt(CheckBoxData[Profile_checkbox],	"IncludeProfileData");
-	SetRegInt(CheckBoxData[Count_instances],	"CountInstances");
+	SetRegInt(CheckBoxData[Libpart_checkbox],		"LibraryPartData");
+	SetRegInt(CheckBoxData[Element_checkbox],		"IncludeElementData");
+	SetRegInt(CheckBoxData[SEO_checkbox],			"IncludeSEOData");
+	SetRegInt(CheckBoxData[Navigator_checkbox],		"IncludeNavigatorData");
+	SetRegInt(CheckBoxData[Layer_checkbox],			"IncludeLayerData");
+	SetRegInt(CheckBoxData[Profile_checkbox],		"IncludeProfileData");
+	SetRegInt(CheckBoxData[Count_instances],		"CountInstances");
 	SetRegInt(CheckBoxData[Zero_checkbox], GS::UniString("IncludeZeroValuedData"));
+	SetRegInt(CheckBoxData[Consistency_checkbox],	"IncludeConsistency");
+	SetRegInt(CheckBoxData[AutoImport],				"AutoImport");
+	SetRegInt(CheckBoxData[AutoExport],				"AutoExport");
 
 	SetRegString(GetLogFolder(), "LogFileFolder");
 	SetRegInt((short)GetLoglevel(), "Loglevel");
 
-	GetLogFolder();
+
+	if (SETTINGS().CheckBoxData[AutoImport])
+		SetRegString(GetImport(), "ImportExcel");
+	else
+		SetRegString("", "ImportExcel");
+
+
+	if (SETTINGS().CheckBoxData[AutoExport])
+		SetRegString(GetExport(), "OutputExcel");
+	else
+		SetRegString("", "OutputExcel");
 }
 
 SettingsSingleton& SettingsSingleton::GetInstance()
@@ -82,14 +117,19 @@ ResultSheet& SettingsSingleton::GetSheet(const IntStr i_sName)
 	return GetSheet(GSFR(i_sName));
 }
 
-void SettingsSingleton::ImportNamesFromExcel(const GS::UniString& i_sSheet /*= ""*/)
+bool SettingsSingleton::ImportNamesFromExcel(const GS::UniString& i_sSheet /*= ""*/)
 {
-	IO::Location xlsFileLoc;
-	if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx", DG::FileDialog::OpenFile))
-		return;
-
 	GS::UniString filepath;
-	xlsFileLoc.ToPath(&filepath);
+
+	if	(	(CheckBoxData[AutoImport])
+		&&  (GetImport() != ""))
+	{
+		filepath = GetImport();
+	}
+	else
+	{
+		return false;
+	}
 
 	BookExtended* book;
 	bool isBookLoaded = false;
@@ -106,25 +146,22 @@ void SettingsSingleton::ImportNamesFromExcel(const GS::UniString& i_sSheet /*= "
 
 	if (isBookLoaded)
 	{
-		if (SheetExtended* sheet = book->_getSheet("CountLayers"))
-		{
-			for (int row = sheet->firstRow(); row < sheet->lastRow(); ++row)
-			{
-				if (const wchar_t* sFilter = sheet->readStr(row, 0))
-					FilterStrings.Add(GS::UniString(sFilter));
-			}
-		}
-
-		//if (SheetExtended* sheet = book->_getSheet("CountLayers"))
-		//{
-		//	for (int row = sheet->firstRow(); row < sheet->lastRow(); ++row)
-		//	{
-		//		if (const wchar_t* sFilter = sheet->readStr(row, 0))
-		//			ListStrings.Add(GS::UniString(sFilter));
-		//	}
-		//}
+		FilterStrings = SetFromSheet("CountLayers", book);
+		CompositeStrings = SetFromSheet("Composite Consistency", book);
 
 		book->release();
+		return true;
 	}
+	else
+		return false;
+}
+
+void SettingsSingleton::SetExcelFile()
+{
+	IO::Location xlsFileLoc;
+	if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx", DG::FileDialog::OpenFile))
+		return;
+
+	xlsFileLoc.ToPath(&m_inExcel);
 }
 

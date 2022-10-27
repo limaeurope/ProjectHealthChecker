@@ -6,7 +6,7 @@
 #define UNISTR_TO_LIBXLSTR(str) (str.ToUStr ())
 
 // -----------------------------------------------------------------------------
-// Open the selected XLSX file into a library part
+// Open the selected XLSX file
 // -----------------------------------------------------------------------------
 bool	GetOpenFile(IO::Location* const dloc,
 	const char* const fileExtensions,
@@ -54,6 +54,14 @@ void ResultSheet::AddItem(const GS::UniString& i_sItem,
 	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, GS::UniString(_sNumberOfWalls));
 }
 
+void ResultSheet::AddItem(const GS::UniString& i_sItem)
+{
+	rowS.Add(i_sItem, ResultRow{});
+
+	DGListInsertItem(32400, 2, DG_LIST_BOTTOM);
+	DGListSetItemText(32400, 2, DG_LIST_BOTTOM, i_sItem);
+}
+
 void ResultTable::ExportReportToExcel()
 {
 	 BookExtended* book = (BookExtended*)xlCreateXMLBook();
@@ -73,7 +81,10 @@ void ResultTable::ExportReportToExcel()
 
 		for (auto &rowItem : _v->rowS.Keys())
 		{
-			if (sheetItem.value->rowS[rowItem].GetSize() || SETTINGS().CheckBoxData[Zero_checkbox])
+			if	(sheetItem.value->rowS[rowItem].GetSize() 
+				|| SETTINGS().CheckBoxData[Zero_checkbox] 
+				|| _v->isZeroWrittenOut
+				)
 			{
 				sheet->writeStr(ii, 0, rowItem.ToUStr());
 				sheet->writeNum(ii++, 1, sheetItem.value->rowS[rowItem]);
@@ -81,12 +92,20 @@ void ResultTable::ExportReportToExcel()
 		}
 	}
 
-	IO::Location xlsFileLoc;
-	if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx", DG::FileDialog::Save))
-		return;
-
 	GS::UniString filepath;
-	xlsFileLoc.ToPath(&filepath);
+
+	if (!SETTINGS().CheckBoxData[AutoExport])
+	{ 
+		IO::Location xlsFileLoc;
+		if (!GetOpenFile(&xlsFileLoc, "xlsx", "*.xlsx", DG::FileDialog::Save))
+			return;
+
+		xlsFileLoc.ToPath(&filepath);
+	}
+	else
+	{
+		filepath = SETTINGS().GetExport();
+	}
 
 	DBVERIFY(book->save(UNISTR_TO_LIBXLSTR(filepath)));
 	book->release();

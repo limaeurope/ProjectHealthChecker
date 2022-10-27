@@ -31,6 +31,8 @@ SheetExtended* XLAPIENTRY _BookExtended<wchar_t>::_getSheet(const GS::UniString&
 {
 	for (int i = 0; i < sheetCount(); i++)
 	{
+		auto _f = i_sSheet.ToCStr().Get();
+
 		if (i_sSheet == GS::UniString(getSheetName(i)))
 		{
 			auto _i = getSheet(i);

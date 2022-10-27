@@ -274,3 +274,107 @@ GS::Array<AbstractData*> ListAttributes(
 	return io_attrs;
 }
 
+//----------------------------------------------
+
+GS::Array<GS::UniString> GetCompositeNames()
+{
+	GS::Array<GS::UniString> resultArray;
+	API_AttributeIndex		count;
+	API_Attribute			attrib;
+
+	GSErrCode err = ACAPI_Attribute_GetNum(API_CompWallID, &count);
+	if (err != NoError) {
+		WriteReport_Err("ACAPI_Attribute_GetNum", err);
+	}
+
+	for (Int32 i = 1; i <= count; i++) {
+		BNZeroMemory(&attrib, sizeof(API_Attribute));
+		attrib.header.typeID = API_CompWallID;
+		attrib.header.index = i;
+
+		err = ACAPI_Attribute_Get(&attrib);
+
+		resultArray.Push(attrib.header.name);
+	}
+
+	return resultArray;
+}
+
+void CheckConsistency()
+{
+	GS::Array<GS::UniString> missingCompIDs, zeroElementContainingComposites, multipleNames;
+
+	for (auto& _sInID : SETTINGS().CompositeStrings)
+	{
+		GS::UniString _sFoundComp = "";
+
+		for (auto& _sCompName : GetCompositeNames())
+		{
+			if (_sCompName.BeginsWith(_sInID))
+				if (_sFoundComp == "")
+					_sFoundComp = _sCompName;
+				else
+				{
+					multipleNames.Push(_sFoundComp);
+					multipleNames.Push(_sCompName);
+				}
+		}
+
+		if (_sFoundComp == "")
+			missingCompIDs.Push(_sInID);
+		else
+		{
+			auto _key = GetAttributeIndexByName(API_CompWallID, _sFoundComp);
+
+			if (!SETTINGS().attributeUsage.compositeUsageTable.ContainsKey(_key)
+				|| !SETTINGS().attributeUsage.compositeUsageTable[_key][0])
+				zeroElementContainingComposites.Push(_sFoundComp);
+		}
+
+	}
+
+	for (auto& _missC: missingCompIDs)
+		SETTINGS().GetSheet("Missing Composites").AddItem(_missC);
+	SETTINGS().GetSheet("Missing Composites").isZeroWrittenOut = true;
+
+	for (auto& _zc: zeroElementContainingComposites)
+		SETTINGS().GetSheet("Composites with zero users").AddItem(_zc);
+	SETTINGS().GetSheet("Composites with zero users").isZeroWrittenOut = true;
+
+	for (auto& _mulC: multipleNames)
+		SETTINGS().GetSheet("Multiple composites beginning with the same ID").AddItem(_mulC);
+	SETTINGS().GetSheet("Multiple composites beginning with the same ID").isZeroWrittenOut = true;
+}
+
+API_AttributeIndex GetAttributeIndexByName(const API_AttrTypeID i_type, const GS::UniString& i_name)
+{
+	API_AttributeIndex		count;
+	API_Attribute			attrib;
+
+	GSErrCode err = ACAPI_Attribute_GetNum(i_type, &count);
+	if (err != NoError) {
+		WriteReport_Err("ACAPI_Attribute_GetNum", err);
+	}
+
+	for (Int32 i = 1; i <= count; i++) {
+		try
+		{
+			BNZeroMemory(&attrib, sizeof(API_Attribute));
+			attrib.header.typeID = i_type;
+			attrib.header.index = i;
+
+			err = ACAPI_Attribute_Get(&attrib);
+
+			if (err == NoError)
+			{
+				if (GS::UniString(attrib.header.name) == i_name)
+					return (API_AttributeIndex)i;
+			}
+		}
+		catch (...) {
+			continue;
+		}
+	}
+
+	return API_AttributeIndex(0);
+}

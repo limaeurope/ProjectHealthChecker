@@ -193,7 +193,6 @@
     <ClCompile Include="Src\Data\SettingsSingleton.cpp" />
     <ClCompile Include="Src\Data\WinReg.cpp" />
     <ClCompile Include="Src\ResultRow.cpp" />
-    <ClCompile Include="Src\Table\Excel.cpp" />
     <ClCompile Include="Src\ACSpecific\LibPart.cpp" />
     <ClCompile Include="Src\ACSpecific\Navigator.cpp" />
     <ClCompile Include="Src\ACSpecific\Profile.cpp" />
@@ -292,7 +291,6 @@
     <ClInclude Include="Src\Enums\Loglevels.hpp" />
     <ClInclude Include="Src\Enums\StringsEnum.hpp" />
     <ClInclude Include="Src\ResultRow.hpp" />
-    <ClInclude Include="Src\Table\Excel.hpp" />
     <ClInclude Include="Src\ACSpecific\LibPart.hpp" />
     <ClInclude Include="Src\ACSpecific\Navigator.hpp" />
     <ClInclude Include="Src\ACSpecific\Profile.hpp" />

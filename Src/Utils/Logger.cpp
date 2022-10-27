@@ -2,7 +2,6 @@
 #include	"../Data/SettingsSingleton.hpp"
 #include	"WinReg.hpp"
 #include	"../Constants/loglevelStrings.hpp"
-#include	"FastLogger.hpp"
 
 #define		EOLInFile		"\xD\xA"
 #define		EOLInFile_LEN	2
@@ -21,7 +20,7 @@ Logger& Logger::GetLogger()
 
 Logger::Logger()
 {
-	GS::UniString fileName = GS::UniString(SETTINGS().GetAppName()) + GetTimeStr() + GS::UniString(".log");
+	GS::UniString fileName = GS::UniString(SETTINGS().GetAppName()) + GetTimeStr("%Y%m%d_%H%M%S") + GS::UniString(".log");
 
 	if (SETTINGS().GetLogFolder().GetLength() > 0)
 	{
@@ -55,6 +54,8 @@ void Logger::SetLogFileFolder(IO::Location& i_loc, GS::UniString& i_fileName)
 
 	Write("Logging started: " + GetTimeStr("%Y.%m.%d %H:%M:%S"));
 
+	WrNewLine();
+
 	CloseLogFile();
 }
 
@@ -72,7 +73,10 @@ GS::UniString Logger::GetLogFileFolderStr()
 //
 // =====================================================================================================================
 
-void Logger::Log(const GS::UniString& i_sLogText, const GSErrCode i_errCode, const Loglevel i_logLevel /*= LogLev_DEBUG*/)
+void Logger::Log(const GS::UniString& i_sLogText, 
+	const GSErrCode i_errCode, 
+	const Loglevel i_logLevel /*= LogLev_DEBUG*/, 
+	const GS::Guid* const i_guid /*= nullptr*/)
 {
 	if (i_logLevel >= SETTINGS().GetLoglevel())
 	{
@@ -82,7 +86,13 @@ void Logger::Log(const GS::UniString& i_sLogText, const GSErrCode i_errCode, con
 
 		itoa((short)i_logLevel, sError, 10);
 
-		const GS::UniString sLogEntry = GetTimeStr("%H:%M:%S") + " " + sLoglevels[(int)i_logLevel] + ": " + i_sLogText + " Error Code: " + sError;
+		GS::UniString _s = i_guid ? (GS::UniString(" GUID: ") + ((*i_guid).ToUniString())) : GS::UniString("");
+
+		const GS::UniString sLogEntry = GetTimeStr("%H:%M:%S") + 
+			" " + sLoglevels[(int)i_logLevel] + 
+			": " + i_sLogText + 
+			_s +
+			" Error Code: " + sError;
 		
 		Write(sLogEntry);
 

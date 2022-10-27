@@ -91,31 +91,43 @@
 }
 
 'GDLG'	32401	Modal			 40   40   490 366 	"Settings" {
-/* [  1] */ Button				380  332   100  24  LargePlain "Close"
+/* [  1] */ Button				370  332   110  24  LargePlain "Close"
 /* [  2] */ CheckBox			 10   10   260  24  LargePlain "Library Part data"
 /* [  3] */ CheckBox			 10   34   260  24  LargePlain "Include Element data"
 /* [  4] */ CheckBox			 10   58   260  24  LargePlain "Include SEO data"
 /* [  5] */ CheckBox			 10   82   260  24  LargePlain "Include Navigator data"
 /* [  6] */ CheckBox			 10  106   260  24  LargePlain "Include Attribute data"
 /* [  7] */ CheckBox			 10  130   260  24  LargePlain "Include Profile data"
-/* [  8] */ CheckBox			 10  154   260  24  LargePlain "Include zero valued data"
-/* [  9] */ CheckBox			 10  178   260  24  LargePlain "Count instances"
-/* [ 10] */ Button				 10  332   170  24  LargePlain "Import filters from .xlsx..."
-/* [ 11] */ Button				190  332   170  24  LargePlain "Logfile folder..."
-/* [ 12] */ PopupControl        190  298   170  24  24 5
+/* [  8] */ CheckBox			 10  178   260  24  LargePlain "Composite consistency check"
+/* [  9] */ CheckBox			 10  202   260  24  LargePlain "Count instances"
+/* [ 10] */ CheckBox			370  264   260  24  LargePlain "Save Automatically"
+/* [ 11] */ CheckBox			370  298   260  24  LargePlain "Load Automatically"
+/* [ 12] */ CheckBox			 10  154   260  24  LargePlain "Include zero valued data"
+/* [ 13] */ Button				 10  264   170  24  LargePlain "Set Export .xlsx file..."
+/* [ 14] */ Button				 10  298   170  24  LargePlain "Import filters from .xlsx..."
+/* [ 15] */ Button				 10  332   170  24  LargePlain "Logfile folder..."
+/* [ 16] */ PopupControl        190  332   170  24  24 5
+/* [ 17] */ TextEdit            190  264   170  24  LargePlain 255
+/* [ 18] */ TextEdit            190  298   170  24  LargePlain 255
 }
 
 'DLGH'  32401  DLG_32500_Settings {
-1	""							Button_0
-2	""							CheckBox_1
-3	""							CheckBox_2
-4	""							CheckBox_3
-5	""							CheckBox_4
-6	""							CheckBox_5
-7	""							CheckBox_6
-8	""							CheckBox_7
-9	""							CheckBox_8
-10	""							Button_1
-11	""							Button_2
-12	""							PopupControl_0
+ 1	""							Button_0
+ 2	""							CheckBox_1
+ 3	""							CheckBox_2
+ 4	""							CheckBox_3
+ 5	""							CheckBox_4
+ 6	""							CheckBox_5
+ 7	""							CheckBox_6
+ 8	"Checks for unused or nonexistent Composites fed from an .xlsx sheet, sheet 'Composite Consistency'"	CheckBox_7
+ 9	""							CheckBox_8
+10	""							CheckBox_9
+11	""							CheckBox_10
+12	""							CheckBox_11
+13	""							Button_1
+14	""							Button_2
+15	""							Button_3
+16	""							PopupControl_0
+17	""							TextEdit_0
+18	""							TextEdit_1
 }

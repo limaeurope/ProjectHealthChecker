@@ -53,6 +53,7 @@ public:
 
 	//AttributeUsage();
 	void ProcessAttributeUsage();
+	//API_AttributeIndex GetAttributeIndexByName(const API_AttrTypeID i_type, const GS::UniString& i_name) const;
 };
 
 
